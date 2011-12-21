@@ -1,0 +1,27 @@
+Package: faoutlier
+Version: 0.1-1
+Date: 2011-08-09
+Type: Package
+Title: Influential case detection methods for factor analysis and SEM
+Author: Phil Chalmers <rphilip.chalmers@gmail.com>
+Maintainer: Phil Chalmers <rphilip.chalmers@gmail.com>
+Description: Tools useful for detecting and summarize influential cases that
+    can affect exploratory and confirmatory factor analysis models.
+Depends:
+    R (>= 2.14),
+    psych,
+    MASS,
+    OpenMx
+LazyLoad: yes
+LazyData: yes
+Repository: R-Forge
+License: GPL (>= 2)
+URL: 
+Collate:
+    'FAoutlier-package.R'
+    'forward.search.R'
+    'gCD.R'
+    'LD.R'
+    'misc.R'
+    'obs.resid.R'
+    'robustMD.R'
