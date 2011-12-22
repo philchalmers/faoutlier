@@ -2,19 +2,22 @@
 \alias{forward.search}
 \title{Forward search algorithm for outlier detection}
 \usage{
-  forward.search(data, nfact, criteria = c("LD", "mah"),
+  forward.search(data, model, criteria = c("LD", "mah"),
     n.subsets = 1000, p.base = 0.4, na.rm = TRUE,
     digits = 5)
 }
 \arguments{
   \item{data}{matrix or data.frame}
 
-  \item{nfact}{number of factors to extract}
+  \item{model}{if a single numeric number declares number
+  of factors to extract in exploratory factor ansysis. If
+  \code{class(model)} is an OpenMx model then a
+  confirmatory factor analysis is performed instead}
 
   \item{criteria}{character strings indicating the forward
-  search method. Can contain \code{'LD'} for log-liklihood
+  search method Can contain \code{'LD'} for log-liklihood
   distance, \code{'mah'} for Mahalanobis distance, or
-  \code{'res'} for model implied residuals.}
+  \code{'res'} for model implied residuals}
 
   \item{n.subsets}{a scalar indicating how many samples to
   draw to find a homogenous starting base group}
@@ -28,7 +31,14 @@
   result}
 }
 \description{
-  Description
+  The forward search algorithm begins by selecting a
+  homogeneous subset of cases based on a maximum likelihood
+  criteria and continues to add individual cases at each
+  iteration given an acceptance criteria. By default the
+  function add cases that contribute most to the likelihood
+  function and that have the closest robust mahalanobis
+  distance, however model implied residuals may be included
+  as well.
 }
 \examples{
 \dontrun{
@@ -41,7 +51,7 @@ output
 }
 \seealso{
   \code{\link{gCD}}, \code{\link{LD}},
-  \code{link{robustMD}}
+  \code{\link{robustMD}}
 }
 \keyword{forward.search}
 

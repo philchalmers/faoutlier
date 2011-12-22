@@ -1,17 +1,19 @@
 #' Generalized Cook's Distance
 #' 
-#' Compute generalize Cook's distances (gCD's) for exploratory FA 
-#' and SEM. Also returns DFBETA matrix.
+#' Compute generalize Cook's distances (gCD's) for exploratory 
+#' and confirmatory FA. Can return DFBETA matrix if requested.
 #' 
 #' 
 #' @aliases gCD
 #' @param data matrix or data.frame 
-#' @param nfact number of factors to extract
+#' @param model if a single numeric number declares number of factors to extract in 
+#' exploratory factor ansysis. If \code{class(model)} is an OpenMx model then a 
+#' confirmatory factor analysis is performed instead
 #' @param na.rm logical; remove cases with missing data?
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#' \code{\link{LD}}, \code{\link{obs.resid}}, \code{link{robustMD}}
+#' \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}
 #' @keywords cooks
 #' @examples 
 #' 
@@ -19,16 +21,16 @@
 #' output <- gCD(data, 2)
 #' output
 #' }
-gCD <- function(data, nfact, na.rm = TRUE, digits = 5)
+gCD <- function(data, model, na.rm = TRUE, digits = 5)
 {
 	if(na.rm) data <- na.omit(data)
-	if(is.numeric(nfact)){		
-		theta <- mlfact(cor(data), nfact)$par 
+	if(is.numeric(model)){		
+		theta <- mlfact(cor(data), model)$par 
 		gCD <- c()	
 		DFBETAS <- matrix(0,nrow(data),length(theta))
 		for(i in 1:nrow(data)){
 			tmp1 <- cor(data[-i,])
-			tmp2 <- mlfact(tmp1, nfact)	  
+			tmp2 <- mlfact(tmp1, model)	  
 			h2 <- tmp2$par 
 			vcovmat <- solve(tmp2$hessian)
 			DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
@@ -36,17 +38,18 @@ gCD <- function(data, nfact, na.rm = TRUE, digits = 5)
 		}	
 		gCD <- round(gCD,digits)
 		DFBETAS <- round(DFBETAS,digits)
-		return(list(dfbetas = DFBETAS, gCD = gCD))
+		ret <- list(dfbetas = DFBETAS, gCD = gCD)
 	}		
-	if(class(nfact) == "MxRAMModel" || class(nfact) == "MxModel" ){		
-		mxMod <- nfact
+	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
+		mxMod <- model
 		fullmxData <- OpenMx::mxData(cov(data), type="cov",	numObs = nrow(data))
 		fullMod <- OpenMx::mxRun(OpenMx::mxModel(mxMod, fullmxData))
 		theta <- fullMod@output$estimate
 		gCD <- c()	
 		DFBETAS <- matrix(0,nrow(data),length(theta))
 		for(i in 1:nrow(data)){
-			tmpmxData <- OpenMx::mxData(cov(data[-i,]), type="cov",	numObs = nrow(data)-1)
+			tmpmxData <- OpenMx::mxData(cov(data[-i,]), type="cov",	
+				numObs = nrow(data)-1)
 			tmpMod <- OpenMx::mxRun(OpenMx::mxModel(mxMod, tmpmxData))
 			h2 <- tmpMod@output$estimate
 			vcovmat <- solve(tmpMod@output$estimatedHessian)
@@ -55,9 +58,17 @@ gCD <- function(data, nfact, na.rm = TRUE, digits = 5)
 		}	
 		gCD <- round(gCD,digits)
 		DFBETAS <- round(DFBETAS,digits)
-		return(list(dfbetas = DFBETAS, gCD = gCD))
+		ret <- list(dfbetas = DFBETAS, gCD = gCD)
 	}
+	class(ret) <- 'gCD'
+	ret
+	
 }
 
+#' @S3method print gCD
+print.gCD <- function(x, ...)
+{
 
+
+}
 

@@ -2,12 +2,15 @@
 \alias{obs.resid}
 \title{Model predicted residual outliers}
 \usage{
-  obs.resid(data, nfact, na.rm = TRUE, digits = 5)
+  obs.resid(data, model, na.rm = TRUE, digits = 5)
 }
 \arguments{
   \item{data}{matrix or data.frame}
 
-  \item{nfact}{number of factors to extract}
+  \item{model}{if a single numeric number declares number
+  of factors to extract in exploratory factor ansysis. If
+  \code{class(model)} is an OpenMx model then a
+  confirmatory factor analysis is performed instead}
 
   \item{na.rm}{logical; remove cases with missing data?}
 
@@ -29,7 +32,7 @@ output
 }
 \seealso{
   \code{\link{gCD}}, \code{\link{LD}},
-  \code{link{robustMD}}
+  \code{\link{robustMD}}
 }
 \keyword{covariance}
 

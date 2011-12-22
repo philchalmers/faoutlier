@@ -5,27 +5,16 @@
 \description{
   Influential case detection methods for factor analysis
   and SEM
-
-  Influential case detection methods for factor analysis
-  and SEM
 }
 \details{
   Implements robust Mahalanobis methods, generalized Cook's
   distances, likelihood ratio tests, model implied
-  residuals, and variaous graphical methods to help detect
-  abd summarize oinfluential cases that can affect factor
-  analysis and structural equation modeling.
-
-  Implements robust Mahalanobis methods, generalized Cook's
-  distances, likelihood ratio tests, model implied
-  residuals, and variaous graphical methods to help detect
-  abd summarize oinfluential cases that can affect factor
-  analysis and structural equation modeling.
+  residuals, and various graphical methods to help detect
+  and summarize influential cases that can affect
+  exploratory and confirmatory factor analyses.
 }
 \author{
-  \email{rphilip.chalmers@gmail.com}
-
-  \email{rphilip.chalmers@gmail.com}
+  Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \keyword{package}
 

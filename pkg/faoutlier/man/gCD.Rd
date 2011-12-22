@@ -2,12 +2,15 @@
 \alias{gCD}
 \title{Generalized Cook's Distance}
 \usage{
-  gCD(data, nfact, na.rm = TRUE, digits = 5)
+  gCD(data, model, na.rm = TRUE, digits = 5)
 }
 \arguments{
   \item{data}{matrix or data.frame}
 
-  \item{nfact}{number of factors to extract}
+  \item{model}{if a single numeric number declares number
+  of factors to extract in exploratory factor ansysis. If
+  \code{class(model)} is an OpenMx model then a
+  confirmatory factor analysis is performed instead}
 
   \item{na.rm}{logical; remove cases with missing data?}
 
@@ -16,7 +19,8 @@
 }
 \description{
   Compute generalize Cook's distances (gCD's) for
-  exploratory FA and SEM. Also returns DFBETA matrix.
+  exploratory and confirmatory FA. Can return DFBETA matrix
+  if requested.
 }
 \examples{
 \dontrun{
@@ -29,7 +33,7 @@ output
 }
 \seealso{
   \code{\link{LD}}, \code{\link{obs.resid}},
-  \code{link{robustMD}}
+  \code{\link{robustMD}}
 }
 \keyword{cooks}
 

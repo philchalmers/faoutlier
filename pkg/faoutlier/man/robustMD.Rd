@@ -16,8 +16,8 @@
   result}
 }
 \description{
-  Compute Mahalanobis distances using a trimmed estimate of
-  the covariance matrix.
+  Compute Mahalanobis distances using the robust computing
+  methods found in the \code{MASS} package.
 }
 \examples{
 \dontrun{
@@ -30,7 +30,7 @@ output
 }
 \seealso{
   \code{\link{gCD}}, \code{\link{obs.resid}},
-  \code{link{LD}}
+  \code{\link{LD}}
 }
 \keyword{covariance}
 
