@@ -23,8 +23,7 @@
 #' }
 LD <- function(data, model, na.rm = TRUE, digits = 5)
 {	
-	is.installed('OpenMx')
-	require('OpenMx')
+	is.installed('OpenMx')	
 	if(na.rm) data <- na.omit(data)
 	if(is.numeric(model)){		
 		MLmod <- factanal(data,model)$STATISTIC
@@ -36,14 +35,14 @@ LD <- function(data, model, na.rm = TRUE, digits = 5)
 	}
 	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){
 		mxMod <- model		
-		mxData <- OpenMx::mxData(cov(data), type="cov",	numObs = nrow(data))
-		fullMod <- OpenMx::mxRun(OpenMx::mxModel(mxMod, mxData))
+		mxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
+		fullMod <- mxRun(mxModel(mxMod, mxData))
 		MLmod <- fullMod@output$Minus2LogLikelihood - fullMod@output$SaturatedLikelihood 
 		LR <- c()
 		for(i in 1:nrow(data)){  
-			tmpmxData <- OpenMx::mxData(cov(data[-i, ]), type="cov", 
+			tmpmxData <- mxData(cov(data[-i, ]), type="cov", 
 				numObs = nrow(data)-1)
-			tmpMod <- OpenMx::mxRun(OpenMx::mxModel(mxMod, tmpmxData))
+			tmpMod <- mxRun(mxModel(mxMod, tmpmxData))
 			LR[i] <- tmpMod@output$Minus2LogLikelihood - tmpMod@output$SaturatedLikelihood
 		}	
 	}

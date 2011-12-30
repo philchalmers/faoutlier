@@ -23,8 +23,7 @@
 #' }
 gCD <- function(data, model, na.rm = TRUE, digits = 5)
 {
-	is.installed('OpenMx')
-	require('OpenMx')
+	is.installed('OpenMx')	
 	if(na.rm) data <- na.omit(data)
 	if(is.numeric(model)){		
 		theta <- mlfact(cor(data), model)$par 
@@ -44,15 +43,15 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 	}		
 	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
 		mxMod <- model
-		fullmxData <- OpenMx::mxData(cov(data), type="cov",	numObs = nrow(data))
-		fullMod <- OpenMx::mxRun(OpenMx::mxModel(mxMod, fullmxData))
+		fullmxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
+		fullMod <- mxRun(mxModel(mxMod, fullmxData))
 		theta <- fullMod@output$estimate
 		gCD <- c()	
 		DFBETAS <- matrix(0,nrow(data),length(theta))
 		for(i in 1:nrow(data)){
-			tmpmxData <- OpenMx::mxData(cov(data[-i,]), type="cov",	
+			tmpmxData <- mxData(cov(data[-i,]), type="cov",	
 				numObs = nrow(data)-1)
-			tmpMod <- OpenMx::mxRun(OpenMx::mxModel(mxMod, tmpmxData))
+			tmpMod <- mxRun(mxModel(mxMod, tmpmxData))
 			h2 <- tmpMod@output$estimate
 			vcovmat <- solve(tmpMod@output$estimatedHessian)
 			DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))

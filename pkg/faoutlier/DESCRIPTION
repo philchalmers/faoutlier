@@ -10,18 +10,17 @@ Description: Tools useful for detecting and summarize influential cases that
 Depends:
     R (>= 2.14),
     psych,
-    MASS,
-	OpenMx
+    MASS
 LazyLoad: yes
 LazyData: yes
 Repository: R-Forge
 License: GPL (>= 2)
 URL: 
 Collate:
-    'forward.search.R'
     'gCD.R'
+    'faoutlier-package.R'
+    'forward.search.R'
     'LD.R'
     'misc.R'
     'obs.resid.R'
     'robustMD.R'
-    'faoutlier-package.R'

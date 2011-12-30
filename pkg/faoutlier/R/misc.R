@@ -38,7 +38,14 @@ is.installed <- function(mypkg)
 {
 	ret <- is.element(mypkg, installed.packages()[,1]) 
 	if(!ret){
-		source('http://openmx.psyc.virginia.edu/getOpenMx.R')		
+		stop('Load the \'OpenMx\' library before running this function. 
+		\nUse the following code if not installed:
+		\tsource(\'http://openmx.psyc.virginia.edu/getOpenMx.R\')')
 	}			
 }
+
+#placeholder functions to be overwritten
+mxRun <- function(...){}
+mxModel <- function(...){}
+mxData <- function(...){}
 

@@ -36,8 +36,7 @@
 forward.search <- function(data, model, criteria = c('LD', 'mah'), 
 	n.subsets = 1000, p.base= .4, na.rm = TRUE, digits = 5)
 {		
-	is.installed('OpenMx')
-	require('OpenMx')
+	is.installed('OpenMx')	
 	if(na.rm) data <- na.omit(data)
 	N <- nrow(data)
 	p <- ncol(data)

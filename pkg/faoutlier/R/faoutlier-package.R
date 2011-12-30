@@ -13,7 +13,7 @@
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @import MASS
 #' @import psych
-#' @import OpenMx
+# @import OpenMx
 #' @keywords package
 NULL
 
