@@ -21,7 +21,7 @@
 #' output
 #' }
 robustMD <- function(data, method = 'mve', na.rm = TRUE, digits = 5)
-{
+{	
 	ret <- list()
 	if(na.rm) data <- na.omit(data)	
 	id <- 1:nrow(data)

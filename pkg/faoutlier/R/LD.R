@@ -23,6 +23,8 @@
 #' }
 LD <- function(data, model, na.rm = TRUE, digits = 5)
 {	
+	is.installed('OpenMx')
+	require('OpenMx')
 	if(na.rm) data <- na.omit(data)
 	if(is.numeric(model)){		
 		MLmod <- factanal(data,model)$STATISTIC

@@ -23,6 +23,8 @@
 #' }
 obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 {
+	is.installed('OpenMx')
+	require('OpenMx')
 	ret <- list()
 	if(na.rm) data <- na.omit(data)	
 	N <- nrow(data)

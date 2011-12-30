@@ -23,6 +23,8 @@
 #' }
 gCD <- function(data, model, na.rm = TRUE, digits = 5)
 {
+	is.installed('OpenMx')
+	require('OpenMx')
 	if(na.rm) data <- na.omit(data)
 	if(is.numeric(model)){		
 		theta <- mlfact(cor(data), model)$par 
@@ -61,14 +63,22 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 		ret <- list(dfbetas = DFBETAS, gCD = gCD)
 	}
 	class(ret) <- 'gCD'
-	ret
-	
+	ret	
 }
 
 #' @S3method print gCD
-print.gCD <- function(x, ...)
+print.gCD <- function(x, head = .05, DFBETAS = FALSE, ...)
 {
-
-
+	ID <- 1:length(x$gCD)
+	ncases <- floor(length(ID)*(1-head))
+	sorted <- cbind(ID, x$gCD)
+	ranked <- rank(x$gCD)
+	ret <- sorted[ranked >= ncases, ]
+	colnames(ret) <- c('ID', 'gCD')
+	if(DFBETAS){
+		attr(ret,'dfbetas') <- x$dfbetas[ret[ ,1], ]
+		rownames(attr(ret,'dfbetas')) <- ret[ ,1]	
+	}
+	ret
 }
 

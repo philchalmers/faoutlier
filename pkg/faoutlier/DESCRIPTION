@@ -11,7 +11,7 @@ Depends:
     R (>= 2.14),
     psych,
     MASS,
-    OpenMx
+	OpenMx
 LazyLoad: yes
 LazyData: yes
 Repository: R-Forge

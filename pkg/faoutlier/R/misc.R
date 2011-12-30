@@ -34,5 +34,11 @@ mlfact <- function (Sigma, nfact){
 	res
 }
 
-
+is.installed <- function(mypkg)
+{
+	ret <- is.element(mypkg, installed.packages()[,1]) 
+	if(!ret){
+		source('http://openmx.psyc.virginia.edu/getOpenMx.R')		
+	}			
+}
 
