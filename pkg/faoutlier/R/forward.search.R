@@ -27,6 +27,7 @@
 #' @seealso
 #' \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}
 #' @keywords forward.search
+#' @export forward.search
 #' @examples 
 #' 
 #' \dontrun{
@@ -120,17 +121,23 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 }
 
 #' @S3method print forward.search
-print.forward.search <- function(x, ...)
+print.forward.search <- function(x, stat = 'LR', ...)
 {
-
-
+	if(stat == 'LR') ret <- x$LR
+	if(stat == 'RMR') ret <- x$RMR
+	if(stat == 'gCD') ret <- x$gCD
+	names(ret) <- x$ord
+	print(ret)
 }
 
 #' @S3method plot forward.search
-plot.forward.search <- function(x, y, ...)
+plot.forward.search <- function(x, y = NULL, stat = 'LR', ...)
 {
-
-
+	id <- x$ord
+	if(stat == 'LR') stat2 <- x$LR
+	if(stat == 'RMR') stat2 <- x$RMR
+	if(stat == 'gCD') stat2 <- x$gCD
+	plot(stat2, type = 'h', main = paste(stat, "plot")) 	
 }
 
 

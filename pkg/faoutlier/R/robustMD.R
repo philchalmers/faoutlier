@@ -14,6 +14,7 @@
 #' @seealso
 #' \code{\link{gCD}}, \code{\link{obs.resid}}, \code{\link{LD}}
 #' @keywords covariance
+#' @export robustMD
 #' @examples 
 #' 
 #' \dontrun{
@@ -40,9 +41,26 @@ robustMD <- function(data, method = 'mve', na.rm = TRUE, digits = 5)
 #' @S3method print robmah
 print.robmah <- function(x, ...)
 {
+	print(x$mah)
+}
 
-
-
+#' @S3method summary robmah
+summary.robmah <- function(object, ...)
+{  
+    p <- object$mah_p
+    t0 <- ifelse(p < .0001, 1,0)
+    t1 <- ifelse(p < .001, 1, 0)
+    t2 <- ifelse(p < .01, 1, 0)
+    t3 <- ifelse(p < .05, 1, 0)
+    nstar <- t0 + t1 + t2 + t3
+    nstar[nstar == 0] <- "."
+    nstar[nstar == 1] <- "*"
+    nstar[nstar == 2] <- "**"
+    nstar[nstar == 3] <- "***"
+    nstar[nstar == 4] <- "****"
+    ret <- data.frame(man=object$mah, p=object$mah_p, sig=nstar)
+    print(ret, quote = FALSE)
+    invisible(ret)
 }
 
 

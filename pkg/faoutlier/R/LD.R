@@ -15,6 +15,7 @@
 #' @seealso
 #' \code{\link{gCD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}
 #' @keywords cooks
+#' @export LD
 #' @examples 
 #' 
 #' \dontrun{
@@ -24,6 +25,7 @@
 LD <- function(data, model, na.rm = TRUE, digits = 5)
 {	
 	is.installed('OpenMx')	
+	rownames(data) <- 1:nrow(data)
 	if(na.rm) data <- na.omit(data)
 	if(is.numeric(model)){		
 		MLmod <- factanal(data,model)$STATISTIC
@@ -48,16 +50,30 @@ LD <- function(data, model, na.rm = TRUE, digits = 5)
 	}
 	deltaX2 <- MLmod - LR	
 	deltaX2 <- round(deltaX2, digits)
+	names(deltaX2) <- rownames(data)
 	class(deltaX2) <- 'LD'
 	deltaX2
 }
 
 #' @S3method print LD
-print.LD <- function(x, ...)
+print.LD <- function(x, ncases = 10, ...)
 {
-
-
+	sorted <- sort(x)
+	if(ncases %% 2 != 0) ncases <- ncases + 1
+	sorted <- c(sorted[1:(ncases/2)], 
+		sorted[(length(sorted)-(ncases/2 + 1)):length(sorted)])
+	ret <- matrix(sorted)
+	rownames(ret) <- names(sorted)
+	colnames(ret) <- 'deltaX2'
+	ret
 }
 
+#' @S3method plot LD
+plot.LD <- function(x, y = NULL, main = 'LD plot', ...)
+{
+	x <- abs(as.numeric(x))
+	plot(x, type = 'h', main = main, ylab = 'Absolute LD', 
+		xlab = 'Case Number', ...)
+}
 
 

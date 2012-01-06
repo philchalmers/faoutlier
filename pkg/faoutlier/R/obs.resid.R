@@ -15,6 +15,7 @@
 #' @seealso
 #' \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}
 #' @keywords covariance
+#' @export obs.resid
 #' @examples 
 #' 
 #' \dontrun{
@@ -25,6 +26,7 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 {
 	is.installed('OpenMx')	
 	ret <- list()
+	rownames(data) <- 1:nrow(data)
 	if(na.rm) data <- na.omit(data)	
 	N <- nrow(data)
 	R <- cor(data)
@@ -40,6 +42,7 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 	colnames(eji) <- colnames(e) <- colnames(data)		
 	ret$res <- e
 	ret$std_res <- eji
+	ret$id <- rownames(data)
 	class(ret) <- 'obs.resid'
 	ret
 }
@@ -47,8 +50,11 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 #' @S3method print obs.resid
 print.obs.resid <- function(x, ...)
 {
-
-
+	stat <- c()
+	for(i in 1:nrow(x$fascores))
+		stat[i] <- x$std_res[i, ] %*% x$std_res[i, ]	
+	ret <- list(ee = stat)
+	ret
 }
 
 

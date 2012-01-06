@@ -15,6 +15,7 @@
 #' @seealso
 #' \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}
 #' @keywords cooks
+#' @export gCD
 #' @examples 
 #' 
 #' \dontrun{
