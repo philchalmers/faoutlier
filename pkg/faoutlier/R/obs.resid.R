@@ -48,7 +48,7 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 }
 
 #' @S3method print obs.resid
-print.obs.resid <- function(x, ...)
+print.obs.resid <- function(x, standerdized = TRUE, ncases = 10, ...)
 {
 	stat <- c()
 	for(i in 1:nrow(x$fascores))

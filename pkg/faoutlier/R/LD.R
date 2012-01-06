@@ -74,6 +74,8 @@ plot.LD <- function(x, y = NULL, main = 'LD plot', ...)
 	x <- abs(as.numeric(x))
 	plot(x, type = 'h', main = main, ylab = 'Absolute LD', 
 		xlab = 'Case Number', ...)
+	x <- abs(x)
+	plot(x, type = 'h', main = main, ...)
 }
 
 
