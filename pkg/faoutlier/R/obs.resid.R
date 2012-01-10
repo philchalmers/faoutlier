@@ -24,7 +24,7 @@
 #' }
 obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 {
-	is.installed('OpenMx')	
+	#is.installed('OpenMx')	
 	ret <- list()
 	rownames(data) <- 1:nrow(data)
 	if(na.rm) data <- na.omit(data)	
@@ -37,8 +37,8 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 		Lambda <- unclass(mod$loadings)
 		Theta <- diag(mod$uniquenesses)	
 		e <- data - scores %*% t(Lambda)
-		VAR <- diag(sqrt(mod$uniqueness)) %*% solve(R) %*% 
-			diag(sqrt(mod$uniqueness)) 
+		VAR <- diag(mod$uniqueness) %*% solve(R) %*% 
+			diag(mod$uniqueness) 
 		eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e)) 
 		colnames(eji) <- colnames(e) <- colnames(data)		
 		ret$res <- e
@@ -76,8 +76,19 @@ print.obs.resid <- function(x, ...)
 	for(i in 1:length(x$id))
 		stat[i] <- x$std_res[i, ] %*% x$std_res[i, ]	
 	ret <- list(ee = stat)
-	ret
+	print(ret)
+	invisible(ret)
 }
 
+#' @S3method plot obs.resid
+plot.obs.resid <- function(x, y = NULL, main = 'obs.resid plot', 
+	ylab = 'Observed residuals', ...)
+{
+	ID <- x$id		
+	stat <- c()
+	for(i in 1:length(x$id))
+		stat[i] <- x$std_res[i, ] %*% x$std_res[i, ]
+	plot(ID, stat, type = 'h', main = main, ylab = ylab, ...)
+}
 
 

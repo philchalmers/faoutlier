@@ -24,7 +24,7 @@
 #' }
 gCD <- function(data, model, na.rm = TRUE, digits = 5)
 {
-	is.installed('OpenMx')	
+	#is.installed('OpenMx')	
 	if(na.rm) data <- na.omit(data)
 	if(is.numeric(model)){		
 		theta <- mlfact(cor(data), model)$par 
@@ -79,6 +79,15 @@ print.gCD <- function(x, head = .05, DFBETAS = FALSE, ...)
 		attr(ret,'dfbetas') <- x$dfbetas[ret[ ,1], ]
 		rownames(attr(ret,'dfbetas')) <- ret[ ,1]	
 	}
-	ret
+	print(ret)
+	invisible(ret)
+}
+
+#' @S3method plot gCD
+plot.gCD <- function(x, y = NULL, main = 'gCD plot', 
+	ylab = 'Generalized Cook Distance', ...)
+{
+	ID <- 1:length(x$gCD)		
+	plot(ID, x$gCD, type = 'h', main = main, ylab = ylab, ...)
 }
 

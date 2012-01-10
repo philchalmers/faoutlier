@@ -24,7 +24,7 @@
 #' }
 LD <- function(data, model, na.rm = TRUE, digits = 5)
 {	
-	is.installed('OpenMx')	
+	#is.installed('OpenMx')	
 	rownames(data) <- 1:nrow(data)
 	if(na.rm) data <- na.omit(data)
 	if(is.numeric(model)){		
@@ -65,7 +65,8 @@ print.LD <- function(x, ncases = 10, ...)
 	ret <- matrix(sorted)
 	rownames(ret) <- names(sorted)
 	colnames(ret) <- 'deltaX2'
-	ret
+	print(ret)
+	invisible(ret)
 }
 
 #' @S3method plot LD

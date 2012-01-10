@@ -10,6 +10,7 @@ Description: Tools useful for detecting and summarize influential cases that
 Depends:
     R (>= 2.13),
     psych,
+    OpenMx,
     MASS
 LazyLoad: yes
 LazyData: yes
