@@ -44,8 +44,11 @@ is.installed <- function(mypkg)
 	}			
 }
 
-#placeholder functions to be overwritten
-mxRun <- function(...){}
-mxModel <- function(...){}
-mxData <- function(...){}
+####placeholder functions to be overwritten
+# @export mxRun
+#mxRun <- function(...){}
+# @export mxModel
+#mxModel <- function(...){}
+# @export mxData
+#mxData <- function(...){}
 

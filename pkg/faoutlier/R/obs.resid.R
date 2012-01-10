@@ -28,30 +28,52 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 	ret <- list()
 	rownames(data) <- 1:nrow(data)
 	if(na.rm) data <- na.omit(data)	
-	N <- nrow(data)
-	R <- cor(data)
-	mod <- fa(R,model,rotate='none')
-	scores <- fa(data,model,rotate='none',scores=TRUE)$scores
-	ret$fascores <- scores
-	Lambda <- unclass(mod$loadings)
-	Theta <- diag(mod$uniquenesses)	
-	e <- data - scores %*% t(Lambda)
-	
-	VAR <- diag(mod$uniqueness) %*% solve(R) %*%  diag(mod$uniqueness) 
-	eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e)) 
-	colnames(eji) <- colnames(e) <- colnames(data)		
-	ret$res <- e
-	ret$std_res <- eji
+	N <- nrow(data)	
+	if(is.numeric(model)){		
+		R <- cor(data)
+		mod <- fa(R,model,rotate='none')
+		scores <- fa(data,model,rotate='none',scores=TRUE)$scores
+		ret$fascores <- scores
+		Lambda <- unclass(mod$loadings)
+		Theta <- diag(mod$uniquenesses)	
+		e <- data - scores %*% t(Lambda)
+		VAR <- diag(sqrt(mod$uniqueness)) %*% solve(R) %*% 
+			diag(sqrt(mod$uniqueness)) 
+		eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e)) 
+		colnames(eji) <- colnames(e) <- colnames(data)		
+		ret$res <- e
+		ret$std_res <- eji
+	}
+	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
+		mxMod <- model
+		fullmxData <- mxData(cov(data), type="cov",	numObs = N)
+		fullMod <- mxRun(mxModel(mxMod, fullmxData))
+		sigHat <- fullMod@objective@expCov
+		mat <- fullMod@output$matrices
+		nfact <- 1:(ncol(mat[[3]]) - sum(mat[[3]]))		
+		n <- ncol(data)	
+		L <- matrix(mat[[1]][1:n, n+nfact], ncol = length(nfact))
+		Phi <- as.matrix(mat[[2]][nfact+n, nfact+n])
+		U <- mat[[2]][1:n, 1:n]
+		scores <- t(Phi %*% t(L) %*% solve(sigHat) %*% 
+			t(data - colMeans(data)))
+		e <- data - scores %*% t(L)
+		VAR <- U %*% solve(cov(data)) %*%  U
+		eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e)) 
+		colnames(eji) <- colnames(e) <- colnames(data)		
+		ret$res <- e
+		ret$std_res <- eji	
+	}
 	ret$id <- rownames(data)
 	class(ret) <- 'obs.resid'
 	ret
 }
 
 #' @S3method print obs.resid
-print.obs.resid <- function(x, standerdized = TRUE, ncases = 10, ...)
+print.obs.resid <- function(x, ...)
 {
 	stat <- c()
-	for(i in 1:nrow(x$fascores))
+	for(i in 1:length(x$id))
 		stat[i] <- x$std_res[i, ] %*% x$std_res[i, ]	
 	ret <- list(ee = stat)
 	ret
