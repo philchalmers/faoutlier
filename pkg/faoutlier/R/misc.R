@@ -33,23 +33,3 @@ mlfact <- function (Sigma, nfact){
     res$loadings <- diag(sqrt(res$par)) %*% load
 	res
 }
-
-#' @import OpenMx
-is.installed <- function(mypkg)
-{
-	ret <- is.element(mypkg, installed.packages()[,1]) 
-	if(!ret){
-		stop('Load the \'OpenMx\' library before running this function. 
-		\nUse the following code if not installed:
-		\tsource(\'http://openmx.psyc.virginia.edu/getOpenMx.R\')')
-	}	
-}
-
-####placeholder functions to be overwritten
-# @export mxRun
-#mxRun <- function(...){OpenMx::mxRun(...)}
-# @export mxModel
-#mxModel <- function(...){OpenMx::mxModel(...)}
-# @export mxData
-#mxData <- function(...){OpenMx::mxData(...)}
-

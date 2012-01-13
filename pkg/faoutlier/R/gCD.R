@@ -23,8 +23,7 @@
 #' output
 #' }
 gCD <- function(data, model, na.rm = TRUE, digits = 5)
-{
-	#is.installed('OpenMx')	
+{	
 	if(na.rm) data <- na.omit(data)
 	if(is.numeric(model)){		
 		theta <- mlfact(cor(data), model)$par 
