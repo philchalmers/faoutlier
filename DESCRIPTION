@@ -16,7 +16,7 @@ LazyLoad: yes
 LazyData: yes
 Repository: github
 License: GPL (>= 2)
-URL: 
+URL: https://github.com/philchalmers/faoutlier
 Collate:
     'gCD.R'
     'faoutlier-package.R'
