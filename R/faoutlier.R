@@ -7,7 +7,7 @@
 #' 
 #'  
 #' 
-#' @name faoutlier-package
+#' @name faoutlier
 #' @docType package
 #' @title Influential case detection methods for FA and SEM
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}

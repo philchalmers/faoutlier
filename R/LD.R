@@ -37,13 +37,13 @@ LD <- function(data, model, na.rm = TRUE, digits = 5)
 	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){
 		mxMod <- model		
 		mxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
-		fullMod <- mxRun(mxModel(mxMod, mxData))
+		fullMod <- mxRun(mxModel(mxMod, mxData), silent = TRUE)
 		MLmod <- fullMod@output$Minus2LogLikelihood - fullMod@output$SaturatedLikelihood 
 		LR <- c()
 		for(i in 1:nrow(data)){  
 			tmpmxData <- mxData(cov(data[-i, ]), type="cov", 
 				numObs = nrow(data)-1)
-			tmpMod <- mxRun(mxModel(mxMod, tmpmxData))
+			tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
 			LR[i] <- tmpMod@output$Minus2LogLikelihood - tmpMod@output$SaturatedLikelihood
 		}	
 	}

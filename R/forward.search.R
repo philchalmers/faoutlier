@@ -115,6 +115,44 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 			(model*(model + 1))))
 		ret <- list(LR=LRstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)		
 	}
+	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){	
+		STATISTICS <- rep(NA, n.subsets)
+		mxMod <- model
+		sampleMxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
+		sampleMxMod <- mxRun(mxModel(mxMod, fullmxData), silent = TRUE)
+		for(i in 1:n.subsets){
+			sampleMxData <- mxData(cov(data[Samples[ ,i], ]), type="cov", numObs = nrow(Samples))
+			sampleMxMod <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
+			STATISTICS[i] <- sampleMxMod@output$Minus2LogLikelihood - 
+				sampleMxMod@output$SaturatedLikelihood 			
+		}
+		orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
+		nbaseID <- setdiff(ID, baseID)
+		basedata <- data[baseID, ]
+		basemodels <- list()
+		orderentered <- c()
+		for (LOOP in 1:length(nbaseID)){	
+			tmpcov <- cov(basedata)
+			Data <- mxData(tmpcov, type="cov", numObs = nrow(Samples))
+			basemodels[[LOOP]] <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
+			stat <- c()
+			RANK <- rep(0, length(nbaseID))
+		
+		
+		
+		
+		
+		
+		
+		}
+	
+	
+	
+	
+	
+	
+		ret <- list(LR=LRstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)
+	}
 	class(ret) <- 'forward.search'
 	ret
 }

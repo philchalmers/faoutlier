@@ -44,14 +44,14 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
 		mxMod <- model
 		fullmxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
-		fullMod <- mxRun(mxModel(mxMod, fullmxData))
+		fullMod <- mxRun(mxModel(mxMod, fullmxData), silent = TRUE)
 		theta <- fullMod@output$estimate
 		gCD <- c()	
 		DFBETAS <- matrix(0,nrow(data),length(theta))
 		for(i in 1:nrow(data)){
 			tmpmxData <- mxData(cov(data[-i,]), type="cov",	
 				numObs = nrow(data)-1)
-			tmpMod <- mxRun(mxModel(mxMod, tmpmxData))
+			tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
 			h2 <- tmpMod@output$estimate
 			vcovmat <- solve(tmpMod@output$estimatedHessian)
 			DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))

@@ -46,8 +46,8 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
 		mxMod <- model
 		fullmxData <- mxData(cov(data), type="cov",	numObs = N)
-		fullMod <- mxRun(mxModel(mxMod, fullmxData))
-		sigHat <- fullMod@objective@expCov
+		fullMod <- mxRun(mxModel(mxMod, fullmxData), silent = TRUE)
+		sigHat <- fullMod@objective@info$expCov
 		mat <- fullMod@output$matrices
 		nfact <- 1:(ncol(mat[[3]]) - sum(mat[[3]]))		
 		n <- ncol(data)	

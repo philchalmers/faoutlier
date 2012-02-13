@@ -19,9 +19,9 @@ License: GPL (>= 2)
 URL: https://github.com/philchalmers/faoutlier
 Collate:
     'gCD.R'
-    'faoutlier-package.R'
     'forward.search.R'
     'LD.R'
     'misc.R'
     'obs.resid.R'
     'robustMD.R'
+    'faoutlier.R'
