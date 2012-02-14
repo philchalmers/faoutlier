@@ -33,8 +33,10 @@
 }
 \examples{
 \dontrun{
-output <- robustMD(data)
+data(holzinger)
+output <- robustMD(holzinger)
 output
+summary(output)
 }
 }
 \author{

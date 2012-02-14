@@ -19,8 +19,29 @@
 #' @examples 
 #' 
 #' \dontrun{
-#' output <- gCD(data, 2)
-#' output
+#' data(holzinger)
+#'
+#' ###Exploratory
+#' nfact <- 2
+#' (gCDresult <- gCD(holzinger, nfact))
+#' plot(gCDresult)
+#'
+#' ###Confirmatory
+#' manifests <- colnames(holzinger)
+#' latents <- c("G")
+#' model <- mxModel("One Factor",
+#'      type="RAM",
+#'       manifestVars = manifests,
+#'       latentVars = latents,
+#'       mxPath(from=latents, to=manifests),
+#'       mxPath(from=manifests, arrows=2),
+#'      mxPath(from=latents, arrows=2,
+#'             free=FALSE, values=1.0),
+#'       mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
+#'	  )
+#'	  
+#' (gCDresult2 <- gCD(holzinger, model))	  
+#' plot(gCDresult2)
 #' }
 gCD <- function(data, model, na.rm = TRUE, digits = 5)
 {	

@@ -40,8 +40,29 @@
 }
 \examples{
 \dontrun{
-output <- LD(data, 2)
-output
+data(holzinger)
+
+###Exploratory
+nfact <- 2
+(LDresult <- LD(holzinger, nfact))
+plot(LDresult)
+
+###Confirmatory
+manifests <- colnames(holzinger)
+latents <- c("G")
+model <- mxModel("One Factor",
+     type="RAM",
+      manifestVars = manifests,
+      latentVars = latents,
+      mxPath(from=latents, to=manifests),
+      mxPath(from=manifests, arrows=2),
+     mxPath(from=latents, arrows=2,
+            free=FALSE, values=1.0),
+      mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
+	  )
+
+(LDresult2 <- LD(holzinger, model))
+plot(LDresult2)
 }
 }
 \author{

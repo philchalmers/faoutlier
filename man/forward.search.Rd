@@ -60,8 +60,29 @@
 }
 \examples{
 \dontrun{
-output <- forward.search(data, 2)
-output
+data(holzinger)
+
+###Exploratory
+nfact <- 2
+(forward.search.result <- forward.search(holzinger, nfact))
+plot(forward.search.result)
+
+###Confirmatory
+manifests <- colnames(holzinger)
+latents <- c("G")
+model <- mxModel("One Factor",
+     type="RAM",
+      manifestVars = manifests,
+      latentVars = latents,
+      mxPath(from=latents, to=manifests),
+      mxPath(from=manifests, arrows=2),
+     mxPath(from=latents, arrows=2,
+            free=FALSE, values=1.0),
+      mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
+	  )
+
+(forward.search.result2 <- forward.search(holzinger, model))
+plot(forward.search.result2)
 }
 }
 \author{

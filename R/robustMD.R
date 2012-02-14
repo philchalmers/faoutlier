@@ -18,8 +18,10 @@
 #' @examples 
 #' 
 #' \dontrun{
-#' output <- robustMD(data)
+#' data(holzinger)
+#' output <- robustMD(holzinger)
 #' output
+#' summary(output)
 #' }
 robustMD <- function(data, method = 'mve', na.rm = TRUE, digits = 5)
 {	

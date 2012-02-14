@@ -19,8 +19,29 @@
 #' @examples 
 #' 
 #' \dontrun{
-#' output <- obs.resid(data, 2)
-#' output
+#' data(holzinger)
+#'
+#' ###Exploratory
+#' nfact <- 2
+#' (obs.resid.result <- obs.resid(holzinger, nfact))
+#' plot(obs.resid.result)
+#'
+#' ###Confirmatory
+#' manifests <- colnames(holzinger)
+#' latents <- c("G")
+#' model <- mxModel("One Factor",
+#'      type="RAM",
+#'       manifestVars = manifests,
+#'       latentVars = latents,
+#'       mxPath(from=latents, to=manifests),
+#'       mxPath(from=manifests, arrows=2),
+#'      mxPath(from=latents, arrows=2,
+#'             free=FALSE, values=1.0),
+#'       mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
+#'	  )
+#'	  
+#' (obs.resid.result2 <- obs.resid(holzinger, model))	  
+#' plot(obs.resid.result2)
 #' }
 obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 {	
@@ -30,8 +51,8 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 	N <- nrow(data)	
 	if(is.numeric(model)){		
 		R <- cor(data)
-		mod <- fa(R,model,rotate='none')
-		scores <- fa(data,model,rotate='none',scores=TRUE)$scores
+		mod <- factanal(data, model, rotation='none', scores = 'regression')
+		scores <- mod$scores
 		ret$fascores <- scores
 		Lambda <- unclass(mod$loadings)
 		Theta <- diag(mod$uniquenesses)	
