@@ -55,6 +55,11 @@ LD <- function(data, model, na.rm = TRUE, digits = 5)
 }
 
 #' @S3method print LD
+#' @rdname LD
+#' @method print LD
+#' @param x an object of class \code{LD}
+#' @param ncases number of extreme cases to display
+#' @param ... additional parameters to be passed 
 print.LD <- function(x, ncases = 10, ...)
 {
 	sorted <- sort(x)
@@ -69,6 +74,10 @@ print.LD <- function(x, ncases = 10, ...)
 }
 
 #' @S3method plot LD
+#' @rdname LD
+#' @method plot LD
+#' @param y a \code{NULL} value ignored by the plotting function
+#' @param main the main title of the plot
 plot.LD <- function(x, y = NULL, main = 'LD plot', ...)
 {
 	x <- abs(as.numeric(x))

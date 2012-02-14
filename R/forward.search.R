@@ -104,7 +104,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 			Rhat <- basemodels[[i]]$loadings %*% t(basemodels[[i]]$loadings)
 			diag(Rhat) <- 1
 			RMR[i] <- sqrt(2*sum(((basemodels[[i]]$R - Rhat)^2) /
-				(model*(model + 1))))
+				(ncol(Rhat)*(ncol(Rhat) + 1))))
 		}
 		Cooksstat <- c(NA, Cooksstat)
 		orderentered <- c(NA, orderentered)
@@ -112,14 +112,14 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 		Rhat <- basemodels[[i+1]]$loadings %*% t(basemodels[[i+1]]$loadings)
 		diag(Rhat) <- 1
 		RMR[i+1] <- sqrt(2*sum(((basemodels[[i+1]]$R - Rhat)^2) / 
-			(model*(model + 1))))
+			(ncol(Rhat)*(ncol(Rhat) + 1))))
 		ret <- list(LR=LRstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)		
 	}
 	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){	
 		STATISTICS <- rep(NA, n.subsets)
 		mxMod <- model
-		sampleMxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
-		sampleMxMod <- mxRun(mxModel(mxMod, fullmxData), silent = TRUE)
+		sampleMxData <- mxData(cov(data), type="cov", numObs = nrow(data))
+		sampleMxMod <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
 		for(i in 1:n.subsets){
 			sampleMxData <- mxData(cov(data[Samples[ ,i], ]), type="cov", numObs = nrow(Samples))
 			sampleMxMod <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
@@ -136,21 +136,65 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 			Data <- mxData(tmpcov, type="cov", numObs = nrow(Samples))
 			basemodels[[LOOP]] <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
 			stat <- c()
-			RANK <- rep(0, length(nbaseID))
-		
-		
-		
-		
-		
-		
-		
-		}
-	
-	
-	
-	
-	
-	
+			RANK <- rep(0, length(nbaseID))		
+			if(any(criteria == 'LD')){	
+				for(j in 1:length(nbaseID)){
+					tmpcov <- cov(rbind(basedata, data[nbaseID[j], ]))
+					sampleMxData <- mxData(tmpcov, type="cov", numObs = nrow(Samples))
+					sampleMxMod <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
+					stat[j] <- sampleMxMod@output$Minus2LogLikelihood - 
+						sampleMxMod@output$SaturatedLikelihood	
+				}		
+				RANK <- RANK + rank(stat)
+			}
+			if(any(criteria == 'mah')){	
+				stat <- mahalanobis(data[nbaseID, ], colMeans(data[baseID, ]), 
+					cov(data[baseID, ]))
+				RANK <- RANK + rank(stat)	
+			}
+			if(any(criteria == 'res')){
+				stat <- c()
+				for(j in 1:length(nbaseID)){					
+					tmp <- obs.resid(rbind(basedata, data[nbaseID[j], ]), model)
+					stat[j] <- tmp$std_res[nrow(basedata)+1, ] %*% 
+						tmp$std_res[nrow(basedata)+1, ]
+				}
+				RANK <- RANK + rank(stat)
+			}
+			RANK <- rank(RANK)
+			newID <- nbaseID[min(RANK) == RANK]
+			if(length(newID) > 1) newID <- newID[1]
+			orderentered <- c(orderentered, newID)
+			baseID <- c(baseID, newID)
+			nbaseID <- setdiff(ID, baseID)
+			basedata <- data[baseID, ]
+			cat('Remaining iterations:', length(nbaseID), '\n')	
+			flush.console()		
+		}	
+		tmpcov <- cov(data)
+		Data <- mxData(tmpcov, type="cov", numObs = nrow(Samples))
+		basemodels[[LOOP+1]] <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)		
+		LRstat <- RMR <- Cooksstat <- c()		
+		for(i in 1:(length(basemodels)-1)){
+			LRstat[i] <- basemodels[[i]]@output$Minus2LogLikelihood - 
+				basemodels[[i]]@output$SaturatedLikelihood			
+			theta <- basemodels[[i]]@output$estimate	
+			hess <- basemodels[[i]]@output$estimatedHessian		
+			theta2 <- basemodels[[i+1]]@output$estimate
+			Cooksstat[i] <- (theta-theta2) %*% solve(hess) %*% (theta-theta2)			
+			Chat <- basemodels[[i]]@objective@info$expCov			
+			C <- basemodels[[i]]@data@observed			
+			RMR[i] <- sqrt(2*sum(((C - Chat)^2) /
+				(ncol(C)*(ncol(C) + 1))))
+		}		
+		Cooksstat <- c(NA, Cooksstat)
+		orderentered <- c(NA, orderentered)
+		LRstat[i+1] <- basemodels[[i+1]]@output$Minus2LogLikelihood - 
+				basemodels[[i+1]]@output$SaturatedLikelihood
+		Chat <- basemodels[[i+1]]@objective@info$expCov	
+		C <- basemodels[[i+1]]@data@observed			
+		RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /
+				(ncol(C)*(ncol(C) + 1))))	
 		ret <- list(LR=LRstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)
 	}
 	class(ret) <- 'forward.search'
@@ -158,6 +202,13 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 }
 
 #' @S3method print forward.search
+#' @rdname forward.search
+#' @method print forward.search
+#' @param x an object of class \code{forward.search}
+#' @param stat type of statistic to use. Could be 'LR', 'RMR', or 'gCD' for 
+#' the likelihood ratio, root mean square residual, or generalized Cook's disntance,  
+#' respectively
+#' @param ... additional parameters to be passed
 print.forward.search <- function(x, stat = 'LR', ...)
 {
 	if(stat == 'LR') ret <- x$LR
@@ -168,6 +219,9 @@ print.forward.search <- function(x, stat = 'LR', ...)
 }
 
 #' @S3method plot forward.search
+#' @rdname forward.search
+#' @method plot forward.search
+#' @param y a \code{null} value ignored by \code{plot}
 plot.forward.search <- function(x, y = NULL, stat = 'LR', ...)
 {
 	id <- x$ord

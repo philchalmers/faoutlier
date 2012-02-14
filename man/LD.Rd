@@ -1,8 +1,14 @@
 \name{LD}
 \alias{LD}
+\alias{plot.LD}
+\alias{print.LD}
 \title{Likelihood Distance}
 \usage{
   LD(data, model, na.rm = TRUE, digits = 5)
+
+  \method{print}{LD} (x, ncases = 10, ...)
+
+  \method{plot}{LD} (x, y = NULL, main = "LD plot", ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -16,6 +22,17 @@
 
   \item{digits}{number of digits to round in the final
   result}
+
+  \item{x}{an object of class \code{LD}}
+
+  \item{ncases}{number of extreme cases to display}
+
+  \item{...}{additional parameters to be passed}
+
+  \item{y}{a \code{NULL} value ignored by the plotting
+  function}
+
+  \item{main}{the main title of the plot}
 }
 \description{
   Compute likelihood distances between models when removing

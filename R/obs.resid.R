@@ -69,6 +69,10 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 }
 
 #' @S3method print obs.resid
+#' @rdname obs.resid
+#' @method print obs.resid
+#' @param x an object of class \code{obs.resid}
+#' @param ... additional parameters to be passed 
 print.obs.resid <- function(x, ...)
 {
 	stat <- c()
@@ -80,6 +84,11 @@ print.obs.resid <- function(x, ...)
 }
 
 #' @S3method plot obs.resid
+#' @rdname obs.resid
+#' @method plot obs.resid
+#' @param y a \code{NULL} value ignored by the plotting function
+#' @param main the main title of the plot
+#' @param ylab the y label of the plot
 plot.obs.resid <- function(x, y = NULL, main = 'obs.resid plot', 
 	ylab = 'Observed residuals', ...)
 {

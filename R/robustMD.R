@@ -39,12 +39,19 @@ robustMD <- function(data, method = 'mve', na.rm = TRUE, digits = 5)
 }
 
 #' @S3method print robmah
+#' @rdname robustMD 
+#' @method print robmah 
+#' @param x an object of class \code{robmah}
+#' @param ... additional parameters to be passed 
 print.robmah <- function(x, ...)
 {
 	print(x$mah)
 }
 
 #' @S3method summary robmah
+#' @rdname robustMD
+#' @method summary robmah 
+#' @param object an object of class \code{robmah}
 summary.robmah <- function(object, ...)
 {  
     p <- object$mah_p

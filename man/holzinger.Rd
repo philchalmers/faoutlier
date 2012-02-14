@@ -1,19 +1,14 @@
+\docType{data}
 \name{holzinger}
 \alias{holzinger}
 \title{Description of holzinger data}
 \description{
-Description of data sets.
+  A sample of 100 simulated cases from the infamous
+  Holzinger dataset using 9 variables.
 }
-
-\usage{
-data(holzinger)
-
+\author{
+  Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
+\keyword{data}
+\keyword{datasets}
 
- \arguments{
-   \item{holzinger}{100 simulated cases from the infamous Holzinger correlation matrix}
- }
-
-\author{Phil Chalmers \email{rphilip.chalmers@gmail.com}}
-
-\keyword{data} 

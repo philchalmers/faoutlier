@@ -1,10 +1,17 @@
 \name{forward.search}
 \alias{forward.search}
+\alias{plot.forward.search}
+\alias{print.forward.search}
 \title{Forward search algorithm for outlier detection}
 \usage{
   forward.search(data, model, criteria = c("LD", "mah"),
     n.subsets = 1000, p.base = 0.4, na.rm = TRUE,
     digits = 5)
+
+  \method{print}{forward.search} (x, stat = "LR", ...)
+
+  \method{plot}{forward.search} (x, y = NULL, stat = "LR",
+    ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -29,6 +36,17 @@
 
   \item{digits}{number of digits to round in the final
   result}
+
+  \item{x}{an object of class \code{forward.search}}
+
+  \item{stat}{type of statistic to use. Could be 'LR',
+  'RMR', or 'gCD' for the likelihood ratio, root mean
+  square residual, or generalized Cook's disntance,
+  respectively}
+
+  \item{...}{additional parameters to be passed}
+
+  \item{y}{a \code{null} value ignored by \code{plot}}
 }
 \description{
   The forward search algorithm begins by selecting a
