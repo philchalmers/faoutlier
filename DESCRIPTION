@@ -9,6 +9,7 @@ Description: Tools useful for detecting and summarize influential cases that
     can affect exploratory and confirmatory factor analysis models.
 Depends:
     R (>= 2.13),
+    lattice,
     OpenMx,
     MASS
 LazyLoad: yes

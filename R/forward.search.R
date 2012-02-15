@@ -243,13 +243,21 @@ print.forward.search <- function(x, stat = 'LR', ...)
 #' @rdname forward.search
 #' @method plot forward.search
 #' @param y a \code{null} value ignored by \code{plot}
-plot.forward.search <- function(x, y = NULL, stat = 'LR', ...)
+#' @param main the main title of the plot
+#' @param type type of plot to use, default displayes points and lines
+#' @param ylab the y label of the plot
+plot.forward.search <- function(x, y = NULL, stat = 'LR', main = 'Forward Search', 
+	type = c('p','h'), ylab = 'obs.resid', ...)
 {
 	id <- x$ord
+	Input <- 1:length(id)
 	if(stat == 'LR') stat2 <- x$LR
 	if(stat == 'RMR') stat2 <- x$RMR
 	if(stat == 'gCD') stat2 <- x$gCD
-	plot(stat2, type = 'h', main = paste(stat, "plot")) 	
+	dat <- data.frame(stat2,Input,id)	
+	ret <- xyplot(stat2~Input, dat, type = type, main = main, ylab = stat, 
+		xlab = 'Input Step', ...)
+	return(ret)
 }
 
 

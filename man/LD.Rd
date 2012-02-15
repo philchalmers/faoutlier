@@ -8,7 +8,9 @@
 
   \method{print}{LD} (x, ncases = 10, ...)
 
-  \method{plot}{LD} (x, y = NULL, main = "LD plot", ...)
+  \method{plot}{LD} (x, y = NULL,
+    main = "Likelihood Distance", type = c("p", "h"),
+    ylab = "LD", ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -32,7 +34,12 @@
   \item{y}{a \code{NULL} value ignored by the plotting
   function}
 
+  \item{type}{type of plot to use, default displayes points
+  and lines}
+
   \item{main}{the main title of the plot}
+
+  \item{ylab}{the y label of the plot}
 }
 \description{
   Compute likelihood distances between models when removing

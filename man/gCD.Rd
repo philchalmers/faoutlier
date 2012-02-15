@@ -9,8 +9,9 @@
   \method{print}{gCD} (x, head = 0.05, DFBETAS = FALSE,
     ...)
 
-  \method{plot}{gCD} (x, y = NULL, main = "gCD plot",
-    ylab = "Generalized Cook Distance", ...)
+  \method{plot}{gCD} (x, y = NULL,
+    main = "Generalized Cook Distance", type = c("p", "h"),
+    ylab = "gCD", ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -39,6 +40,9 @@
   function}
 
   \item{main}{the main title of the plot}
+
+  \item{type}{type of plot to use, default displayes points
+  and lines}
 
   \item{ylab}{the y label of the plot}
 }

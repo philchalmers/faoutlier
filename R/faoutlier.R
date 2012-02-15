@@ -13,6 +13,7 @@
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @import MASS
 #' @import OpenMx
+#' @import lattice
 #' @keywords package
 NULL
 

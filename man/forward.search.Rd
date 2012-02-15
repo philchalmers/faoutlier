@@ -11,7 +11,8 @@
   \method{print}{forward.search} (x, stat = "LR", ...)
 
   \method{plot}{forward.search} (x, y = NULL, stat = "LR",
-    ...)
+    main = "Forward Search", type = c("p", "h"),
+    ylab = "obs.resid", ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -47,6 +48,13 @@
   \item{...}{additional parameters to be passed}
 
   \item{y}{a \code{null} value ignored by \code{plot}}
+
+  \item{main}{the main title of the plot}
+
+  \item{type}{type of plot to use, default displayes points
+  and lines}
+
+  \item{ylab}{the y label of the plot}
 }
 \description{
   The forward search algorithm begins by selecting a

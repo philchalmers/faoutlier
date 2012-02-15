@@ -9,8 +9,8 @@
   \method{print}{obs.resid} (x, ...)
 
   \method{plot}{obs.resid} (x, y = NULL,
-    main = "obs.resid plot", ylab = "Observed residuals",
-    ...)
+    main = "Observed Residuals", type = c("p", "h"),
+    ylab = "obs.resid", ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -35,6 +35,9 @@
   \item{main}{the main title of the plot}
 
   \item{ylab}{the y label of the plot}
+
+  \item{type}{type of plot to use, default displayes points
+  and lines}
 }
 \description{
   Compute model predicted residuals for each variable using

@@ -98,14 +98,16 @@ print.LD <- function(x, ncases = 10, ...)
 #' @rdname LD
 #' @method plot LD
 #' @param y a \code{NULL} value ignored by the plotting function
+#' @param type type of plot to use, default displayes points and lines
 #' @param main the main title of the plot
-plot.LD <- function(x, y = NULL, main = 'LD plot', ...)
+#' @param ylab the y label of the plot
+plot.LD <- function(x, y = NULL, main = 'Likelihood Distance', 
+	type = c('p','h'), ylab = 'LD', ...)
 {
-	x <- abs(as.numeric(x))
-	plot(x, type = 'h', main = main, ylab = 'Absolute LD', 
-		xlab = 'Case Number', ...)
-	x <- abs(x)
-	plot(x, type = 'h', main = main, ...)
+	LD <- abs(as.numeric(x))
+	ID <- 1:length(x)	
+	dat <- data.frame(LD,ID)	
+	ret <- xyplot(LD~ID, dat, type = type, main = main, ylab = ylab, ...)
+	return(ret)
 }
-
 
