@@ -26,3 +26,4 @@ Collate:
     'robustMD.R'
     'faoutlier.R'
     'holzinger.R'
+    'holzinger.outlier.R'

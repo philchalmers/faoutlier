@@ -20,15 +20,19 @@
 #' 
 #' \dontrun{
 #' data(holzinger)
+#' data(holzinger.outlier)
 #'
 #' ###Exploratory
-#' nfact <- 2
-#' (obs.resid.result <- obs.resid(holzinger, nfact))
-#' plot(obs.resid.result)
+#' nfact <- 3
+#' (ORresult <- obs.resid(holzinger, nfact))
+#' (ORresult.outlier <- obs.resid(holzinger.outlier, nfact))
+#' plot(ORresult)
+#' plot(ORresult.outlier)
 #'
 #' ###Confirmatory
 #' manifests <- colnames(holzinger)
 #' latents <- c("G")
+#' #specify model, mxData not necessary but useful to check if mxRun works
 #' model <- mxModel("One Factor",
 #'      type="RAM",
 #'       manifestVars = manifests,
@@ -40,8 +44,10 @@
 #'       mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
 #'	  )
 #'	  
-#' (obs.resid.result2 <- obs.resid(holzinger, model))	  
-#' plot(obs.resid.result2)
+#' (ORresult <- obs.resid(holzinger, model))	  
+#' (ORresult.outlier <- obs.resid(holzinger.outlier, model))
+#' plot(ORresult)
+#' plot(ORresult.outlier)
 #' }
 obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 {	

@@ -51,18 +51,28 @@
   exploratory and confirmatory FA. Can return DFBETA matrix
   if requested.
 }
+\details{
+  Note that \code{gCD} is not limited to confirmatory
+  factor analysis using OpenMx, and can apply to nearly any
+  model being studied where detection of influential
+  observations is important.
+}
 \examples{
 \dontrun{
 data(holzinger)
+data(holzinger.outlier)
 
 ###Exploratory
-nfact <- 2
+nfact <- 3
 (gCDresult <- gCD(holzinger, nfact))
+(gCDresult.outlier <- gCD(holzinger.outlier, nfact))
 plot(gCDresult)
+plot(gCDresult.outlier)
 
 ###Confirmatory
 manifests <- colnames(holzinger)
 latents <- c("G")
+#specify model, mxData not necessary but useful to check if mxRun works
 model <- mxModel("One Factor",
      type="RAM",
       manifestVars = manifests,
@@ -75,7 +85,9 @@ model <- mxModel("One Factor",
 	  )
 
 (gCDresult2 <- gCD(holzinger, model))
+(gCDresult2.outlier <- gCD(holzinger.outlier, model))
 plot(gCDresult2)
+plot(gCDresult2.outlier)
 }
 }
 \author{

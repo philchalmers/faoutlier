@@ -66,31 +66,45 @@
   distance, however model implied residuals may be included
   as well.
 }
+\details{
+  Note that \code{forward.search} is not limited to
+  confirmatory factor analysis using OpenMx, and can apply
+  to nearly any model being studied where detection of
+  influential observations is important.
+}
 \examples{
 \dontrun{
 data(holzinger)
+data(holzinger.outlier)
 
 ###Exploratory
-nfact <- 2
-(forward.search.result <- forward.search(holzinger, nfact))
-plot(forward.search.result)
+nfact <- 3
+(FS <- forward.search(holzinger, nfact))
+(FS.outlier <- forward.search(holzinger.outlier, nfact))
+plot(FS)
+plot(FS.outlier)
 
 ###Confirmatory
 manifests <- colnames(holzinger)
-latents <- c("G")
-model <- mxModel("One Factor",
-     type="RAM",
+latents <- c("F1","F2","F3")
+#specify model, mxData not necessary but useful to check if mxRun works
+model3 <- mxModel("Three Factor",
+      type="RAM",
       manifestVars = manifests,
       latentVars = latents,
-      mxPath(from=latents, to=manifests),
+      mxPath(from="F1", to=manifests[1:3]),
+	     mxPath(from="F2", to=manifests[4:6]),
+	     mxPath(from="F3", to=manifests[7:9]),
       mxPath(from=manifests, arrows=2),
-     mxPath(from=latents, arrows=2,
+      mxPath(from=latents, arrows=2,
             free=FALSE, values=1.0),
       mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
 	  )
 
-(forward.search.result2 <- forward.search(holzinger, model))
-plot(forward.search.result2)
+(FS <- forward.search(holzinger, model3))
+(FS.outlier <- forward.search(holzinger.outlier, model3))
+plot(FS)
+plot(FS.outlier)
 }
 }
 \author{
