@@ -36,19 +36,21 @@
 #'
 #' ###Confirmatory
 #' manifests <- colnames(holzinger)
-#' latents <- c("G")
+#' latents <- c("F1","F2","F3")
 #' #specify model, mxData not necessary but useful to check if mxRun works
-#' model <- mxModel("One Factor",
-#'      type="RAM",
+#' model <- mxModel("Three Factor",
+#'       type="RAM",
 #'       manifestVars = manifests,
 #'       latentVars = latents,
-#'       mxPath(from=latents, to=manifests),
+#'       mxPath(from="F1", to=manifests[1:3]),
+#' 	     mxPath(from="F2", to=manifests[4:6]),
+#' 	     mxPath(from="F3", to=manifests[7:9]),
 #'       mxPath(from=manifests, arrows=2),
-#'      mxPath(from=latents, arrows=2,
+#'       mxPath(from=latents, arrows=2,
 #'             free=FALSE, values=1.0),
 #'       mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
-#'	  )
-#'	  
+#' 	  )			
+#' 	  
 #' (gCDresult2 <- gCD(holzinger, model))	  
 #' (gCDresult2.outlier <- gCD(holzinger.outlier, model))
 #' plot(gCDresult2)
@@ -59,13 +61,13 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 	if(na.rm) data <- na.omit(data)
 	if(is.numeric(model)){	
 		mod <- mlfact(cor(data), model)
-		theta <- mod$par 
-		vcovmat <- mod$hessian
+		theta <- mod$par 		
 		gCD <- c()	
 		DFBETAS <- matrix(0,nrow(data),length(theta))
 		for(i in 1:nrow(data)){
 			tmp1 <- cor(data[-i,])
-			tmp2 <- mlfact(tmp1, model)	  
+			tmp2 <- mlfact(tmp1, model)	
+			vcovmat <- tmp2$hessian	
 			h2 <- tmp2$par 			
 			DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
 			gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
@@ -78,14 +80,14 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 		mxMod <- model
 		fullmxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
 		fullMod <- mxRun(mxModel(mxMod, fullmxData), silent = TRUE)
-		theta <- fullMod@output$estimate
-		vcovmat <- solve(fullMod@output$estimatedHessian)
+		theta <- fullMod@output$estimate		
 		gCD <- c()	
 		DFBETAS <- matrix(0,nrow(data),length(theta))
 		for(i in 1:nrow(data)){
 			tmpmxData <- mxData(cov(data[-i,]), type="cov",	
 				numObs = nrow(data)-1)
 			tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
+			vcovmat <- solve(tmpMod@output$estimatedHessian)
 			h2 <- tmpMod@output$estimate			
 			DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
 			gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  

@@ -48,7 +48,7 @@
 #' manifests <- colnames(holzinger)
 #' latents <- c("F1","F2","F3")
 #' #specify model, mxData not necessary but useful to check if mxRun works
-#' model3 <- mxModel("Three Factor",
+#' model <- mxModel("Three Factor",
 #'       type="RAM",
 #'       manifestVars = manifests,
 #'       latentVars = latents,
@@ -61,8 +61,8 @@
 #'       mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
 #' 	  )			
 #' 
-#' (FS <- forward.search(holzinger, model3))	  
-#' (FS.outlier <- forward.search(holzinger.outlier, model3))
+#' (FS <- forward.search(holzinger, model))	  
+#' (FS.outlier <- forward.search(holzinger.outlier, model))
 #' plot(FS)
 #' plot(FS.outlier)
 #' }

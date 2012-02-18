@@ -31,19 +31,21 @@
 #'
 #' ###Confirmatory
 #' manifests <- colnames(holzinger)
-#' latents <- c("G")
+#' latents <- c("F1","F2","F3")
 #' #specify model, mxData not necessary but useful to check if mxRun works
-#' model <- mxModel("One Factor",
-#'      type="RAM",
+#' model <- mxModel("Three Factor",
+#'       type="RAM",
 #'       manifestVars = manifests,
 #'       latentVars = latents,
-#'       mxPath(from=latents, to=manifests),
+#'       mxPath(from="F1", to=manifests[1:3]),
+#' 	     mxPath(from="F2", to=manifests[4:6]),
+#' 	     mxPath(from="F3", to=manifests[7:9]),
 #'       mxPath(from=manifests, arrows=2),
-#'      mxPath(from=latents, arrows=2,
+#'       mxPath(from=latents, arrows=2,
 #'             free=FALSE, values=1.0),
 #'       mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
-#'	  )
-#'	  
+#' 	  )			
+#' 	  
 #' (ORresult <- obs.resid(holzinger, model))	  
 #' (ORresult.outlier <- obs.resid(holzinger.outlier, model))
 #' plot(ORresult)

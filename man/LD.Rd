@@ -46,10 +46,10 @@
   the \eqn{i_{th}} case.
 }
 \details{
-  Note that \code{Likelihood} is not limited to
-  confirmatory factor analysis using OpenMx, and can apply
-  to nearly any modelbeing studied where detection of
-  influential observations is important.
+  Note that \code{LD} is not limited to confirmatory factor
+  analysis using OpenMx, and can apply to nearly any
+  modelbeing studied where detection of influential
+  observations is important.
 }
 \examples{
 \dontrun{
@@ -65,13 +65,15 @@ plot(LDresult.outlier)
 
 ###Confirmatory
 manifests <- colnames(holzinger)
-latents <- c("G")
+latents <- c("F1","F2","F3")
 #specify model, mxData not necessary but useful to check if mxRun works
-model <- mxModel("One Factor",
-     type="RAM",
+model <- mxModel("Three Factor",
+      type="RAM",
       manifestVars = manifests,
       latentVars = latents,
-      mxPath(from=latents, to=manifests),
+      mxPath(from="F1", to=manifests[1:3]),
+	     mxPath(from="F2", to=manifests[4:6]),
+	     mxPath(from="F3", to=manifests[7:9]),
       mxPath(from=manifests, arrows=2),
       mxPath(from=latents, arrows=2,
             free=FALSE, values=1.0),
