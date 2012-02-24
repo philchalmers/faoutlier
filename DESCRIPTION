@@ -25,5 +25,3 @@ Collate:
     'obs.resid.R'
     'robustMD.R'
     'faoutlier.R'
-    'holzinger.R'
-    'holzinger.outlier.R'
