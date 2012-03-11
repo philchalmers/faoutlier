@@ -96,7 +96,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 			RANK <- rep(0, length(nbaseID))
 			if(any(criteria == 'LD')){				
 				for(j in 1:length(nbaseID))
-					stat[j] <- mlfact(cor(rbind(basedata, data[nbaseID[j], ])), model)$value										
+					stat[j] <- mlfact(cor(rbind(basedata, data[nbaseID[j], ])), model)$value
 				RANK <- RANK + rank(stat)
 			}
 			if(any(criteria == 'mah')){	
