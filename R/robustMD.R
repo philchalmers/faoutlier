@@ -36,6 +36,7 @@ robustMD <- function(data, method = 'mve', na.rm = TRUE, digits = 5)
 	ret$normmah <- mahalanobis(data, colMeans(data), cov(data))
 	ret$normmah_p <- round(pchisq(ret$normmah, ncol(data), 
 		lower.tail = FALSE), digits)
+	ret$J <- ncol(data)	
 	class(ret) <- 'robmah'
 	ret
 }
@@ -54,7 +55,8 @@ print.robmah <- function(x, ...)
 #' @rdname robustMD
 #' @method summary robmah 
 #' @param object an object of class \code{robmah}
-summary.robmah <- function(object, ...)
+#' @param gt only print values with MD's greater than \code{gt}
+summary.robmah <- function(object, gt = 0, ...)
 {  
     p <- object$mah_p
     t0 <- ifelse(p < .0001, 1,0)
@@ -68,8 +70,22 @@ summary.robmah <- function(object, ...)
     nstar[nstar == 3] <- "***"
     nstar[nstar == 4] <- "****"
     ret <- data.frame(man=object$mah, p=object$mah_p, sig=nstar)
+	ret <- ret[object$mah > gt, ]
     print(ret, quote = FALSE)
     invisible(ret)
 }
 
-
+#' @S3method plot robmah
+#' @param y empty parameter passed to \code{plot}
+#' @rdname robustMD
+#' @method plot robmah 
+plot.robmah <- function(x, y = NULL, ...){
+	mah <- x$mah
+	N <- length(mah)
+	J <- x$J
+	qqplot(qchisq(ppoints(N),df=J), mah,
+		main="QQ Plot",
+		ylab="Robust Mahalanobis Distance",
+		xlab='Theoretical Quartile')
+	abline(a=0,b=1)
+}

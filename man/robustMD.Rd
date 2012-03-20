@@ -1,4 +1,5 @@
 \name{robustMD}
+\alias{plot.robmah}
 \alias{print.robmah}
 \alias{robustMD}
 \alias{summary.robmah}
@@ -8,7 +9,9 @@
 
   \method{print}{robmah} (x, ...)
 
-  \method{summary}{robmah} (object, ...)
+  \method{summary}{robmah} (object, gt = 0, ...)
+
+  \method{plot}{robmah} (x, y = NULL, ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -26,6 +29,11 @@
   \item{...}{additional parameters to be passed}
 
   \item{object}{an object of class \code{robmah}}
+
+  \item{gt}{only print values with MD's greater than
+  \code{gt}}
+
+  \item{y}{empty parameter passed to \code{plot}}
 }
 \description{
   Compute Mahalanobis distances using the robust computing
