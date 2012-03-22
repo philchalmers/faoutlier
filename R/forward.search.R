@@ -26,6 +26,7 @@
 #' @param p.base proportion of sample size to use as the base group
 #' @param na.rm logical; remove cases with missing data?
 #' @param digits number of digits to round in the final result
+#' @param print.messages logical; print how many iterations are remaining?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
 #' \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}
@@ -67,7 +68,7 @@
 #' plot(FS.outlier)
 #' }
 forward.search <- function(data, model, criteria = c('LD', 'mah'), 
-	n.subsets = 1000, p.base= .4, na.rm = TRUE, digits = 5)
+	n.subsets = 1000, p.base= .4, na.rm = TRUE, digits = 5, print.messages = TRUE)
 {		
 	if(na.rm) data <- na.omit(data)
 	N <- nrow(data)
@@ -120,8 +121,10 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 			baseID <- c(baseID, newID)
 			nbaseID <- setdiff(ID, baseID)
 			basedata <- data[baseID, ]
-			cat('Remaining iterations:', length(nbaseID), '\n')	
-			flush.console()
+			if(print.messages) {
+				cat('Remaining iterations:', length(nbaseID), '\n')	
+				flush.console()
+			}
 		}
 		basemodels[[LOOP+1]] <- mlfact(cor(data), model)	
 		basemodels[[LOOP+1]]$N <- nrow(data)
@@ -200,8 +203,10 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 			baseID <- c(baseID, newID)
 			nbaseID <- setdiff(ID, baseID)
 			basedata <- data[baseID, ]
-			cat('Remaining iterations:', length(nbaseID), '\n')	
-			flush.console()		
+			if(print.messages){
+				cat('Remaining iterations:', length(nbaseID), '\n')	
+				flush.console()		
+			}
 		}	
 		tmpcov <- cov(data)
 		Data <- mxData(tmpcov, type="cov", numObs = nrow(data))
@@ -266,8 +271,8 @@ plot.forward.search <- function(x, y = NULL, stat = 'LR', main = 'Forward Search
 	if(stat == 'RMR') stat2 <- x$RMR
 	if(stat == 'gCD') stat2 <- x$gCD
 	dat <- data.frame(stat2,Input,id)	
-	ret <- xyplot(stat2~Input, dat, type = type, main = main, ylab = stat, 
-		xlab = 'Input Step', ...)
+	ret <- xyplot(stat2~Input, dat, type=type, main=main, ylab=stat, 
+		xlab='Input Step', ...)
 	return(ret)
 }
 
