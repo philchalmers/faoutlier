@@ -6,7 +6,7 @@
 \usage{
   forward.search(data, model, criteria = c("LD", "mah"),
     n.subsets = 1000, p.base = 0.4, na.rm = TRUE,
-    digits = 5)
+    digits = 5, print.messages = TRUE)
 
   \method{print}{forward.search} (x, stat = "LR", ...)
 
@@ -37,6 +37,9 @@
 
   \item{digits}{number of digits to round in the final
   result}
+
+  \item{print.messages}{logical; print how many iterations
+  are remaining?}
 
   \item{x}{an object of class \code{forward.search}}
 
