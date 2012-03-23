@@ -3,15 +3,15 @@
 #' Compute likelihood distances between models when removing the \eqn{i_{th}}
 #' case.
 #' 
-#' Note that \code{LD} is not limited to confirmatory factor analysis using
-#' OpenMx, and can apply to nearly any modelbeing studied
+#' Note that \code{LD} is not limited to confirmatory factor analysis and 
+#' can apply to nearly any model being studied
 #' where detection of influential observations is important.
 #'
 #' @aliases LD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor ansysis. If \code{class(model)} is an OpenMx model then a 
-#' confirmatory factor analysis is performed instead
+#' exploratory factor ansysis. If \code{class(model)} is a sem (or OpenMx model if installed 
+#' from github) then a confirmatory approach is performed instead
 #' @param na.rm logical; remove cases with missing data?
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
@@ -25,14 +25,34 @@
 #' data(holzinger)
 #' data(holzinger.outlier)
 #'
-#' ###Exploratory
+#' #Exploratory
 #' nfact <- 3
 #' (LDresult <- LD(holzinger, nfact))
 #' (LDresult.outlier <- LD(holzinger.outlier, nfact))
 #' plot(LDresult)
 #' plot(LDresult.outlier)
 #'
-#' ###Confirmatory
+#' #Confirmatory with sem
+#' model <- specifyModel()
+#'	  F1 -> Sentences,        lam11
+#' 	  F1 -> Vocabulary,       lam21
+#' 	  F1 -> Sent.Completion,  lam31
+#' 	  F2 -> First.Letters,    lam41
+#' 	  F2 -> 4.Letter.Words,   lam52
+#' 	  F2 -> Suffixes,         lam62
+#' 	  F3 -> Letter.Series,    lam73
+#'	  F3 -> Pedigrees,        lam83
+#' 	  F3 -> Letter.Group,     lam93
+#' 	  F1 <-> F1,              NA,     1
+#' 	  F2 <-> F2,              NA,     1
+#' 	  F3 <-> F3,              NA,     1
+#' 
+#' (LDresult <- LD(holzinger, model))	  
+#' (LDresult.outlier <- LD(holzinger.outlier, model))
+#' plot(LDresult)
+#' plot(LDresult.outlier)
+
+#' #Confirmatory using OpenMx (requires github version, see ?faoutlier)
 #' manifests <- colnames(holzinger)
 #' latents <- c("F1","F2","F3")
 #' #specify model, mxData not necessary but useful to check if mxRun works
@@ -66,19 +86,25 @@ LD <- function(data, model, na.rm = TRUE, digits = 5)
 			LR[i] <- tmp$STATISTIC
 		}
 	}
-	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){
-		mxMod <- model		
-		mxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
-		fullMod <- mxRun(mxModel(mxMod, mxData), silent = TRUE)
-		MLmod <- fullMod@output$Minus2LogLikelihood - fullMod@output$SaturatedLikelihood 
-		LR <- c()
-		for(i in 1:nrow(data)){  
-			tmpmxData <- mxData(cov(data[-i, ]), type="cov", 
-				numObs = nrow(data)-1)
-			tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
-			LR[i] <- tmpMod@output$Minus2LogLikelihood - tmpMod@output$SaturatedLikelihood
-		}	
+	if(class(model) == "semmod"){
+	    
+	    
+	    
+	    
 	}
+	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){
+	##OPENMX## 	mxMod <- model		
+	##OPENMX## 	mxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
+	##OPENMX## 	fullMod <- mxRun(mxModel(mxMod, mxData), silent = TRUE)
+	##OPENMX## 	MLmod <- fullMod@output$Minus2LogLikelihood - fullMod@output$SaturatedLikelihood 
+	##OPENMX## 	LR <- c()
+	##OPENMX## 	for(i in 1:nrow(data)){  
+	##OPENMX## 		tmpmxData <- mxData(cov(data[-i, ]), type="cov", 
+	##OPENMX## 			numObs = nrow(data)-1)
+	##OPENMX## 		tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
+	##OPENMX## 		LR[i] <- tmpMod@output$Minus2LogLikelihood - tmpMod@output$SaturatedLikelihood
+	##OPENMX## 	}	
+	##OPENMX## }
 	deltaX2 <- MLmod - LR	
 	deltaX2 <- round(deltaX2, digits)
 	names(deltaX2) <- rownames(data)

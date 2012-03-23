@@ -17,8 +17,9 @@
 
   \item{model}{if a single numeric number declares number
   of factors to extract in exploratory factor ansysis. If
-  \code{class(model)} is an OpenMx model then a
-  confirmatory factor analysis is performed instead}
+  \code{class(model)} is a sem (or OpenMx model if
+  installed from github) then a confirmatory approach is
+  performed instead}
 
   \item{na.rm}{logical; remove cases with missing data?}
 
@@ -47,23 +48,41 @@
 }
 \details{
   Note that \code{LD} is not limited to confirmatory factor
-  analysis using OpenMx, and can apply to nearly any
-  modelbeing studied where detection of influential
-  observations is important.
+  analysis and can apply to nearly any model being studied
+  where detection of influential observations is important.
 }
 \examples{
 \dontrun{
 data(holzinger)
 data(holzinger.outlier)
 
-###Exploratory
+#Exploratory
 nfact <- 3
 (LDresult <- LD(holzinger, nfact))
 (LDresult.outlier <- LD(holzinger.outlier, nfact))
 plot(LDresult)
 plot(LDresult.outlier)
 
-###Confirmatory
+#Confirmatory with sem
+model <- specifyModel()
+	  F1 -> Sentences,        lam11
+	  F1 -> Vocabulary,       lam21
+	  F1 -> Sent.Completion,  lam31
+	  F2 -> First.Letters,    lam41
+	  F2 -> 4.Letter.Words,   lam52
+	  F2 -> Suffixes,         lam62
+	  F3 -> Letter.Series,    lam73
+	  F3 -> Pedigrees,        lam83
+	  F3 -> Letter.Group,     lam93
+	  F1 <-> F1,              NA,     1
+	  F2 <-> F2,              NA,     1
+	  F3 <-> F3,              NA,     1
+
+(LDresult <- LD(holzinger, model))
+(LDresult.outlier <- LD(holzinger.outlier, model))
+plot(LDresult)
+plot(LDresult.outlier)
+#Confirmatory using OpenMx (requires github version, see ?faoutlier)
 manifests <- colnames(holzinger)
 latents <- c("F1","F2","F3")
 #specify model, mxData not necessary but useful to check if mxRun works

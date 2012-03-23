@@ -10,8 +10,8 @@ Description: Tools useful for detecting and summarize influential cases that
 Depends:
     R (>= 2.13),
     lattice,
-    OpenMx,
-    MASS
+    MASS,
+    sem
 LazyLoad: yes
 LazyData: yes
 Repository: github

@@ -1,6 +1,6 @@
 mlfact <- function (Sigma, nfact){    
-	## Phil Chalmers, December 7, 2011 
-	## Following code substantially modified from stats::factanal function.
+	# Phil Chalmers, December 7, 2011 
+	# Following code substantially modified from stats::factanal function.
 	FAfn <- function(Psi, S, q) {
 		sc <- diag(1/sqrt(Psi))
 		Sstar <- sc %*% S %*% sc

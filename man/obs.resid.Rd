@@ -17,8 +17,9 @@
 
   \item{model}{if a single numeric number declares number
   of factors to extract in exploratory factor ansysis. If
-  \code{class(model)} is an OpenMx model then a
-  confirmatory factor analysis is performed instead}
+  \code{class(model)} is a sem (or OpenMx model if
+  installed from github) then a confirmatory approach is
+  performed instead}
 
   \item{na.rm}{logical; remove cases with missing data?}
 
@@ -48,14 +49,34 @@
 data(holzinger)
 data(holzinger.outlier)
 
-###Exploratory
+#Exploratory
 nfact <- 3
 (ORresult <- obs.resid(holzinger, nfact))
 (ORresult.outlier <- obs.resid(holzinger.outlier, nfact))
 plot(ORresult)
 plot(ORresult.outlier)
 
-###Confirmatory
+#Confirmatory with sem
+model <- specifyModel()
+	  F1 -> Sentences,        lam11
+	  F1 -> Vocabulary,       lam21
+	  F1 -> Sent.Completion,  lam31
+	  F2 -> First.Letters,    lam41
+	  F2 -> 4.Letter.Words,   lam52
+	  F2 -> Suffixes,         lam62
+	  F3 -> Letter.Series,    lam73
+	  F3 -> Pedigrees,        lam83
+	  F3 -> Letter.Group,     lam93
+	  F1 <-> F1,              NA,     1
+	  F2 <-> F2,              NA,     1
+	  F3 <-> F3,              NA,     1
+
+(ORresult <- obs.resid(holzinger, model))
+(ORresult.outlier <- obs.resid(holzinger.outlier, model))
+plot(ORresult)
+plot(ORresult.outlier)
+
+#Confirmatory using OpenMx (requires github version, see ?faoutlier)
 manifests <- colnames(holzinger)
 latents <- c("F1","F2","F3")
 #specify model, mxData not necessary but useful to check if mxRun works

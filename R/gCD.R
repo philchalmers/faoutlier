@@ -4,16 +4,16 @@
 #' and confirmatory FA. Can return DFBETA matrix if requested.
 #' 
 #'
-#' Note that \code{gCD} is not limited to confirmatory factor analysis using
-#' OpenMx, and can apply to nearly any model being studied
+#' Note that \code{gCD} is not limited to confirmatory factor analysis and 
+#' can apply to nearly any model being studied
 #' where detection of influential observations is important. 
 #'
 #' 
 #' @aliases gCD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor ansysis. If \code{class(model)} is an OpenMx model then a 
-#' confirmatory factor analysis is performed instead
+#' exploratory factor ansysis. If \code{class(model)} is a sem (or OpenMx model if installed 
+#' from github) then a confirmatory approach is performed instead
 #' @param na.rm logical; remove cases with missing data?
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
@@ -27,14 +27,34 @@
 #' data(holzinger)
 #' data(holzinger.outlier)
 #'
-#' ###Exploratory
+#' #Exploratory
 #' nfact <- 3
 #' (gCDresult <- gCD(holzinger, nfact))
 #' (gCDresult.outlier <- gCD(holzinger.outlier, nfact))
 #' plot(gCDresult)
 #' plot(gCDresult.outlier)
 #'
-#' ###Confirmatory
+#' #Confirmatory with sem
+#' model <- specifyModel()
+#'	  F1 -> Sentences,        lam11
+#' 	  F1 -> Vocabulary,       lam21
+#' 	  F1 -> Sent.Completion,  lam31
+#' 	  F2 -> First.Letters,    lam41
+#' 	  F2 -> 4.Letter.Words,   lam52
+#' 	  F2 -> Suffixes,         lam62
+#' 	  F3 -> Letter.Series,    lam73
+#'	  F3 -> Pedigrees,        lam83
+#' 	  F3 -> Letter.Group,     lam93
+#' 	  F1 <-> F1,              NA,     1
+#' 	  F2 <-> F2,              NA,     1
+#' 	  F3 <-> F3,              NA,     1
+#' 
+#' (gCDresult2 <- gCD(holzinger, model))
+#' (gCDresult2.outlier <- gCD(holzinger.outlier, model))
+#' plot(gCDresult2)
+#' plot(gCDresult2.outlier)
+#'
+#' #Confirmatory using OpenMx (requires github version, see ?faoutlier)
 #' manifests <- colnames(holzinger)
 #' latents <- c("F1","F2","F3")
 #' #specify model, mxData not necessary but useful to check if mxRun works
@@ -75,27 +95,33 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 		gCD <- round(gCD,digits)
 		DFBETAS <- round(DFBETAS,digits)
 		ret <- list(dfbetas = DFBETAS, gCD = gCD)
-	}		
-	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
-		mxMod <- model
-		fullmxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
-		fullMod <- mxRun(mxModel(mxMod, fullmxData), silent = TRUE)
-		theta <- fullMod@output$estimate		
-		gCD <- c()	
-		DFBETAS <- matrix(0,nrow(data),length(theta))
-		for(i in 1:nrow(data)){
-			tmpmxData <- mxData(cov(data[-i,]), type="cov",	
-				numObs = nrow(data)-1)
-			tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
-			vcovmat <- solve(tmpMod@output$estimatedHessian)
-			h2 <- tmpMod@output$estimate			
-			DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
-			gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
-		}	
-		gCD <- round(gCD,digits)
-		DFBETAS <- round(DFBETAS,digits)
-		ret <- list(dfbetas = DFBETAS, gCD = gCD)
+	}	
+	if(class(model) == "semmod"){
+	    
+	    
+	    
+	    
 	}
+	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
+	##OPENMX## 	mxMod <- model
+	##OPENMX## 	fullmxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
+	##OPENMX## 	fullMod <- mxRun(mxModel(mxMod, fullmxData), silent = TRUE)
+	##OPENMX## 	theta <- fullMod@output$estimate		
+	##OPENMX## 	gCD <- c()	
+	##OPENMX## 	DFBETAS <- matrix(0,nrow(data),length(theta))
+	##OPENMX## 	for(i in 1:nrow(data)){
+	##OPENMX## 		tmpmxData <- mxData(cov(data[-i,]), type="cov",	
+	##OPENMX## 			numObs = nrow(data)-1)
+	##OPENMX## 		tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
+	##OPENMX## 		vcovmat <- solve(tmpMod@output$estimatedHessian)
+	##OPENMX## 		h2 <- tmpMod@output$estimate			
+	##OPENMX## 		DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
+	##OPENMX## 		gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
+	##OPENMX## 	}	
+	##OPENMX## 	gCD <- round(gCD,digits)
+	##OPENMX## 	DFBETAS <- round(DFBETAS,digits)
+	##OPENMX## 	ret <- list(dfbetas = DFBETAS, gCD = gCD)
+	##OPENMX## }
 	class(ret) <- 'gCD'
 	ret	
 }
