@@ -5,8 +5,9 @@ Type: Package
 Title: Influential case detection methods for factor analysis and SEM
 Author: Phil Chalmers <rphilip.chalmers@gmail.com>
 Maintainer: Phil Chalmers <rphilip.chalmers@gmail.com>
-Description: Tools useful for detecting and summarize influential cases that
-    can affect exploratory and confirmatory factor analysis models.
+Description: Tools for detecting and summarize influential cases that
+    can affect exploratory and confirmatory factor analysis models as well as
+	structural equation models more generally.
 Depends:
     R (>= 2.13),
     lattice,
