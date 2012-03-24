@@ -36,18 +36,18 @@
 #'
 #' #Confirmatory with sem
 #' model <- specifyModel()
-#'	  F1 -> Sentences,        lam11
-#' 	  F1 -> Vocabulary,       lam21
-#' 	  F1 -> Sent.Completion,  lam31
-#' 	  F2 -> First.Letters,    lam41
-#' 	  F2 -> 4.Letter.Words,   lam52
-#' 	  F2 -> Suffixes,         lam62
-#' 	  F3 -> Letter.Series,    lam73
-#'	  F3 -> Pedigrees,        lam83
-#' 	  F3 -> Letter.Group,     lam93
-#' 	  F1 <-> F1,              NA,     1
-#' 	  F2 <-> F2,              NA,     1
-#' 	  F3 <-> F3,              NA,     1
+#'	  F1 -> V1,    lam11
+#' 	  F1 -> V2,    lam21
+#' 	  F1 -> V3,    lam31
+#' 	  F2 -> V4,    lam41
+#' 	  F2 -> V5,    lam52
+#' 	  F2 -> V6,    lam62
+#' 	  F3 -> V7,    lam73
+#'	  F3 -> V8,    lam83
+#' 	  F3 -> V9,    lam93
+#' 	  F1 <-> F1,   NA,     1
+#' 	  F2 <-> F2,   NA,     1
+#' 	  F3 <-> F3,   NA,     1
 #' 
 #' (gCDresult2 <- gCD(holzinger, model))
 #' (gCDresult2.outlier <- gCD(holzinger.outlier, model))
@@ -79,15 +79,16 @@
 gCD <- function(data, model, na.rm = TRUE, digits = 5)
 {	
 	if(na.rm) data <- na.omit(data)
+	N <- nrow(data)
 	if(is.numeric(model)){	
 		mod <- mlfact(cor(data), model)
 		theta <- mod$par 		
 		gCD <- c()	
-		DFBETAS <- matrix(0,nrow(data),length(theta))
-		for(i in 1:nrow(data)){
+		DFBETAS <- matrix(0, N, length(theta))
+		for(i in 1:N){
 			tmp1 <- cor(data[-i,])
 			tmp2 <- mlfact(tmp1, model)	
-			vcovmat <- tmp2$hessian	
+			vcovmat <- solve(tmp2$hessian)
 			h2 <- tmp2$par 			
 			DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
 			gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
@@ -97,10 +98,21 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 		ret <- list(dfbetas = DFBETAS, gCD = gCD)
 	}	
 	if(class(model) == "semmod"){
-	    
-	    
-	    
-	    
+	    mod <- sem(model, cov(data), N)
+	    theta <- mod$coeff		
+	    gCD <- c()	
+	    DFBETAS <- matrix(0, N, length(theta))
+	    for(i in 1:nrow(data)){
+	        tmp1 <- cov(data[-i, ])
+	        tmp2 <- sem(model, tmp1, N-1)
+	        vcovmat <- tmp2$vcov
+	        h2 <- tmp2$coeff 			
+	        DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
+	        gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
+	    }	
+	    gCD <- round(gCD,digits)
+	    DFBETAS <- round(DFBETAS,digits)
+	    ret <- list(dfbetas = DFBETAS, gCD = gCD)    
 	}
 	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
 	##OPENMX## 	mxMod <- model

@@ -9,7 +9,9 @@
 #'
 #' Note that \code{forward.search} is not limited to confirmatory factor analysis and 
 #' can apply to nearly any model being studied
-#' where detection of influential observations is important.
+#' where detection of influential observations is important. If using the \code{sem} package
+#' \code{forward.search} can be \emph{very} slow, and it's recommended that the user use 
+#' \code{OpenMx} instead (see \code{?faoutlier} for details).
 #' 
 #' 
 #' @aliases forward.search
@@ -47,18 +49,18 @@
 #'
 #' #Confirmatory with sem
 #' model <- specifyModel()
-#'	  F1 -> Sentences,        lam11
-#' 	  F1 -> Vocabulary,       lam21
-#' 	  F1 -> Sent.Completion,  lam31
-#' 	  F2 -> First.Letters,    lam41
-#' 	  F2 -> 4.Letter.Words,   lam52
-#' 	  F2 -> Suffixes,         lam62
-#' 	  F3 -> Letter.Series,    lam73
-#'	  F3 -> Pedigrees,        lam83
-#' 	  F3 -> Letter.Group,     lam93
-#' 	  F1 <-> F1,              NA,     1
-#' 	  F2 <-> F2,              NA,     1
-#' 	  F3 <-> F3,              NA,     1
+#'	  F1 -> V1,    lam11
+#' 	  F1 -> V2,    lam21
+#' 	  F1 -> V3,    lam31
+#' 	  F2 -> V4,    lam41
+#' 	  F2 -> V5,    lam52
+#' 	  F2 -> V6,    lam62
+#' 	  F3 -> V7,    lam73
+#'	  F3 -> V8,    lam83
+#' 	  F3 -> V9,    lam93
+#' 	  F1 <-> F1,   NA,     1
+#' 	  F2 <-> F2,   NA,     1
+#' 	  F3 <-> F3,   NA,     1
 #' 
 #' (FS <- forward.search(holzinger, model))	  
 #' (FS.outlier <- forward.search(holzinger.outlier, model))
@@ -170,11 +172,78 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 			(ncol(Rhat)*(ncol(Rhat) + 1))))
 		ret <- list(LR=LRstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)		
 	}
-	if(class(model) == "semmod"){
-	    
-	    
-	    
-	    
+	if(class(model) == "semmod"){        
+	    STATISTICS <- rep(NA, n.subsets)
+	    sampleCov <- cov(data)	    
+	    for(i in 1:n.subsets){	        
+	        samplesemMod <- sem(model, cov(data[-i,]), N-1)
+	        STATISTICS[i] <- samplesemMod$criterion * (samplesemMod$N - 1)
+	    }        
+        orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
+	    nbaseID <- setdiff(ID, baseID)
+	    basedata <- data[baseID, ]
+	    basemodels <- list()
+	    orderentered <- c()
+	    for (LOOP in 1:length(nbaseID)){	
+	        tmpcov <- cov(basedata)
+	        basemodels[[LOOP]] <- sem(model, tmpcov, nrow(basedata))	    	
+	        stat <- c()
+	        RANK <- rep(0, length(nbaseID))		
+			if(any(criteria == 'LD')){	
+				for(j in 1:length(nbaseID)){
+					tmpcov <- cov(rbind(basedata, data[nbaseID[j], ]))					
+					tmpmod <- sem(model, tmpcov, nrow(basedata) + 1)
+					stat[j] <- tmpmod$criterion * (tmpmod$N - 1)
+				}		
+				RANK <- RANK + rank(stat)
+			}
+			if(any(criteria == 'mah')){	
+				stat <- mahalanobis(data[nbaseID, ], colMeans(data[baseID, ]), 
+					cov(data[baseID, ]))
+				RANK <- RANK + rank(stat)	
+			}
+			if(any(criteria == 'res')){ 
+				stat <- c()
+				for(j in 1:length(nbaseID)){					
+					tmp <- obs.resid(rbind(basedata, data[nbaseID[j], ]), model)
+					stat[j] <- tmp$std_res[nrow(basedata)+1, ] %*% 
+						tmp$std_res[nrow(basedata)+1, ]
+				}
+				RANK <- RANK + rank(stat)
+			}
+	    	RANK <- rank(RANK)
+	    	newID <- nbaseID[min(RANK) == RANK]
+	    	if(length(newID) > 1) newID <- newID[1]
+	    	orderentered <- c(orderentered, newID)
+	    	baseID <- c(baseID, newID)
+	    	nbaseID <- setdiff(ID, baseID)
+	    	basedata <- data[baseID, ]
+	    	if(print.messages){
+	    		cat('Remaining iterations:', length(nbaseID), '\n')	
+	    		flush.console()		
+	    	}
+	    }	
+	    tmpcov <- cov(data)	    
+	    basemodels[[LOOP+1]] <- sem(model, tmpcov, N)
+	    LRstat <- RMR <- Cooksstat <- c()		
+	    for(i in 1:(length(basemodels)-1)){
+	    	LRstat[i] <- basemodels[[i]]$criterion * (basemodels[[i]]$N - 1)			
+	    	theta <- basemodels[[i]]$coeff	
+	    	vcov <- basemodels[[i]]$vcov
+	    	theta2 <- basemodels[[i+1]]$coeff
+	    	Cooksstat[i] <- (theta-theta2) %*% vcov %*% (theta-theta2)			
+	    	Chat <- basemodels[[i]]$C
+	    	C <- basemodels[[i]]$S			
+	    	RMR[i] <- sqrt(2*sum(((C - Chat)^2) /
+	    		(ncol(C)*(ncol(C) + 1))))
+	    }		
+	    Cooksstat <- c(NA, Cooksstat)
+	    orderentered <- c(NA, orderentered)
+	    LRstat[i+1] <- basemodels[[i+1]]$criterion * (basemodels[[i+1]]$N - 1)
+	    Chat <- basemodels[[i+1]]$C
+	    C <- basemodels[[i+1]]$S
+	    RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /	(ncol(C)*(ncol(C) + 1))))	
+	    ret <- list(LR=LRstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)	    
 	}
 	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){	
 	##OPENMX## 	STATISTICS <- rep(NA, n.subsets)

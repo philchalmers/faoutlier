@@ -12,22 +12,20 @@
   distances, likelihood ratio tests, model implied
   residuals, and various graphical methods to help detect
   and summarize influential cases that can affect
-  exploratory and confirmatory factor analyses.
-
-  The package can also use \code{OpenMx} for evaluating
-  confirmatory models, although this version is not yet
-  available through CRAN. To obtain an \code{OpenMx}
+  exploratory and confirmatory factor analyses. The package
+  can also use \code{OpenMx} for evaluating confirmatory
+  models (can be much faster), although this version is not
+  yet available through CRAN. To obtain an \code{OpenMx}
   compatable version do the following:
 
-  \describe{ \item{devtools}{If not installed yet obtain
-  the \code{devtools} package with
-  \code{install.packages('devtools', dep = TRUE)}}
-  \item{load devtools}{Load \code{devtools} with
-  \code{library(devtools)}} \item{install
-  faoutlier}{Install the github maintained \code{faoutlier}
-  package using \code{install_github('faoutlier',
-  username='philchalmers', branch='omxversion'}} \item{load
-  faoutlier}{Now load the new faoutlier normally with
+  \describe{ \item{devtools}{If not installed, obtain the
+  \code{devtools} package with
+  \code{install.packages('devtools')}}
+  \item{install}{Install the github maintained
+  \code{faoutlier} package using
+  \code{devools::install_github('faoutlier',
+  username='philchalmers', branch='omxversion'}}
+  \item{load}{Now load the new faoutlier normally with
   \code{library(faoutlier)}} }
 }
 \author{

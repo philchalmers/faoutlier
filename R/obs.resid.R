@@ -31,18 +31,18 @@
 #'
 #' #Confirmatory with sem
 #' model <- specifyModel()
-#'	  F1 -> Sentences,        lam11
-#' 	  F1 -> Vocabulary,       lam21
-#' 	  F1 -> Sent.Completion,  lam31
-#' 	  F2 -> First.Letters,    lam41
-#' 	  F2 -> 4.Letter.Words,   lam52
-#' 	  F2 -> Suffixes,         lam62
-#' 	  F3 -> Letter.Series,    lam73
-#'	  F3 -> Pedigrees,        lam83
-#' 	  F3 -> Letter.Group,     lam93
-#' 	  F1 <-> F1,              NA,     1
-#' 	  F2 <-> F2,              NA,     1
-#' 	  F3 <-> F3,              NA,     1
+#'	  F1 -> V1,    lam11
+#' 	  F1 -> V2,    lam21
+#' 	  F1 -> V3,    lam31
+#' 	  F2 -> V4,    lam41
+#' 	  F2 -> V5,    lam52
+#' 	  F2 -> V6,    lam62
+#' 	  F3 -> V7,    lam73
+#'	  F3 -> V8,    lam83
+#' 	  F3 -> V9,    lam93
+#' 	  F1 <-> F1,   NA,     1
+#' 	  F2 <-> F2,   NA,     1
+#' 	  F3 <-> F3,   NA,     1
 #' 
 #' (ORresult <- obs.resid(holzinger, model))	  
 #' (ORresult.outlier <- obs.resid(holzinger.outlier, model))
@@ -93,10 +93,20 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 		ret$std_res <- eji
 	}
 	if(class(model) == "semmod"){
-        
-        
-        
-        
+        C <- cov(data)
+        vnames <- colnames(C)
+        mod <- sem(model, C, N)
+        scores <- fscores(mod, data)        
+        ret$fascores <- scores
+        lnames <- setdiff(colnames(mod$P), vnames)
+        Lambda <- mod$A[1:length(vnames), (length(vnames)+1):ncol(mod$A)]
+        Theta <- mod$P[1:length(vnames),1:length(vnames)]
+        e <- data - scores %*% t(Lambda)
+        VAR <- Theta %*% solve(C) %*% Theta
+        eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e))
+        colnames(eji) <- colnames(e) <- colnames(data)
+        ret$res <- e
+        ret$std_res <- eji        
 	}
 	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
 	##OPENMX## 	mxMod <- model
