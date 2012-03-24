@@ -245,90 +245,90 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /	(ncol(C)*(ncol(C) + 1))))	
 	    ret <- list(LR=LRstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)	    
 	}
-	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){	
-	##OPENMX## 	STATISTICS <- rep(NA, n.subsets)
-	##OPENMX## 	mxMod <- model
-	##OPENMX## 	sampleMxData <- mxData(cov(data), type="cov", numObs = nrow(data))
-	##OPENMX## 	sampleMxMod <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
-	##OPENMX## 	for(i in 1:n.subsets){
-	##OPENMX## 		sampleMxData <- mxData(cov(data[Samples[ ,i], ]), type="cov", numObs = nrow(Samples))
-	##OPENMX## 		sampleMxMod <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
-	##OPENMX## 		STATISTICS[i] <- sampleMxMod@output$Minus2LogLikelihood - 
-	##OPENMX## 			sampleMxMod@output$SaturatedLikelihood 			
-	##OPENMX## 	}
-	##OPENMX## 	orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
-	##OPENMX## 	nbaseID <- setdiff(ID, baseID)
-	##OPENMX## 	basedata <- data[baseID, ]
-	##OPENMX## 	basemodels <- list()
-	##OPENMX## 	orderentered <- c()
-	##OPENMX## 	for (LOOP in 1:length(nbaseID)){	
-	##OPENMX## 		tmpcov <- cov(basedata)
-	##OPENMX## 		Data <- mxData(tmpcov, type="cov", numObs = nrow(Samples))
-	##OPENMX## 		basemodels[[LOOP]] <- mxRun(mxModel(mxMod, Data), silent = TRUE)
-	##OPENMX## 		stat <- c()
-	##OPENMX## 		RANK <- rep(0, length(nbaseID))		
-	##OPENMX## 		if(any(criteria == 'LD')){	
-	##OPENMX## 			for(j in 1:length(nbaseID)){
-	##OPENMX## 				tmpcov <- cov(rbind(basedata, data[nbaseID[j], ]))
-	##OPENMX## 				sampleMxData <- mxData(tmpcov, type="cov", numObs = nrow(basedata) + 1)
-	##OPENMX## 				sampleMxMod <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
-	##OPENMX## 				stat[j] <- sampleMxMod@output$Minus2LogLikelihood - 
-	##OPENMX## 					sampleMxMod@output$SaturatedLikelihood	
-	##OPENMX## 			}		
-	##OPENMX## 			RANK <- RANK + rank(stat)
-	##OPENMX## 		}
-	##OPENMX## 		if(any(criteria == 'mah')){	
-	##OPENMX## 			stat <- mahalanobis(data[nbaseID, ], colMeans(data[baseID, ]), 
-	##OPENMX## 				cov(data[baseID, ]))
-	##OPENMX## 			RANK <- RANK + rank(stat)	
-	##OPENMX## 		}
-	##OPENMX## 		if(any(criteria == 'res')){
-	##OPENMX## 			stat <- c()
-	##OPENMX## 			for(j in 1:length(nbaseID)){					
-	##OPENMX## 				tmp <- obs.resid(rbind(basedata, data[nbaseID[j], ]), model)
-	##OPENMX## 				stat[j] <- tmp$std_res[nrow(basedata)+1, ] %*% 
-	##OPENMX## 					tmp$std_res[nrow(basedata)+1, ]
-	##OPENMX## 			}
-	##OPENMX## 			RANK <- RANK + rank(stat)
-	##OPENMX## 		}
-	##OPENMX## 		RANK <- rank(RANK)
-	##OPENMX## 		newID <- nbaseID[min(RANK) == RANK]
-	##OPENMX## 		if(length(newID) > 1) newID <- newID[1]
-	##OPENMX## 		orderentered <- c(orderentered, newID)
-	##OPENMX## 		baseID <- c(baseID, newID)
-	##OPENMX## 		nbaseID <- setdiff(ID, baseID)
-	##OPENMX## 		basedata <- data[baseID, ]
-	##OPENMX## 		if(print.messages){
-	##OPENMX## 			cat('Remaining iterations:', length(nbaseID), '\n')	
-	##OPENMX## 			flush.console()		
-	##OPENMX## 		}
-	##OPENMX## 	}	
-	##OPENMX## 	tmpcov <- cov(data)
-	##OPENMX## 	Data <- mxData(tmpcov, type="cov", numObs = nrow(data))
-	##OPENMX## 	basemodels[[LOOP+1]] <- mxRun(mxModel(mxMod, Data), silent = TRUE)		
-	##OPENMX## 	LRstat <- RMR <- Cooksstat <- c()		
-	##OPENMX## 	for(i in 1:(length(basemodels)-1)){
-	##OPENMX## 		LRstat[i] <- basemodels[[i]]@output$Minus2LogLikelihood - 
-	##OPENMX## 			basemodels[[i]]@output$SaturatedLikelihood			
-	##OPENMX## 		theta <- basemodels[[i]]@output$estimate	
-	##OPENMX## 		hess <- basemodels[[i]]@output$estimatedHessian		
-	##OPENMX## 		theta2 <- basemodels[[i+1]]@output$estimate
-	##OPENMX## 		Cooksstat[i] <- (theta-theta2) %*% solve(hess) %*% (theta-theta2)			
-	##OPENMX## 		Chat <- basemodels[[i]]@objective@info$expCov			
-	##OPENMX## 		C <- basemodels[[i]]@data@observed			
-	##OPENMX## 		RMR[i] <- sqrt(2*sum(((C - Chat)^2) /
-	##OPENMX## 			(ncol(C)*(ncol(C) + 1))))
-	##OPENMX## 	}		
-	##OPENMX## 	Cooksstat <- c(NA, Cooksstat)
-	##OPENMX## 	orderentered <- c(NA, orderentered)
-	##OPENMX## 	LRstat[i+1] <- basemodels[[i+1]]@output$Minus2LogLikelihood - 
-	##OPENMX## 			basemodels[[i+1]]@output$SaturatedLikelihood
-	##OPENMX## 	Chat <- basemodels[[i+1]]@objective@info$expCov	
-	##OPENMX## 	C <- basemodels[[i+1]]@data@observed			
-	##OPENMX## 	RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /
-	##OPENMX## 			(ncol(C)*(ncol(C) + 1))))	
-	##OPENMX## 	ret <- list(LR=LRstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)
-	##OPENMX## }
+	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){	
+		STATISTICS <- rep(NA, n.subsets)
+		mxMod <- model
+		sampleMxData <- mxData(cov(data), type="cov", numObs = nrow(data))
+		sampleMxMod <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
+		for(i in 1:n.subsets){
+			sampleMxData <- mxData(cov(data[Samples[ ,i], ]), type="cov", numObs = nrow(Samples))
+			sampleMxMod <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
+			STATISTICS[i] <- sampleMxMod@output$Minus2LogLikelihood - 
+				sampleMxMod@output$SaturatedLikelihood 			
+		}
+		orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
+		nbaseID <- setdiff(ID, baseID)
+		basedata <- data[baseID, ]
+		basemodels <- list()
+		orderentered <- c()
+		for (LOOP in 1:length(nbaseID)){	
+			tmpcov <- cov(basedata)
+			Data <- mxData(tmpcov, type="cov", numObs = nrow(Samples))
+			basemodels[[LOOP]] <- mxRun(mxModel(mxMod, Data), silent = TRUE)
+			stat <- c()
+			RANK <- rep(0, length(nbaseID))		
+			if(any(criteria == 'LD')){	
+				for(j in 1:length(nbaseID)){
+					tmpcov <- cov(rbind(basedata, data[nbaseID[j], ]))
+					sampleMxData <- mxData(tmpcov, type="cov", numObs = nrow(basedata) + 1)
+					sampleMxMod <- mxRun(mxModel(mxMod, sampleMxData), silent = TRUE)
+					stat[j] <- sampleMxMod@output$Minus2LogLikelihood - 
+						sampleMxMod@output$SaturatedLikelihood	
+				}		
+				RANK <- RANK + rank(stat)
+			}
+			if(any(criteria == 'mah')){	
+				stat <- mahalanobis(data[nbaseID, ], colMeans(data[baseID, ]), 
+					cov(data[baseID, ]))
+				RANK <- RANK + rank(stat)	
+			}
+			if(any(criteria == 'res')){
+				stat <- c()
+				for(j in 1:length(nbaseID)){					
+					tmp <- obs.resid(rbind(basedata, data[nbaseID[j], ]), model)
+					stat[j] <- tmp$std_res[nrow(basedata)+1, ] %*% 
+						tmp$std_res[nrow(basedata)+1, ]
+				}
+				RANK <- RANK + rank(stat)
+			}
+			RANK <- rank(RANK)
+			newID <- nbaseID[min(RANK) == RANK]
+			if(length(newID) > 1) newID <- newID[1]
+			orderentered <- c(orderentered, newID)
+			baseID <- c(baseID, newID)
+			nbaseID <- setdiff(ID, baseID)
+			basedata <- data[baseID, ]
+			if(print.messages){
+				cat('Remaining iterations:', length(nbaseID), '\n')	
+				flush.console()		
+			}
+		}	
+		tmpcov <- cov(data)
+		Data <- mxData(tmpcov, type="cov", numObs = nrow(data))
+		basemodels[[LOOP+1]] <- mxRun(mxModel(mxMod, Data), silent = TRUE)		
+		LRstat <- RMR <- Cooksstat <- c()		
+		for(i in 1:(length(basemodels)-1)){
+			LRstat[i] <- basemodels[[i]]@output$Minus2LogLikelihood - 
+				basemodels[[i]]@output$SaturatedLikelihood			
+			theta <- basemodels[[i]]@output$estimate	
+			hess <- basemodels[[i]]@output$estimatedHessian		
+			theta2 <- basemodels[[i+1]]@output$estimate
+			Cooksstat[i] <- (theta-theta2) %*% solve(hess) %*% (theta-theta2)			
+			Chat <- basemodels[[i]]@objective@info$expCov			
+			C <- basemodels[[i]]@data@observed			
+			RMR[i] <- sqrt(2*sum(((C - Chat)^2) /
+				(ncol(C)*(ncol(C) + 1))))
+		}		
+		Cooksstat <- c(NA, Cooksstat)
+		orderentered <- c(NA, orderentered)
+		LRstat[i+1] <- basemodels[[i+1]]@output$Minus2LogLikelihood - 
+				basemodels[[i+1]]@output$SaturatedLikelihood
+		Chat <- basemodels[[i+1]]@objective@info$expCov	
+		C <- basemodels[[i+1]]@data@observed			
+		RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /
+				(ncol(C)*(ncol(C) + 1))))	
+		ret <- list(LR=LRstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)
+	}
 	class(ret) <- 'forward.search'
 	ret
 }

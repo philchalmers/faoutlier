@@ -114,26 +114,26 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 	    DFBETAS <- round(DFBETAS,digits)
 	    ret <- list(dfbetas = DFBETAS, gCD = gCD)    
 	}
-	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
-	##OPENMX## 	mxMod <- model
-	##OPENMX## 	fullmxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
-	##OPENMX## 	fullMod <- mxRun(mxModel(mxMod, fullmxData), silent = TRUE)
-	##OPENMX## 	theta <- fullMod@output$estimate		
-	##OPENMX## 	gCD <- c()	
-	##OPENMX## 	DFBETAS <- matrix(0,nrow(data),length(theta))
-	##OPENMX## 	for(i in 1:nrow(data)){
-	##OPENMX## 		tmpmxData <- mxData(cov(data[-i,]), type="cov",	
-	##OPENMX## 			numObs = nrow(data)-1)
-	##OPENMX## 		tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
-	##OPENMX## 		vcovmat <- solve(tmpMod@output$estimatedHessian)
-	##OPENMX## 		h2 <- tmpMod@output$estimate			
-	##OPENMX## 		DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
-	##OPENMX## 		gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
-	##OPENMX## 	}	
-	##OPENMX## 	gCD <- round(gCD,digits)
-	##OPENMX## 	DFBETAS <- round(DFBETAS,digits)
-	##OPENMX## 	ret <- list(dfbetas = DFBETAS, gCD = gCD)
-	##OPENMX## }
+	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
+		mxMod <- model
+		fullmxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
+		fullMod <- mxRun(mxModel(mxMod, fullmxData), silent = TRUE)
+		theta <- fullMod@output$estimate		
+		gCD <- c()	
+		DFBETAS <- matrix(0,nrow(data),length(theta))
+		for(i in 1:nrow(data)){
+			tmpmxData <- mxData(cov(data[-i,]), type="cov",	
+				numObs = nrow(data)-1)
+			tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
+			vcovmat <- solve(tmpMod@output$estimatedHessian)
+			h2 <- tmpMod@output$estimate			
+			DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
+			gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
+		}	
+		gCD <- round(gCD,digits)
+		DFBETAS <- round(DFBETAS,digits)
+		ret <- list(dfbetas = DFBETAS, gCD = gCD)
+	}
 	class(ret) <- 'gCD'
 	ret	
 }

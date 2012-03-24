@@ -94,19 +94,19 @@ LD <- function(data, model, na.rm = TRUE, digits = 5)
 	        LR[i] <- tmp$criterion * (tmp$N - 1)
 	    }	    
 	}
-	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){
-	##OPENMX## 	mxMod <- model		
-	##OPENMX## 	mxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
-	##OPENMX## 	fullMod <- mxRun(mxModel(mxMod, mxData), silent = TRUE)
-	##OPENMX## 	MLmod <- fullMod@output$Minus2LogLikelihood - fullMod@output$SaturatedLikelihood 
-	##OPENMX## 	LR <- c()
-	##OPENMX## 	for(i in 1:nrow(data)){  
-	##OPENMX## 		tmpmxData <- mxData(cov(data[-i, ]), type="cov", 
-	##OPENMX## 			numObs = nrow(data)-1)
-	##OPENMX## 		tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
-	##OPENMX## 		LR[i] <- tmpMod@output$Minus2LogLikelihood - tmpMod@output$SaturatedLikelihood
-	##OPENMX## 	}	
-	##OPENMX## }
+	if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){
+		mxMod <- model		
+		mxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
+		fullMod <- mxRun(mxModel(mxMod, mxData), silent = TRUE)
+		MLmod <- fullMod@output$Minus2LogLikelihood - fullMod@output$SaturatedLikelihood 
+		LR <- c()
+		for(i in 1:nrow(data)){  
+			tmpmxData <- mxData(cov(data[-i, ]), type="cov", 
+				numObs = nrow(data)-1)
+			tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
+			LR[i] <- tmpMod@output$Minus2LogLikelihood - tmpMod@output$SaturatedLikelihood
+		}	
+	}
 	deltaX2 <- MLmod - LR	
 	deltaX2 <- round(deltaX2, digits)
 	names(deltaX2) <- rownames(data)
