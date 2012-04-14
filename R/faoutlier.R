@@ -4,9 +4,9 @@
 #' likelihood ratio tests, model implied residuals, and various 
 #' graphical methods to help detect and summarize influential 
 #' cases that can affect exploratory and confirmatory factor analyses. The 
-#' package can also use \code{OpenMx} for evaluating confirmatory models (can be much faster), 
-#' although this version is not yet available through CRAN. To obtain an \code{OpenMx}
-#' compatable version do the following:
+#' package can also use \code{OpenMx} for evaluating confirmatory models, 
+#' although this version is not yet available through CRAN directly. To obtain an 
+#' \code{OpenMx} compatable version do the following:
 #' 
 #' \describe{ 
 #' 	\item{devtools}{If not installed, obtain the \code{devtools} package with 
