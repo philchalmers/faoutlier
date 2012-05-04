@@ -16,7 +16,7 @@
   \item{data}{matrix or data.frame}
 
   \item{model}{if a single numeric number declares number
-  of factors to extract in exploratory factor ansysis. If
+  of factors to extract in exploratory factor analysis. If
   \code{class(model)} is a sem (or OpenMx model if
   installed from github) then a confirmatory approach is
   performed instead}

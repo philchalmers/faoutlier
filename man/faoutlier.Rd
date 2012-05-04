@@ -16,7 +16,7 @@
   can also use \code{OpenMx} for evaluating confirmatory
   models, although this version is not yet available
   through CRAN directly. To obtain an \code{OpenMx}
-  compatable version do the following:
+  compatible version do the following:
 
   \describe{ \item{devtools}{If not installed, obtain the
   \code{devtools} package with

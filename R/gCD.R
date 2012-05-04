@@ -12,7 +12,7 @@
 #' @aliases gCD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor ansysis. If \code{class(model)} is a sem (or OpenMx model if installed 
+#' exploratory factor analysis. If \code{class(model)} is a sem (or OpenMx model if installed 
 #' from github) then a confirmatory approach is performed instead
 #' @param na.rm logical; remove cases with missing data?
 #' @param digits number of digits to round in the final result

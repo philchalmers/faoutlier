@@ -7,7 +7,7 @@
   Holzinger dataset using 9 variables, but with 1 outlier
   added to the dataset. The first row was replaced by
   adding 2 to five of the observed variables (odd-numbered
-  items) and subtrating 2 from the other four observed
+  items) and subtracting 2 from the other four observed
   variables (even-numbered items).
 }
 \author{
