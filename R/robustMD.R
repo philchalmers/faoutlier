@@ -49,7 +49,7 @@ robustMD <- function(data, method = 'mve', na.rm = TRUE, digits = 5)
 #' @param ... additional parameters to be passed 
 print.robmah <- function(x, ...)
 {
-	return(sort(x$mah))	
+	return(x$mah)	
 }
 
 #' @S3method summary robmah
