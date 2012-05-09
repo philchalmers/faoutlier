@@ -17,7 +17,7 @@
   \item{data}{matrix or data.frame}
 
   \item{method}{type of estimation for robust means and
-  covariance (see \code{\link{cov.rob}}}
+  covariance (see \code{\link{cov.rob}})}
 
   \item{na.rm}{logical; remove cases with missing data?}
 
@@ -36,7 +36,7 @@
   \item{y}{empty parameter passed to \code{plot}}
 }
 \description{
-  Compute Mahalanobis distances using the robust computing
+  Obtain Mahalanobis distances using the robust computing
   methods found in the \code{MASS} package.
 }
 \examples{
