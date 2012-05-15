@@ -22,6 +22,8 @@
 #' output <- robustMD(holzinger)
 #' output
 #' summary(output)
+#' plot(output)
+#' plot(output, type = 'qqplot')
 #' }
 robustMD <- function(data, method = 'mve', na.rm = TRUE, digits = 5)
 {	
@@ -78,15 +80,23 @@ summary.robmah <- function(object, gt = 0, ...)
 
 #' @S3method plot robmah
 #' @param y empty parameter passed to \code{plot}
+#' @param type type of plot to display, can be either \code{'qqplot'} or \code{'xyplot'}
 #' @rdname robustMD
 #' @method plot robmah 
-plot.robmah <- function(x, y = NULL, ...){
+plot.robmah <- function(x, y = NULL, type = 'xyplot', ...){
 	mah <- x$mah
 	N <- length(mah)
 	J <- x$J
-	qqplot(qchisq(ppoints(N),df=J), mah,
-		main="QQ Plot",
-		ylab="Robust Mahalanobis Distance",
-		xlab='Theoretical Quartile')
-	abline(a=0,b=1)
+    if(type == 'qqplot'){
+        dat <- data.frame(theoryQQ = qchisq(ppoints(N),df=J), mah=mah)
+        qqmath(~mah, data=dat, prepanel = prepanel.qqmathline, main = 'QQ plot',
+               panel = function(x, ...) {
+                   panel.qqmathline(x, ...)
+                   panel.qqmath(x, ...)
+               })   	
+    }
+    if(type == 'xyplot'){
+        dat <- data.frame(mah=mah, ID=x$ID)
+        xyplot(mah~ID, dat, main="Robust MD", type = c('p', 'h'), ...)
+    }	
 }

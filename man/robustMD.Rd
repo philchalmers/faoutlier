@@ -11,7 +11,7 @@
 
   \method{summary}{robmah} (object, gt = 0, ...)
 
-  \method{plot}{robmah} (x, y = NULL, ...)
+  \method{plot}{robmah} (x, y = NULL, type = "xyplot", ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -34,6 +34,9 @@
   \code{gt}}
 
   \item{y}{empty parameter passed to \code{plot}}
+
+  \item{type}{type of plot to display, can be either
+  \code{'qqplot'} or \code{'xyplot'}}
 }
 \description{
   Obtain Mahalanobis distances using the robust computing
@@ -45,6 +48,8 @@ data(holzinger)
 output <- robustMD(holzinger)
 output
 summary(output)
+plot(output)
+plot(output, type = 'qqplot')
 }
 }
 \author{
