@@ -137,7 +137,7 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 #' @rdname obs.resid
 #' @method print obs.resid
 #' @param x an object of class \code{obs.resid}
-#' @param restype type of residual returned, either \code{'obs'} for observation value  
+#' @param restype type of residual used, either \code{'obs'} for observation value  
 #' (inner product), \code{'res'} or \code{'std_res'} for unstandardized and standardized 
 #' for each variable, respectively  
 #' @param ... additional parameters to be passed 
@@ -159,14 +159,27 @@ print.obs.resid <- function(x, restype = 'obs', ...)
 #' @param ylab the y label of the plot
 #' @param type type of plot to use, default displayes points and lines
 plot.obs.resid <- function(x, y = NULL, main = 'Observed Residuals', 
-	type = c('p','h'), ylab = 'obs.resid', ...)
+	type = c('p','h'), restype = 'obs', ...)
 {
+	ylab <- switch(restype,
+		obs = 'Observed residuals',
+		res = 'Observed variable residuals',
+		std_res = 'Standardized variable residuals')
 	ID <- as.numeric(x$id)
 	stat <- c()
 	for(i in 1:length(x$id))
-		stat[i] <- x$std_res[i, ] %*% x$std_res[i, ]
-	dat <- data.frame(stat,ID)	
-	ret <- xyplot(stat~ID, dat, type = type, main = main, ylab = ylab, ...)
+		stat[i] <- x$std_res[i, ] %*% x$std_res[i, ]	
+	if(restype == 'obs'){
+		dat <- data.frame(stat=stat,ID=ID)
+		ret <- xyplot(stat~ID, dat, type = type, main = main, ylab = ylab, ...)
+	}
+	if(restype == 'res' || restype == 'std_res'){
+		if(restype == 'res') dat <- data.frame(ID=ID,x$res)
+			else dat <- data.frame(ID=ID,x$std_res)
+		rownames(dat) <- ID
+		dat2 <- reshape(dat, v.names='res', direction = 'long', varying=2:ncol(dat), timevar='variable', sep='')	
+		ret <- xyplot(res~ID|as.factor(variable), dat2, type = type, main = main, ylab = ylab, ...)		
+	}
 	return(ret)
 }
 

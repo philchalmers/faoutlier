@@ -10,7 +10,7 @@
 
   \method{plot}{obs.resid} (x, y = NULL,
     main = "Observed Residuals", type = c("p", "h"),
-    ylab = "obs.resid", ...)
+    restype = "obs", ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -28,10 +28,10 @@
 
   \item{x}{an object of class \code{obs.resid}}
 
-  \item{restype}{type of residual returned, either
-  \code{'obs'} for observation value (inner product),
-  \code{'res'} or \code{'std_res'} for unstandardized and
-  standardized for each variable, respectively}
+  \item{restype}{type of residual used, either \code{'obs'}
+  for observation value (inner product), \code{'res'} or
+  \code{'std_res'} for unstandardized and standardized for
+  each variable, respectively}
 
   \item{...}{additional parameters to be passed}
 
