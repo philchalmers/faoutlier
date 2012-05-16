@@ -137,15 +137,18 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 #' @rdname obs.resid
 #' @method print obs.resid
 #' @param x an object of class \code{obs.resid}
+#' @param restype type of residual returned, either \code{'obs'} for observation value  
+#' (inner product), \code{'res'} or \code{'std_res'} for unstandardized and standardized 
+#' for each variable, respectively  
 #' @param ... additional parameters to be passed 
-print.obs.resid <- function(x, ...)
+print.obs.resid <- function(x, restype = 'obs', ...)
 {
-	stat <- c()
+    if(restype == 'res') return(print(x$res))
+    if(restype == 'std_res') return(print(x$std_res))
+	stat <- c()    
 	for(i in 1:length(x$id))
-		stat[i] <- x$std_res[i, ] %*% x$std_res[i, ]	
-	ret <- list(ee = stat)
-	print(ret)
-	invisible(ret)
+		stat[i] <- x$std_res[i, ] %*% x$std_res[i, ]
+    if(restype == 'obs') return(print(stat))
 }
 
 #' @S3method plot obs.resid

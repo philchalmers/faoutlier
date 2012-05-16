@@ -6,7 +6,7 @@
 \usage{
   obs.resid(data, model, na.rm = TRUE, digits = 5)
 
-  \method{print}{obs.resid} (x, ...)
+  \method{print}{obs.resid} (x, restype = "obs", ...)
 
   \method{plot}{obs.resid} (x, y = NULL,
     main = "Observed Residuals", type = c("p", "h"),
@@ -27,6 +27,11 @@
   result}
 
   \item{x}{an object of class \code{obs.resid}}
+
+  \item{restype}{type of residual returned, either
+  \code{'obs'} for observation value (inner product),
+  \code{'res'} or \code{'std_res'} for unstandardized and
+  standardized for each variable, respectively}
 
   \item{...}{additional parameters to be passed}
 

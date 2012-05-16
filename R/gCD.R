@@ -157,8 +157,7 @@ print.gCD <- function(x, head = .05, DFBETAS = FALSE, ...)
 		attr(ret,'dfbetas') <- x$dfbetas[ret[ ,1], ]
 		rownames(attr(ret,'dfbetas')) <- ret[ ,1]	
 	}
-	print(ret)
-	invisible(ret)
+	return(print(ret))	
 }
 
 #' @S3method plot gCD

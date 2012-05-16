@@ -129,8 +129,7 @@ print.LD <- function(x, ncases = 10, ...)
 	ret <- matrix(sorted)
 	rownames(ret) <- names(sorted)
 	colnames(ret) <- 'deltaX2'
-	print(ret)
-	invisible(ret)
+	return(print(ret))	
 }
 
 #' @S3method plot LD

@@ -345,7 +345,7 @@ print.forward.search <- function(x, stat = 'LR', ...)
 	if(stat == 'RMR') ret <- x$RMR
 	if(stat == 'gCD') ret <- x$gCD
 	names(ret) <- x$ord
-	print(ret)
+	return(print(ret))
 }
 
 #' @S3method plot forward.search
