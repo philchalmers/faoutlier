@@ -84,9 +84,9 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 		ret$fascores <- scores
 		Lambda <- unclass(mod$loadings)
 		Theta <- diag(mod$uniquenesses)	
-		e <- scale(data - scores %*% t(Lambda), scale = FALSE)		
+		e <- data - scores %*% t(Lambda)		
 		VAR <- Theta %*% solve(R) %*% Theta 
-		eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e)) 
+		eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(scale(e, scale = FALSE))) 
 		colnames(eji) <- colnames(e) <- colnames(data)		
 		ret$res <- e
 		ret$std_res <- eji
@@ -100,9 +100,9 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
         lnames <- setdiff(colnames(mod$P), vnames)
         Lambda <- mod$A[1:length(vnames), (length(vnames)+1):ncol(mod$A)]
         Theta <- mod$P[1:length(vnames),1:length(vnames)]
-        e <- scale(data - scores %*% t(Lambda), scale = FALSE)		
+        e <- data - scores %*% t(Lambda)		
         VAR <- Theta %*% solve(C) %*% Theta
-        eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e))
+        eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(scale(e, scale = FALSE)))
         colnames(eji) <- colnames(e) <- colnames(data)
         ret$res <- e
         ret$std_res <- eji        
@@ -120,9 +120,9 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 	##OPENMX## 	U <- mat[[2]][1:n, 1:n]
 	##OPENMX## 	scores <- t(Phi %*% t(L) %*% solve(sigHat) %*% 
 	##OPENMX## 		t(data - colMeans(data)))
-	##OPENMX## 	e <- scale(data - scores %*% t(L), scale = FALSE)	
+	##OPENMX## 	e <- data - scores %*% t(L)	
 	##OPENMX## 	VAR <- U %*% solve(cov(data)) %*%  U
-	##OPENMX## 	eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e)) 
+	##OPENMX## 	eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(scale(e, scale = FALSE)) 
 	##OPENMX## 	colnames(eji) <- colnames(e) <- colnames(data)		
 	##OPENMX## 	ret$res <- e
 	##OPENMX## 	ret$std_res <- eji	
