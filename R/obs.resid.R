@@ -80,13 +80,12 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 	if(is.numeric(model)){		
 		R <- cor(data)
 		mod <- factanal(data, model, rotation='none', scores = 'regression')
-		scores <- mod$scores
+		scores <- mod$scores		
 		ret$fascores <- scores
 		Lambda <- unclass(mod$loadings)
 		Theta <- diag(mod$uniquenesses)	
-		e <- data - scores %*% t(Lambda)
-		VAR <- diag(mod$uniqueness) %*% solve(R) %*% 
-			diag(mod$uniqueness) 
+		e <- scale(data - scores %*% t(Lambda), scale = FALSE)		
+		VAR <- Theta %*% solve(R) %*% Theta 
 		eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e)) 
 		colnames(eji) <- colnames(e) <- colnames(data)		
 		ret$res <- e
@@ -101,7 +100,7 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
         lnames <- setdiff(colnames(mod$P), vnames)
         Lambda <- mod$A[1:length(vnames), (length(vnames)+1):ncol(mod$A)]
         Theta <- mod$P[1:length(vnames),1:length(vnames)]
-        e <- data - scores %*% t(Lambda)
+        e <- scale(data - scores %*% t(Lambda), scale = FALSE)		
         VAR <- Theta %*% solve(C) %*% Theta
         eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e))
         colnames(eji) <- colnames(e) <- colnames(data)
@@ -121,7 +120,7 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
 	##OPENMX## 	U <- mat[[2]][1:n, 1:n]
 	##OPENMX## 	scores <- t(Phi %*% t(L) %*% solve(sigHat) %*% 
 	##OPENMX## 		t(data - colMeans(data)))
-	##OPENMX## 	e <- data - scores %*% t(L)
+	##OPENMX## 	e <- scale(data - scores %*% t(L), scale = FALSE)	
 	##OPENMX## 	VAR <- U %*% solve(cov(data)) %*%  U
 	##OPENMX## 	eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(e)) 
 	##OPENMX## 	colnames(eji) <- colnames(e) <- colnames(data)		
