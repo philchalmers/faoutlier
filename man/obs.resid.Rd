@@ -40,8 +40,6 @@
 
   \item{main}{the main title of the plot}
 
-  \item{ylab}{the y label of the plot}
-
   \item{type}{type of plot to use, default displays points
   and lines}
 }
