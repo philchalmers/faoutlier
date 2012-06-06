@@ -165,7 +165,7 @@ print.gCD <- function(x, head = .05, DFBETAS = FALSE, ...)
 #' @method plot gCD
 #' @param y a \code{NULL} value ignored by the plotting function
 #' @param main the main title of the plot
-#' @param type type of plot to use, default displayes points and lines
+#' @param type type of plot to use, default displays points and lines
 #' @param ylab the y label of the plot
 plot.gCD <- function(x, y = NULL, main = 'Generalized Cook Distance', 
 	type = c('p','h'), ylab = 'gCD', ...)

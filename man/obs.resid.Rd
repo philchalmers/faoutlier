@@ -42,7 +42,7 @@
 
   \item{ylab}{the y label of the plot}
 
-  \item{type}{type of plot to use, default displayes points
+  \item{type}{type of plot to use, default displays points
   and lines}
 }
 \description{

@@ -46,7 +46,7 @@
 
   \item{stat}{type of statistic to use. Could be 'LR',
   'RMR', or 'gCD' for the likelihood ratio, root mean
-  square residual, or generalized Cook's disntance,
+  square residual, or generalized Cook's distances,
   respectively}
 
   \item{...}{additional parameters to be passed}
@@ -55,7 +55,7 @@
 
   \item{main}{the main title of the plot}
 
-  \item{type}{type of plot to use, default displayes points
+  \item{type}{type of plot to use, default displays points
   and lines}
 
   \item{ylab}{the y label of the plot}
@@ -66,7 +66,7 @@
   criteria and continues to add individual cases at each
   iteration given an acceptance criteria. By default the
   function add cases that contribute most to the likelihood
-  function and that have the closest robust mahalanobis
+  function and that have the closest robust Mahalanobis
   distance, however model implied residuals may be included
   as well.
 }

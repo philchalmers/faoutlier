@@ -156,7 +156,7 @@ print.obs.resid <- function(x, restype = 'obs', ...)
 #' @param y a \code{NULL} value ignored by the plotting function
 #' @param main the main title of the plot
 #' @param ylab the y label of the plot
-#' @param type type of plot to use, default displayes points and lines
+#' @param type type of plot to use, default displays points and lines
 plot.obs.resid <- function(x, y = NULL, main = 'Observed Residuals', 
 	type = c('p','h'), restype = 'obs', ...)
 {

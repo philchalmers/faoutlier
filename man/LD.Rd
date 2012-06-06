@@ -16,7 +16,7 @@
   \item{data}{matrix or data.frame}
 
   \item{model}{if a single numeric number declares number
-  of factors to extract in exploratory factor ansysis. If
+  of factors to extract in exploratory factor analysis. If
   \code{class(model)} is a sem (or OpenMx model if
   installed from github) then a confirmatory approach is
   performed instead}
@@ -35,7 +35,7 @@
   \item{y}{a \code{NULL} value ignored by the plotting
   function}
 
-  \item{type}{type of plot to use, default displayes points
+  \item{type}{type of plot to use, default displays points
   and lines}
 
   \item{main}{the main title of the plot}

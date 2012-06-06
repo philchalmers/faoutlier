@@ -10,7 +10,7 @@
 #' @aliases LD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor ansysis. If \code{class(model)} is a sem (or OpenMx model if installed 
+#' exploratory factor analysis. If \code{class(model)} is a sem (or OpenMx model if installed 
 #' from github) then a confirmatory approach is performed instead
 #' @param na.rm logical; remove cases with missing data?
 #' @param digits number of digits to round in the final result
@@ -136,7 +136,7 @@ print.LD <- function(x, ncases = 10, ...)
 #' @rdname LD
 #' @method plot LD
 #' @param y a \code{NULL} value ignored by the plotting function
-#' @param type type of plot to use, default displayes points and lines
+#' @param type type of plot to use, default displays points and lines
 #' @param main the main title of the plot
 #' @param ylab the y label of the plot
 plot.LD <- function(x, y = NULL, main = 'Likelihood Distance', 
