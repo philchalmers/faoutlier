@@ -13,6 +13,9 @@
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
 #' \code{\link{gCD}}, \code{\link{obs.resid}}, \code{\link{LD}}
+#' @references
+#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for 
+#' exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21.
 #' @keywords covariance
 #' @export robustMD
 #' @examples 
