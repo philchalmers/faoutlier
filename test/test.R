@@ -1,3 +1,5 @@
+library(faoutlier)
+
 data(holzinger)
 data(holzinger.outlier)
 nfact <- 3

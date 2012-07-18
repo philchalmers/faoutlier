@@ -9,7 +9,8 @@
 #' @param model if a single numeric number declares number of factors to extract in 
 #' exploratory factor analysis. If \code{class(model)} is a sem (or OpenMx model if installed 
 #' from github) then a confirmatory approach is performed instead
-#' @param na.rm logical; remove cases with missing data?
+#' @param na.rm logical; remove rows with missing data? Note that this is required for 
+#' EFA analysis and \code{sem} fitted models
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
@@ -172,14 +173,14 @@ plot.obs.resid <- function(x, y = NULL, main = 'Observed Residuals',
 		stat[i] <- x$std_res[i, ] %*% x$std_res[i, ]	
 	if(restype == 'obs'){
 		dat <- data.frame(stat=stat,ID=ID)
-		ret <- xyplot(stat~ID, dat, type = type, main = main, ylab = ylab, ...)
+		ret <- lattice::xyplot(stat~ID, dat, type = type, main = main, ylab = ylab, ...)
 	}
 	if(restype == 'res' || restype == 'std_res'){
 		if(restype == 'res') dat <- data.frame(ID=ID,x$res)
 			else dat <- data.frame(ID=ID,x$std_res)
 		rownames(dat) <- ID
 		dat2 <- reshape(dat, v.names='res', direction = 'long', varying=2:ncol(dat), timevar='variable', sep='')	
-		ret <- xyplot(res~ID|as.factor(variable), dat2, type = type, main = main, ylab = ylab, ...)		
+		ret <- lattice::xyplot(res~ID|as.factor(variable), dat2, type = type, main = main, ylab = ylab, ...)		
 	}
 	return(ret)
 }

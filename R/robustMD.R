@@ -8,7 +8,7 @@
 #' @param data matrix or data.frame 
 #' @param method type of estimation for robust means and covariance
 #' (see \code{\link{cov.rob}})
-#' @param na.rm logical; remove cases with missing data?
+#' @param na.rm logical; remove rows with missing data?
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
@@ -92,7 +92,7 @@ plot.robmah <- function(x, y = NULL, type = 'xyplot', ...){
 	J <- x$J
     if(type == 'qqplot'){
         dat <- data.frame(theoryQQ = qchisq(ppoints(N),df=J), mah=mah)
-        qqmath(~mah, data=dat, prepanel = prepanel.qqmathline, main = 'QQ plot',
+        lattice::qqmath(~mah, data=dat, prepanel = prepanel.qqmathline, main = 'QQ plot',
                panel = function(x, ...) {
                    panel.qqmathline(x, ...)
                    panel.qqmath(x, ...)
@@ -100,6 +100,6 @@ plot.robmah <- function(x, y = NULL, type = 'xyplot', ...){
     }
     if(type == 'xyplot'){
         dat <- data.frame(mah=mah, ID=x$ID)
-        xyplot(mah~ID, dat, main="Robust MD", type = c('p', 'h'), ...)
+        lattice::xyplot(mah~ID, dat, main="Robust MD", type = c('p', 'h'), ...)
     }	
 }

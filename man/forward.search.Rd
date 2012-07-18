@@ -8,9 +8,9 @@
     n.subsets = 1000, p.base = 0.4, na.rm = TRUE,
     digits = 5, print.messages = TRUE)
 
-  \method{print}{forward.search} (x, stat = "LR", ...)
+  \method{print}{forward.search} (x, stat = "X2", ...)
 
-  \method{plot}{forward.search} (x, y = NULL, stat = "LR",
+  \method{plot}{forward.search} (x, y = NULL, stat = "X2",
     main = "Forward Search", type = c("p", "h"),
     ylab = "obs.resid", ...)
 }
@@ -34,7 +34,9 @@
   \item{p.base}{proportion of sample size to use as the
   base group}
 
-  \item{na.rm}{logical; remove cases with missing data?}
+  \item{na.rm}{logical; remove rows with missing data? Note
+  that this is required for EFA analysis and \code{sem}
+  fitted models}
 
   \item{digits}{number of digits to round in the final
   result}
@@ -44,9 +46,9 @@
 
   \item{x}{an object of class \code{forward.search}}
 
-  \item{stat}{type of statistic to use. Could be 'LR',
-  'RMR', or 'gCD' for the likelihood ratio, root mean
-  square residual, or generalized Cook's distances,
+  \item{stat}{type of statistic to use. Could be 'X2',
+  'RMR', or 'gCD' for the model chi-square, root mean
+  square residual, or generalized Cook's distance,
   respectively}
 
   \item{...}{additional parameters to be passed}

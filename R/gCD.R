@@ -14,7 +14,8 @@
 #' @param model if a single numeric number declares number of factors to extract in 
 #' exploratory factor analysis. If \code{class(model)} is a sem (or OpenMx model if installed 
 #' from github) then a confirmatory approach is performed instead
-#' @param na.rm logical; remove cases with missing data?
+#' @param na.rm logical; remove rows with missing data? Note that this is required for 
+#' EFA analysis
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
@@ -101,7 +102,7 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 		ret <- list(dfbetas = DFBETAS, gCD = gCD)
 	}	
 	if(class(model) == "semmod"){
-	    mod <- sem(model, cov(data), N)
+	    mod <- sem(model, data=data)
 	    theta <- mod$coeff		
 	    gCD <- c()	
 	    DFBETAS <- matrix(0, N, length(theta))
@@ -174,7 +175,7 @@ plot.gCD <- function(x, y = NULL, main = 'Generalized Cook Distance',
 	type = c('p','h'), ylab = 'gCD', ...)
 {
 	ID <- 1:length(x$gCD)		
-	ret <- xyplot(gCD~ID, x, type = type, main = main, ylab = ylab, ...)
+	ret <- lattice::xyplot(gCD~ID, x, type = type, main = main, ylab = ylab, ...)
 	return(ret)
 }
 

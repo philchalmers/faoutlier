@@ -12,7 +12,8 @@
 #' @param model if a single numeric number declares number of factors to extract in 
 #' exploratory factor analysis. If \code{class(model)} is a sem (or OpenMx model if installed 
 #' from github) then a confirmatory approach is performed instead
-#' @param na.rm logical; remove cases with missing data?
+#' @param na.rm logical; remove rows with missing data? Note that this is required for 
+#' EFA analysis
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
@@ -90,7 +91,7 @@ LD <- function(data, model, na.rm = TRUE, digits = 5)
 		}
 	}
 	if(class(model) == "semmod"){
-	    MLmod <- sem(model, cov(data), nrow(data))
+	    MLmod <- sem(model, data=data)
 	    LR <- c()
 	    for(i in 1:nrow(data)){  
 	        tmp <- sem(model, cov(data[-i, ]), nrow(data) - 1)            
@@ -131,7 +132,7 @@ print.LD <- function(x, ncases = 10, ...)
 		sorted[(length(sorted)-(ncases/2 + 1)):length(sorted)])
 	ret <- matrix(sorted)
 	rownames(ret) <- names(sorted)
-	colnames(ret) <- 'deltaX2'
+	colnames(ret) <- 'LD'
 	return(print(ret))	
 }
 
@@ -142,13 +143,19 @@ print.LD <- function(x, ncases = 10, ...)
 #' @param type type of plot to use, default displays points and lines
 #' @param main the main title of the plot
 #' @param ylab the y label of the plot
+#' @param absolute logical; use absolute values instead of deviations?
 plot.LD <- function(x, y = NULL, main = 'Likelihood Distance', 
-	type = c('p','h'), ylab = 'LD', ...)
-{
-	LD <- abs(as.numeric(x))
+	type = c('p','h'), ylab = 'LD', absolute = FALSE, ...)
+{    
+	LD <- if(absolute) abs(as.numeric(x)) else as.numeric(x)
 	ID <- 1:length(x)	
 	dat <- data.frame(LD,ID)	
-	ret <- xyplot(LD~ID, dat, type = type, main = main, ylab = ylab, ...)
+	ret <- lattice::xyplot(LD~ID, dat, type = type, main = main, ylab = ylab, 
+	                       panel = function(...){
+                               panel.xyplot(ID, LD, type='h')
+                               panel.xyplot(ID, LD, type='p')
+                               panel.abline(0)
+                               }, ...)
 	return(ret)
 }
 

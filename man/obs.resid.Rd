@@ -21,7 +21,9 @@
   installed from github) then a confirmatory approach is
   performed instead}
 
-  \item{na.rm}{logical; remove cases with missing data?}
+  \item{na.rm}{logical; remove rows with missing data? Note
+  that this is required for EFA analysis and \code{sem}
+  fitted models}
 
   \item{digits}{number of digits to round in the final
   result}

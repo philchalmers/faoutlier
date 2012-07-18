@@ -19,7 +19,7 @@
   \item{method}{type of estimation for robust means and
   covariance (see \code{\link{cov.rob}})}
 
-  \item{na.rm}{logical; remove cases with missing data?}
+  \item{na.rm}{logical; remove rows with missing data?}
 
   \item{digits}{number of digits to round in the final
   result}
