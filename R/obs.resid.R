@@ -162,7 +162,7 @@ print.obs.resid <- function(x, restype = 'obs', ...)
 #' @param type type of plot to use, default displays points and lines
 plot.obs.resid <- function(x, y = NULL, main = 'Observed Residuals', 
 	type = c('p','h'), restype = 'obs', ...)
-{
+{    
 	ylab <- switch(restype,
 		obs = 'Observed residuals',
 		res = 'Observed variable residuals',
@@ -179,8 +179,10 @@ plot.obs.resid <- function(x, y = NULL, main = 'Observed Residuals',
 		if(restype == 'res') dat <- data.frame(ID=ID,x$res)
 			else dat <- data.frame(ID=ID,x$std_res)
 		rownames(dat) <- ID
-		dat2 <- reshape(dat, v.names='res', direction = 'long', varying=2:ncol(dat), timevar='variable', sep='')	
-		ret <- lattice::xyplot(res~ID|as.factor(variable), dat2, type = type, main = main, ylab = ylab, ...)		
+		dat2 <- reshape(dat, v.names='res', direction = 'long', varying=2:ncol(dat), 
+                        times = colnames(dat)[-1], timevar='variable', sep='')	
+		ret <- lattice::xyplot(res~ID|as.factor(variable), dat2, type = type, main = main, 
+                               ylab = ylab, ...)		
 	}
 	return(ret)
 }
