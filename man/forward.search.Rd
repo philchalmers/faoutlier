@@ -8,9 +8,9 @@
     n.subsets = 1000, p.base = 0.4, na.rm = TRUE,
     digits = 5, print.messages = TRUE)
 
-  \method{print}{forward.search} (x, stat = "X2", ...)
+  \method{print}{forward.search} (x, stat = "LD", ...)
 
-  \method{plot}{forward.search} (x, y = NULL, stat = "X2",
+  \method{plot}{forward.search} (x, y = NULL, stat = "LD",
     main = "Forward Search", type = c("p", "h"),
     ylab = "obs.resid", ...)
 }
@@ -24,7 +24,7 @@
   performed instead}
 
   \item{criteria}{character strings indicating the forward
-  search method Can contain \code{'LD'} for log-likelihood
+  search method Can contain \code{'LD'} for likelihood
   distance, \code{'mah'} for Mahalanobis distance, or
   \code{'res'} for model implied residuals}
 
@@ -46,9 +46,9 @@
 
   \item{x}{an object of class \code{forward.search}}
 
-  \item{stat}{type of statistic to use. Could be 'X2',
-  'RMR', or 'gCD' for the model chi-square, root mean
-  square residual, or generalized Cook's distance,
+  \item{stat}{type of statistic to use. Could be 'LD',
+  'RMR', or 'gCD' for the model likelihood distance, root
+  mean square residual, or generalized Cook's distance,
   respectively}
 
   \item{...}{additional parameters to be passed}
