@@ -11,7 +11,8 @@
 
   \method{summary}{robmah} (object, gt = 0, ...)
 
-  \method{plot}{robmah} (x, y = NULL, type = "xyplot", ...)
+  \method{plot}{robmah} (x, y = NULL, type = "xyplot",
+    main, ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -37,6 +38,9 @@
 
   \item{type}{type of plot to display, can be either
   \code{'qqplot'} or \code{'xyplot'}}
+
+  \item{main}{title for plot. If missing titles will be
+  generated automatically}
 }
 \description{
   Obtain Mahalanobis distances using the robust computing

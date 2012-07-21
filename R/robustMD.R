@@ -84,22 +84,25 @@ summary.robmah <- function(object, gt = 0, ...)
 #' @S3method plot robmah
 #' @param y empty parameter passed to \code{plot}
 #' @param type type of plot to display, can be either \code{'qqplot'} or \code{'xyplot'}
+#' @param main title for plot. If missing titles will be generated automatically
 #' @rdname robustMD
 #' @method plot robmah 
-plot.robmah <- function(x, y = NULL, type = 'xyplot', ...){
+plot.robmah <- function(x, y = NULL, type = 'xyplot', main, ...){    
 	mah <- x$mah
 	N <- length(mah)
 	J <- x$J
+    if(missing(main)) 
+        main <- ifelse(type == 'qqplot', 'QQ plot', 'Robust MD') 
     if(type == 'qqplot'){
         dat <- data.frame(theoryQQ = qchisq(ppoints(N),df=J), mah=mah)
-        lattice::qqmath(~mah, data=dat, prepanel = prepanel.qqmathline, main = 'QQ plot',
+        lattice::qqmath(~mah, data=dat, prepanel = prepanel.qqmathline, main = main,
                panel = function(x, ...) {
                    panel.qqmathline(x, ...)
                    panel.qqmath(x, ...)
-               })   	
+               }, ...)   	
     }
     if(type == 'xyplot'){
         dat <- data.frame(mah=mah, ID=x$ID)
-        lattice::xyplot(mah~ID, dat, main="Robust MD", type = c('p', 'h'), ...)
+        lattice::xyplot(mah~ID, dat, main = main, type = c('p', 'h'), ...)
     }	
 }
