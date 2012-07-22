@@ -111,7 +111,7 @@ LD <- function(data, model, na.rm = TRUE, digits = 5)
 	##OPENMX## 		LR[i] <- tmpMod@output$Minus2LogLikelihood - tmpMod@output$SaturatedLikelihood
 	##OPENMX## 	}	
 	##OPENMX## }
-	deltaX2 <- MLmod - LR	
+	deltaX2 <- LR - MLmod 	
 	deltaX2 <- round(deltaX2, digits)
 	names(deltaX2) <- rownames(data)
 	class(deltaX2) <- 'LD'
