@@ -1,6 +1,6 @@
 Package: faoutlier
 Version: 0.3.0
-Date: 2011-12-22
+Date: 2012-07-22
 Type: Package
 Title: Influential case detection methods for factor analysis and SEM
 Author: Phil Chalmers <rphilip.chalmers@gmail.com>

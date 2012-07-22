@@ -8,9 +8,9 @@
     n.subsets = 1000, p.base = 0.4, na.rm = TRUE,
     digits = 5, print.messages = TRUE)
 
-  \method{print}{forward.search} (x, stat = "LD", ...)
+  \method{print}{forward.search} (x, stat = "X2", ...)
 
-  \method{plot}{forward.search} (x, y = NULL, stat = "LD",
+  \method{plot}{forward.search} (x, y = NULL, stat = "X2",
     main = "Forward Search", type = c("p", "h"),
     ylab = "obs.resid", ...)
 }
@@ -46,8 +46,8 @@
 
   \item{x}{an object of class \code{forward.search}}
 
-  \item{stat}{type of statistic to use. Could be 'LD',
-  'RMR', or 'gCD' for the model likelihood distance, root
+  \item{stat}{type of statistic to use. Could be 'X2',
+  'RMR', or 'gCD' for the model chi squared value, root
   mean square residual, or generalized Cook's distance,
   respectively}
 

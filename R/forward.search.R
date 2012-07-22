@@ -335,13 +335,13 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 #' @rdname forward.search
 #' @method print forward.search
 #' @param x an object of class \code{forward.search}
-#' @param stat type of statistic to use. Could be 'LD', 'RMR', or 'gCD' for 
-#' the model likelihood distance, root mean square residual, or generalized Cook's distance,  
+#' @param stat type of statistic to use. Could be 'X2', 'RMR', or 'gCD' for 
+#' the model chi squared value, root mean square residual, or generalized Cook's distance,  
 #' respectively
 #' @param ... additional parameters to be passed
-print.forward.search <- function(x, stat = 'LD', ...)
+print.forward.search <- function(x, stat = 'X2', ...)
 {
-	if(stat == 'LD') ret <- x$LD
+	if(stat == 'X2') ret <- x$LD
 	if(stat == 'RMR') ret <- x$RMR
 	if(stat == 'gCD') ret <- x$gCD
 	names(ret) <- x$ord
@@ -355,12 +355,12 @@ print.forward.search <- function(x, stat = 'LD', ...)
 #' @param main the main title of the plot
 #' @param type type of plot to use, default displays points and lines
 #' @param ylab the y label of the plot
-plot.forward.search <- function(x, y = NULL, stat = 'LD', main = 'Forward Search', 
+plot.forward.search <- function(x, y = NULL, stat = 'X2', main = 'Forward Search', 
 	type = c('p','h'), ylab = 'obs.resid', ...)
 {    
 	id <- x$ord
 	Input <- 1:length(id)
-	if(stat == 'LD') stat2 <- x$LD
+	if(stat == 'X2') stat2 <- x$LD
 	if(stat == 'RMR') stat2 <- x$RMR
 	if(stat == 'gCD') stat2 <- x$gCD
 	dat <- data.frame(stat2,Input,id)	
