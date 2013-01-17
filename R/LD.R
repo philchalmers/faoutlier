@@ -38,15 +38,15 @@
 #'
 #' #Confirmatory with sem
 #' model <- specifyModel()
-#'	  F1 -> V1,    lam11
-#' 	  F1 -> V2,    lam21
-#' 	  F1 -> V3,    lam31
-#' 	  F2 -> V4,    lam41
-#' 	  F2 -> V5,    lam52
-#' 	  F2 -> V6,    lam62
-#' 	  F3 -> V7,    lam73
-#'	  F3 -> V8,    lam83
-#' 	  F3 -> V9,    lam93
+#'	  F1 -> Remndrs,    lam11
+#' 	  F1 -> SntComp,    lam21
+#' 	  F1 -> WrdMean,    lam31
+#' 	  F2 -> MissNum,    lam41
+#' 	  F2 -> MxdArit,    lam52
+#' 	  F2 -> OddWrds,    lam62
+#' 	  F3 -> Boots,      lam73
+#'	  F3 -> Gloves,     lam83
+#' 	  F3 -> Hatchts,    lam93
 #' 	  F1 <-> F1,   NA,     1
 #' 	  F2 <-> F2,   NA,     1
 #' 	  F3 <-> F3,   NA,     1
@@ -92,6 +92,7 @@ LD <- function(data, model, na.rm = TRUE, digits = 5)
 	}
 	if(class(model) == "semmod"){
 	    MLmod <- sem(model, data=data)
+        MLmod <- MLmod$criterion * MLmod$N
 	    LR <- c()
 	    for(i in 1:nrow(data)){  
 	        tmp <- sem(model, cov(data[-i, ]), nrow(data) - 1)            
@@ -110,7 +111,7 @@ LD <- function(data, model, na.rm = TRUE, digits = 5)
 	##OPENMX## 		tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
 	##OPENMX## 		LR[i] <- tmpMod@output$Minus2LogLikelihood - tmpMod@output$SaturatedLikelihood
 	##OPENMX## 	}	
-	##OPENMX## }
+	##OPENMX## }    
 	deltaX2 <- LR - MLmod 	
 	deltaX2 <- round(deltaX2, digits)
 	names(deltaX2) <- rownames(data)
