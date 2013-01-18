@@ -12,8 +12,8 @@
 #' @aliases gCD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor analysis. If \code{class(model)} is a sem (or OpenMx model if installed 
-#' from github) then a confirmatory approach is performed instead
+#' exploratory factor analysis. If \code{class(model)} is a sem (semmod), lavaan (character), 
+#' or OpenMx model (github version only) then a confirmatory approach is performed instead
 #' @param na.rm logical; remove rows with missing data? Note that this is required for 
 #' EFA analysis
 #' @param digits number of digits to round in the final result
@@ -115,13 +115,13 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 		ret <- list(dfbetas = DFBETAS, gCD = gCD)
 	}	
 	if(class(model) == "semmod"){
-	    mod <- sem(model, data=data, ...)
+	    mod <- sem::sem(model, data=data, ...)
 	    theta <- mod$coeff		
 	    gCD <- c()	
 	    DFBETAS <- matrix(0, N, length(theta))
 	    for(i in 1:nrow(data)){
 	        tmp1 <- cov(data[-i, ])
-	        tmp2 <- sem(model, tmp1, N-1, ...)
+	        tmp2 <- sem::sem(model, tmp1, N-1, ...)
 	        vcovmat <- tmp2$vcov
 	        h2 <- tmp2$coeff 			
 	        DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
@@ -132,19 +132,20 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	    ret <- list(dfbetas = DFBETAS, gCD = gCD)    
 	}
 	if(class(model) == "character"){
-	    mod <- lavaan::sem(model, data=data, ...)
-        browser()
+	    mod <- lavaan::sem(model, data=data, information='observed', ...)
 	    theta <- coef(mod)
 	    gCD <- c()    
 	    DFBETAS <- matrix(0, N, length(theta))
 	    for(i in 1:nrow(data)){
-	        tmp <- lavaan::sem(model, data[-i, ], ...)
+	        tmp <- lavaan::sem(model, data[-i, ], information='observed', ...)
 	        vcovmat <- vcov(tmp)
 	        h2 <- coef(tmp)
 	        DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
 	        gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
 	    }
-        
+	    gCD <- round(gCD,digits)
+	    DFBETAS <- round(DFBETAS,digits)
+	    ret <- list(dfbetas = DFBETAS, gCD = gCD)    
 	}
 	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
 	##OPENMX## 	mxMod <- model

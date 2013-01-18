@@ -10,8 +10,8 @@
 #' @aliases LD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor analysis. If \code{class(model)} is a sem (or OpenMx model if installed 
-#' from github) then a confirmatory approach is performed instead
+#' exploratory factor analysis. If \code{class(model)} is a sem (semmod), lavaan (character), 
+#' or OpenMx model (github version only) then a confirmatory approach is performed instead
 #' @param na.rm logical; remove rows with missing data? Note that this is required for 
 #' EFA analysis
 #' @param digits number of digits to round in the final result
@@ -42,7 +42,7 @@
 #'	  F1 -> Remndrs,    lam11
 #' 	  F1 -> SntComp,    lam21
 #' 	  F1 -> WrdMean,    lam31
-#' 	  F2 -> MissNum,    lam41
+#' 	  F2 -> MissNum,    lam42
 #' 	  F2 -> MxdArit,    lam52
 #' 	  F2 -> OddWrds,    lam62
 #' 	  F3 -> Boots,      lam73
@@ -112,10 +112,10 @@ LD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	    }	    
 	}
 	if(class(model) == "character"){        
-        MLmod <- lavaan::sem(model, data=data, ...)
+        MLmod <- lavaan::sem(model, data=data, information='observed', ...)
         MLmod <- MLmod@Fit@test[[1]]$stat
         for(i in 1:nrow(data)){  
-            tmp <- lavaan::sem(model, data[-i, ], ...)            
+            tmp <- lavaan::sem(model, data[-i, ], information='observed', ...)            
             LR[i] <- tmp@Fit@test[[1]]$stat
         }
 	}

@@ -4,7 +4,7 @@
 \alias{print.LD}
 \title{Likelihood Distance}
 \usage{
-  LD(data, model, na.rm = TRUE, digits = 5)
+  LD(data, model, na.rm = TRUE, digits = 5, ...)
 
   \method{print}{LD} (x, ncases = 10, ...)
 
@@ -17,9 +17,9 @@
 
   \item{model}{if a single numeric number declares number
   of factors to extract in exploratory factor analysis. If
-  \code{class(model)} is a sem (or OpenMx model if
-  installed from github) then a confirmatory approach is
-  performed instead}
+  \code{class(model)} is a sem (semmod), lavaan
+  (character), or OpenMx model (github version only) then a
+  confirmatory approach is performed instead}
 
   \item{na.rm}{logical; remove rows with missing data? Note
   that this is required for EFA analysis}
@@ -67,12 +67,13 @@ nfact <- 3
 plot(LDresult)
 plot(LDresult.outlier)
 
+#-------------------------------------------------------------------
 #Confirmatory with sem
 model <- specifyModel()
 	  F1 -> Remndrs,    lam11
 	  F1 -> SntComp,    lam21
 	  F1 -> WrdMean,    lam31
-	  F2 -> MissNum,    lam41
+	  F2 -> MissNum,    lam42
 	  F2 -> MxdArit,    lam52
 	  F2 -> OddWrds,    lam62
 	  F3 -> Boots,      lam73
@@ -86,6 +87,19 @@ model <- specifyModel()
 (LDresult.outlier <- LD(holzinger.outlier, model))
 plot(LDresult)
 plot(LDresult.outlier)
+
+#-------------------------------------------------------------------
+#Confirmatory with lavaan
+model <- 'F1 =~  Remndrs + SntComp + WrdMean
+F2 =~ MissNum + MissNum + OddWrds
+F3 =~ Boots + Gloves + Hatchts'
+
+(LDresult <- LD(holzinger, model, orthogonal=TRUE))
+(LDresult.outlier <- LD(holzinger.outlier, model, orthogonal=TRUE))
+plot(LDresult)
+plot(LDresult.outlier)
+
+#-------------------------------------------------------------------
 #Confirmatory using OpenMx (requires github version, see ?faoutlier)
 manifests <- colnames(holzinger)
 latents <- c("F1","F2","F3")

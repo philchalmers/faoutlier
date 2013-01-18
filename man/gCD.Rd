@@ -4,7 +4,7 @@
 \alias{print.gCD}
 \title{Generalized Cook's Distance}
 \usage{
-  gCD(data, model, na.rm = TRUE, digits = 5)
+  gCD(data, model, na.rm = TRUE, digits = 5, ...)
 
   \method{print}{gCD} (x, head = 0.05, DFBETAS = FALSE,
     ...)
@@ -18,9 +18,9 @@
 
   \item{model}{if a single numeric number declares number
   of factors to extract in exploratory factor analysis. If
-  \code{class(model)} is a sem (or OpenMx model if
-  installed from github) then a confirmatory approach is
-  performed instead}
+  \code{class(model)} is a sem (semmod), lavaan
+  (character), or OpenMx model (github version only) then a
+  confirmatory approach is performed instead}
 
   \item{na.rm}{logical; remove rows with missing data? Note
   that this is required for EFA analysis}
@@ -71,6 +71,7 @@ nfact <- 3
 plot(gCDresult)
 plot(gCDresult.outlier)
 
+#-------------------------------------------------------------------
 #Confirmatory with sem
 model <- specifyModel()
    F1 -> Remndrs,    lam11
@@ -91,6 +92,18 @@ model <- specifyModel()
 plot(gCDresult2)
 plot(gCDresult2.outlier)
 
+#-------------------------------------------------------------------
+#Confirmatory with lavaan
+model <- 'F1 =~  Remndrs + SntComp + WrdMean
+F2 =~ MissNum + MissNum + OddWrds
+F3 =~ Boots + Gloves + Hatchts'
+
+(gCDresult2 <- gCD(holzinger, model, orthogonal=TRUE))
+(gCDresult2.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE))
+plot(gCDresult2)
+plot(gCDresult2.outlier)
+
+#-------------------------------------------------------------------
 #Confirmatory using OpenMx (requires github version, see ?faoutlier)
 manifests <- colnames(holzinger)
 latents <- c("F1","F2","F3")
