@@ -33,6 +33,7 @@
 #' plot(ORresult)
 #' plot(ORresult.outlier)
 #'
+#' #-------------------------------------------------------------------
 #' #Confirmatory with sem
 #' model <- specifyModel()
 #'    F1 -> Remndrs,    lam11
@@ -53,6 +54,7 @@
 #' plot(ORresult)
 #' plot(ORresult.outlier)
 #'
+#' #-------------------------------------------------------------------
 #' #Confirmatory using OpenMx (requires github version, see ?faoutlier)
 #' manifests <- colnames(holzinger)
 #' latents <- c("F1","F2","F3")

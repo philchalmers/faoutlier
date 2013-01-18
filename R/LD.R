@@ -36,6 +36,7 @@
 #' plot(LDresult)
 #' plot(LDresult.outlier)
 #'
+#' #-------------------------------------------------------------------
 #' #Confirmatory with sem
 #' model <- specifyModel()
 #'	  F1 -> Remndrs,    lam11
@@ -55,7 +56,19 @@
 #' (LDresult.outlier <- LD(holzinger.outlier, model))
 #' plot(LDresult)
 #' plot(LDresult.outlier)
-
+#' 
+#' #-------------------------------------------------------------------
+#' #Confirmatory with lavaan
+#' model <- 'F1 =~  Remndrs + SntComp + WrdMean
+#' F2 =~ MissNum + MissNum + OddWrds
+#' F3 =~ Boots + Gloves + Hatchts'
+#' 
+#' (LDresult <- LD(holzinger, model, orthogonal=TRUE))	  
+#' (LDresult.outlier <- LD(holzinger.outlier, model, orthogonal=TRUE))
+#' plot(LDresult)
+#' plot(LDresult.outlier)
+#' 
+#' #-------------------------------------------------------------------
 #' #Confirmatory using OpenMx (requires github version, see ?faoutlier)
 #' manifests <- colnames(holzinger)
 #' latents <- c("F1","F2","F3")
@@ -78,26 +91,33 @@
 #' plot(LDresult)
 #' plot(LDresult.outlier)
 #' }
-LD <- function(data, model, na.rm = TRUE, digits = 5)
+LD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 {		
 	rownames(data) <- 1:nrow(data)
 	if(na.rm) data <- na.omit(data)
+	LR <- c()
 	if(is.numeric(model)){		
-		MLmod <- factanal(data,model)$STATISTIC
-		LR <- c()
+		MLmod <- factanal(data,model)$STATISTIC		
 		for(i in 1:nrow(data)){  
 			tmp <- factanal(data[-i, ],model)
 			LR[i] <- tmp$STATISTIC
 		}
 	}
 	if(class(model) == "semmod"){
-	    MLmod <- sem(model, data=data)
-        MLmod <- MLmod$criterion * MLmod$N
-	    LR <- c()
+	    MLmod <- sem::sem(model, data=data)
+        MLmod <- MLmod$criterion * MLmod$N	    
 	    for(i in 1:nrow(data)){  
-	        tmp <- sem(model, cov(data[-i, ]), nrow(data) - 1)            
+	        tmp <- sem::sem(model, cov(data[-i, ]), nrow(data) - 1, ...)            
 	        LR[i] <- tmp$criterion * (tmp$N - 1)
 	    }	    
+	}
+	if(class(model) == "character"){        
+        MLmod <- lavaan::sem(model, data=data, ...)
+        MLmod <- MLmod@Fit@test[[1]]$stat
+        for(i in 1:nrow(data)){  
+            tmp <- lavaan::sem(model, data[-i, ], ...)            
+            LR[i] <- tmp@Fit@test[[1]]$stat
+        }
 	}
 	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){
 	##OPENMX## 	mxMod <- model		

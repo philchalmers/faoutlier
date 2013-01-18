@@ -38,6 +38,7 @@
 #' plot(gCDresult)
 #' plot(gCDresult.outlier)
 #'
+#' #-------------------------------------------------------------------
 #' #Confirmatory with sem
 #' model <- specifyModel()
 #'    F1 -> Remndrs,    lam11
@@ -58,6 +59,18 @@
 #' plot(gCDresult2)
 #' plot(gCDresult2.outlier)
 #'
+#' #-------------------------------------------------------------------
+#' #Confirmatory with lavaan
+#' model <- 'F1 =~  Remndrs + SntComp + WrdMean
+#' F2 =~ MissNum + MissNum + OddWrds
+#' F3 =~ Boots + Gloves + Hatchts'
+#' 
+#' (gCDresult2 <- gCD(holzinger, model, orthogonal=TRUE))      
+#' (gCDresult2.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE))
+#' plot(gCDresult2)
+#' plot(gCDresult2.outlier)
+#' 
+#' #-------------------------------------------------------------------
 #' #Confirmatory using OpenMx (requires github version, see ?faoutlier)
 #' manifests <- colnames(holzinger)
 #' latents <- c("F1","F2","F3")
@@ -80,7 +93,7 @@
 #' plot(gCDresult2)
 #' plot(gCDresult2.outlier)
 #' }
-gCD <- function(data, model, na.rm = TRUE, digits = 5)
+gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 {	
 	if(na.rm) data <- na.omit(data)
 	N <- nrow(data)
@@ -102,13 +115,13 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 		ret <- list(dfbetas = DFBETAS, gCD = gCD)
 	}	
 	if(class(model) == "semmod"){
-	    mod <- sem(model, data=data)
+	    mod <- sem(model, data=data, ...)
 	    theta <- mod$coeff		
 	    gCD <- c()	
 	    DFBETAS <- matrix(0, N, length(theta))
 	    for(i in 1:nrow(data)){
 	        tmp1 <- cov(data[-i, ])
-	        tmp2 <- sem(model, tmp1, N-1)
+	        tmp2 <- sem(model, tmp1, N-1, ...)
 	        vcovmat <- tmp2$vcov
 	        h2 <- tmp2$coeff 			
 	        DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
@@ -117,6 +130,21 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5)
 	    gCD <- round(gCD,digits)
 	    DFBETAS <- round(DFBETAS,digits)
 	    ret <- list(dfbetas = DFBETAS, gCD = gCD)    
+	}
+	if(class(model) == "character"){
+	    mod <- lavaan::sem(model, data=data, ...)
+        browser()
+	    theta <- coef(mod)
+	    gCD <- c()    
+	    DFBETAS <- matrix(0, N, length(theta))
+	    for(i in 1:nrow(data)){
+	        tmp <- lavaan::sem(model, data[-i, ], ...)
+	        vcovmat <- vcov(tmp)
+	        h2 <- coef(tmp)
+	        DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
+	        gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
+	    }
+        
 	}
 	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
 	##OPENMX## 	mxMod <- model
