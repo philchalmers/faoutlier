@@ -13,7 +13,8 @@ Depends:
     sem
 Imports:
     lattice,
-    MASS,
+    MASS
+Suggests:
     lavaan
 LazyLoad: yes
 LazyData: yes

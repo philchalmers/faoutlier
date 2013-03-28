@@ -89,8 +89,7 @@ LD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	        LR[i] <- tmp$criterion * (tmp$N - 1)
 	    }	    
 	}
-	if(class(model) == "character"){    
-	    if(!require(lavaan)) require(lavaan)
+	if(class(model) == "character"){        
         MLmod <- lavaan::sem(model, data=data, information='observed', ...)
         MLmod <- MLmod@Fit@test[[1]]$stat
         for(i in 1:nrow(data)){  
