@@ -109,7 +109,8 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	    DFBETAS <- round(DFBETAS,digits)
 	    ret <- list(dfbetas = DFBETAS, gCD = gCD)    
 	}
-	if(class(model) == "character"){
+	if(class(model) == "character"){        
+        if(!require(lavaan)) require(lavaan)
 	    mod <- lavaan::sem(model, data=data, information='observed', ...)
 	    theta <- coef(mod)
 	    gCD <- c()    

@@ -1,0 +1,22 @@
+context('obs.resid')
+
+test_that('obs.resid run', {
+    
+    #Exploratory
+    nfact <- 3
+    ORresult <- obs.resid(holzinger, nfact)
+    ORresult.outlier <- obs.resid(holzinger.outlier, nfact)
+    expect_is(ORresult, 'obs.resid')
+    expect_is(ORresult.outlier, 'obs.resid')
+    expect_is(plot(ORresult), 'trellis')
+    expect_is(plot(ORresult.outlier), 'trellis')    
+    
+    #-------------------------------------------------------------------    
+    suppressMessages(model <- specifyModel(file='sem-model.txt', quiet=TRUE))    
+    ORresult <- obs.resid(holzinger, model)
+    ORresult.outlier <- obs.resid(holzinger.outlier, model)
+    expect_is(ORresult, 'obs.resid')
+    expect_is(ORresult.outlier, 'obs.resid')
+    expect_is(plot(ORresult), 'trellis')
+    expect_is(plot(ORresult.outlier), 'trellis')    
+})

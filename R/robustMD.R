@@ -95,14 +95,14 @@ plot.robmah <- function(x, y = NULL, type = 'xyplot', main, ...){
         main <- ifelse(type == 'qqplot', 'QQ plot', 'Robust MD') 
     if(type == 'qqplot'){
         dat <- data.frame(theoryQQ = qchisq(ppoints(N),df=J), mah=mah)
-        lattice::qqmath(~mah, data=dat, prepanel = prepanel.qqmathline, main = main,
+        return(lattice::qqmath(~mah, data=dat, prepanel = prepanel.qqmathline, main = main,
                panel = function(x, ...) {
                    panel.qqmathline(x, ...)
                    panel.qqmath(x, ...)
-               }, ...)   	
+               }, ...))
     }
     if(type == 'xyplot'){
         dat <- data.frame(mah=mah, ID=x$ID)
-        lattice::xyplot(mah~ID, dat, main = main, type = c('p', 'h'), ...)
+        return(lattice::xyplot(mah~ID, dat, main = main, type = c('p', 'h'), ...))
     }	
 }
