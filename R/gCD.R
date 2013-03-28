@@ -12,8 +12,8 @@
 #' @aliases gCD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor analysis. If \code{class(model)} is a sem (semmod), lavaan (character), 
-#' or OpenMx model (github version only) then a confirmatory approach is performed instead
+#' exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
+#' then a confirmatory approach is performed instead
 #' @param na.rm logical; remove rows with missing data? Note that this is required for 
 #' EFA analysis
 #' @param digits number of digits to round in the final result
@@ -70,28 +70,6 @@
 #' plot(gCDresult2)
 #' plot(gCDresult2.outlier)
 #' 
-#' #-------------------------------------------------------------------
-#' #Confirmatory using OpenMx (requires github version, see ?faoutlier)
-#' manifests <- colnames(holzinger)
-#' latents <- c("F1","F2","F3")
-#' #specify model, mxData not necessary but useful to check if mxRun works
-#' model <- mxModel("Three Factor",
-#'       type="RAM",
-#'       manifestVars = manifests,
-#'       latentVars = latents,
-#'       mxPath(from="F1", to=manifests[1:3]),
-#' 	     mxPath(from="F2", to=manifests[4:6]),
-#' 	     mxPath(from="F3", to=manifests[7:9]),
-#'       mxPath(from=manifests, arrows=2),
-#'       mxPath(from=latents, arrows=2,
-#'             free=FALSE, values=1.0),
-#'       mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
-#' 	  )			
-#' 	  
-#' (gCDresult2 <- gCD(holzinger, model))	  
-#' (gCDresult2.outlier <- gCD(holzinger.outlier, model))
-#' plot(gCDresult2)
-#' plot(gCDresult2.outlier)
 #' }
 gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 {	
@@ -147,26 +125,6 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	    DFBETAS <- round(DFBETAS,digits)
 	    ret <- list(dfbetas = DFBETAS, gCD = gCD)    
 	}
-	##OPENMX## if(class(model) == "MxRAMModel" || class(model) == "MxModel" ){		
-	##OPENMX## 	mxMod <- model
-	##OPENMX## 	fullmxData <- mxData(cov(data), type="cov",	numObs = nrow(data))
-	##OPENMX## 	fullMod <- mxRun(mxModel(mxMod, fullmxData), silent = TRUE)
-	##OPENMX## 	theta <- fullMod@output$estimate		
-	##OPENMX## 	gCD <- c()	
-	##OPENMX## 	DFBETAS <- matrix(0,nrow(data),length(theta))
-	##OPENMX## 	for(i in 1:nrow(data)){
-	##OPENMX## 		tmpmxData <- mxData(cov(data[-i,]), type="cov",	
-	##OPENMX## 			numObs = nrow(data)-1)
-	##OPENMX## 		tmpMod <- mxRun(mxModel(mxMod, tmpmxData), silent = TRUE)
-	##OPENMX## 		vcovmat <- solve(tmpMod@output$estimatedHessian)
-	##OPENMX## 		h2 <- tmpMod@output$estimate			
-	##OPENMX## 		DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
-	##OPENMX## 		gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
-	##OPENMX## 	}	
-	##OPENMX## 	gCD <- round(gCD,digits)
-	##OPENMX## 	DFBETAS <- round(DFBETAS,digits)
-	##OPENMX## 	ret <- list(dfbetas = DFBETAS, gCD = gCD)
-	##OPENMX## }
 	class(ret) <- 'gCD'
 	ret	
 }

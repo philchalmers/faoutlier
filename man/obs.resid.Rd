@@ -17,9 +17,8 @@
 
   \item{model}{if a single numeric number declares number
   of factors to extract in exploratory factor analysis. If
-  \code{class(model)} is a sem (or OpenMx model if
-  installed from github) then a confirmatory approach is
-  performed instead}
+  \code{class(model)} is a sem then a confirmatory approach
+  is performed instead}
 
   \item{na.rm}{logical; remove rows with missing data? Note
   that this is required for EFA analysis and \code{sem}
@@ -82,28 +81,6 @@ model <- specifyModel()
 plot(ORresult)
 plot(ORresult.outlier)
 
-#-------------------------------------------------------------------
-#Confirmatory using OpenMx (requires github version, see ?faoutlier)
-manifests <- colnames(holzinger)
-latents <- c("F1","F2","F3")
-#specify model, mxData not necessary but useful to check if mxRun works
-model <- mxModel("Three Factor",
-      type="RAM",
-      manifestVars = manifests,
-      latentVars = latents,
-      mxPath(from="F1", to=manifests[1:3]),
-	     mxPath(from="F2", to=manifests[4:6]),
-	     mxPath(from="F3", to=manifests[7:9]),
-      mxPath(from=manifests, arrows=2),
-      mxPath(from=latents, arrows=2,
-            free=FALSE, values=1.0),
-      mxData(cov(holzinger), type="cov", numObs=nrow(holzinger))
-	  )
-
-(ORresult <- obs.resid(holzinger, model))
-(ORresult.outlier <- obs.resid(holzinger.outlier, model))
-plot(ORresult)
-plot(ORresult.outlier)
 }
 }
 \author{
