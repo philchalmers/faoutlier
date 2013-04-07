@@ -16,6 +16,7 @@ Imports:
     MASS
 Suggests:
     lavaan
+ByteCompile: yes
 LazyLoad: yes
 LazyData: yes
 Repository: github
