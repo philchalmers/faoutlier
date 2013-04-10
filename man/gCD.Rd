@@ -98,8 +98,8 @@ model <- 'F1 =~  Remndrs + SntComp + WrdMean
 F2 =~ MissNum + MissNum + OddWrds
 F3 =~ Boots + Gloves + Hatchts'
 
-(gCDresult2 <- gCD(holzinger, model, orthogonal=TRUE))
-(gCDresult2.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE))
+(gCDresult2 <- gCD(holzinger, model))
+(gCDresult2.outlier <- gCD(holzinger.outlier, model))
 plot(gCDresult2)
 plot(gCDresult2.outlier)
 

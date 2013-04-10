@@ -63,8 +63,8 @@
 #' F2 =~ MissNum + MissNum + OddWrds
 #' F3 =~ Boots + Gloves + Hatchts'
 #' 
-#' (LDresult <- LD(holzinger, model, orthogonal=TRUE))	  
-#' (LDresult.outlier <- LD(holzinger.outlier, model, orthogonal=TRUE))
+#' (LDresult <- LD(holzinger, model))	  
+#' (LDresult.outlier <- LD(holzinger.outlier, model))
 #' plot(LDresult)
 #' plot(LDresult.outlier)
 #' 
@@ -90,10 +90,10 @@ LD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	    }	    
 	}
 	if(class(model) == "character"){        
-        MLmod <- lavaan::sem(model, data=data, information='observed', ...)
+        MLmod <- lavaan::sem(model, data=data, ...)
         MLmod <- MLmod@Fit@test[[1]]$stat
         for(i in 1:nrow(data)){  
-            tmp <- lavaan::sem(model, data[-i, ], information='observed', ...)            
+            tmp <- lavaan::sem(model, data[-i, ], ...)            
             LR[i] <- tmp@Fit@test[[1]]$stat
         }
 	}

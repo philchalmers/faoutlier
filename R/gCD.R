@@ -65,8 +65,8 @@
 #' F2 =~ MissNum + MissNum + OddWrds
 #' F3 =~ Boots + Gloves + Hatchts'
 #' 
-#' (gCDresult2 <- gCD(holzinger, model, orthogonal=TRUE))      
-#' (gCDresult2.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE))
+#' (gCDresult2 <- gCD(holzinger, model))      
+#' (gCDresult2.outlier <- gCD(holzinger.outlier, model))
 #' plot(gCDresult2)
 #' plot(gCDresult2.outlier)
 #' 
@@ -111,12 +111,12 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	}
 	if(class(model) == "character"){      
         if(!require(lavaan)) require(lavaan)
-	    mod <- lavaan::sem(model, data=data, information='observed', ...)
+	    mod <- lavaan::sem(model, data=data, ...)
 	    theta <- coef(mod)
 	    gCD <- c()    
 	    DFBETAS <- matrix(0, N, length(theta))
 	    for(i in 1:nrow(data)){
-	        tmp <- lavaan::sem(model, data[-i, ], information='observed', ...)
+	        tmp <- lavaan::sem(model, data[-i, ], ...)
 	        vcovmat <- vcov(tmp)
 	        h2 <- coef(tmp)
 	        DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))

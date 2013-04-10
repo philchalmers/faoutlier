@@ -94,8 +94,8 @@ model <- 'F1 =~  Remndrs + SntComp + WrdMean
 F2 =~ MissNum + MissNum + OddWrds
 F3 =~ Boots + Gloves + Hatchts'
 
-(LDresult <- LD(holzinger, model, orthogonal=TRUE))
-(LDresult.outlier <- LD(holzinger.outlier, model, orthogonal=TRUE))
+(LDresult <- LD(holzinger, model))
+(LDresult.outlier <- LD(holzinger.outlier, model))
 plot(LDresult)
 plot(LDresult.outlier)
 

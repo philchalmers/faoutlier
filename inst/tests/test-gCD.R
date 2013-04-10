@@ -26,8 +26,8 @@ test_that('gCD run', {
     F2 =~ MissNum + MissNum + OddWrds
     F3 =~ Boots + Gloves + Hatchts'
     
-    gCDresult <- gCD(holzinger, model, orthogonal=TRUE)
-    gCDresult.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE)
+    gCDresult <- gCD(holzinger, model)
+    gCDresult.outlier <- gCD(holzinger.outlier, model)
     expect_is(gCDresult, 'gCD')
     expect_is(plot(gCDresult), 'trellis')
     expect_is(gCDresult.outlier, 'gCD')

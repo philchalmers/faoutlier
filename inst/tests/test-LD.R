@@ -26,8 +26,8 @@ test_that('LD run', {
     F2 =~ MissNum + MissNum + OddWrds
     F3 =~ Boots + Gloves + Hatchts'
     
-    LDresult <- LD(holzinger, model, orthogonal=TRUE)
-    LDresult <- LD(holzinger.outlier, model, orthogonal=TRUE)
+    LDresult <- LD(holzinger, model)
+    LDresult <- LD(holzinger.outlier, model)
     expect_is(LDresult, 'LD')
     expect_is(LDresult.outlier, 'LD')
     expect_is(plot(LDresult), 'trellis')
