@@ -23,11 +23,11 @@ test_that('LD run', {
     #-------------------------------------------------------------------
     #Confirmatory with lavaan
     model <- 'F1 =~  Remndrs + SntComp + WrdMean
-    F2 =~ MissNum + MissNum + OddWrds
+    F2 =~ MissNum + MxdArit + OddWrds
     F3 =~ Boots + Gloves + Hatchts'
     
-    LDresult <- LD(holzinger, model)
-    LDresult <- LD(holzinger.outlier, model)
+    LDresult <- LD(holzinger, model, orthogonal=TRUE)
+    LDresult <- LD(holzinger.outlier, model, orthogonal=TRUE)
     expect_is(LDresult, 'LD')
     expect_is(LDresult.outlier, 'LD')
     expect_is(plot(LDresult), 'trellis')
