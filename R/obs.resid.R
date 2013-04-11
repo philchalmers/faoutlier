@@ -7,8 +7,8 @@
 #' @aliases obs.resid
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor analysis. If \code{class(model)} is a sem then a confirmatory approach 
-#' is performed instead
+#' exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
+#' then a confirmatory approach is performed instead
 #' @param na.rm logical; remove rows with missing data? Note that this is required for 
 #' EFA analysis and \code{sem} fitted models
 #' @param digits number of digits to round in the final result
@@ -53,9 +53,20 @@
 #' (ORresult.outlier <- obs.resid(holzinger.outlier, model))
 #' plot(ORresult)
 #' plot(ORresult.outlier)
+#' 
+#' #-------------------------------------------------------------------
+#' #Confirmatory with lavaan
+#' model <- 'F1 =~  Remndrs + SntComp + WrdMean
+#' F2 =~ MissNum + MxdArit + OddWrds
+#' F3 =~ Boots + Gloves + Hatchts'
+#' 
+#' (obs.resid2 <- obs.resid(holzinger, model, orthogonal=TRUE))      
+#' (obs.resid2.outlier <- obs.resid(holzinger.outlier, model, orthogonal=TRUE))
+#' plot(obs.resid2)
+#' plot(obs.resid2.outlier)
 #'
 #' }
-obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
+obs.resid <- function(data, model, na.rm = TRUE, digits = 5, ...)
 {	
 	ret <- list()
 	rownames(data) <- 1:nrow(data)
@@ -90,6 +101,22 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5)
         colnames(eji) <- colnames(e) <- colnames(data)
         ret$res <- e
         ret$std_res <- eji        
+	}
+	if(class(model) == "character"){            
+	    if(!require(lavaan)) require(lavaan)
+        C <- cov(data)
+	    mod <- lavaan::sem(model, data=data, ...)
+        scores <- predict(mod)
+        ret$fascores <- scores       
+        Lambda <- mod@Model@GLIST$lambda
+        Theta <- mod@Model@GLIST$theta
+        Psi <- mod@Model@GLIST$psi
+        e <- data - scores %*% t(Lambda) 
+        VAR <- Theta %*% solve(C) %*% Theta
+        eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(scale(e, scale = FALSE)))
+        colnames(eji) <- colnames(e) <- colnames(data)
+        ret$res <- e
+        ret$std_res <- eji               
 	}
 	ret$id <- rownames(data)
 	class(ret) <- 'obs.resid'

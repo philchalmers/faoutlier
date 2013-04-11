@@ -4,7 +4,7 @@
 \alias{print.obs.resid}
 \title{Model predicted residual outliers}
 \usage{
-  obs.resid(data, model, na.rm = TRUE, digits = 5)
+  obs.resid(data, model, na.rm = TRUE, digits = 5, ...)
 
   \method{print}{obs.resid} (x, restype = "obs", ...)
 
@@ -17,8 +17,9 @@
 
   \item{model}{if a single numeric number declares number
   of factors to extract in exploratory factor analysis. If
-  \code{class(model)} is a sem then a confirmatory approach
-  is performed instead}
+  \code{class(model)} is a sem (semmod), or lavaan
+  (character), then a confirmatory approach is performed
+  instead}
 
   \item{na.rm}{logical; remove rows with missing data? Note
   that this is required for EFA analysis and \code{sem}
@@ -80,6 +81,17 @@ model <- specifyModel()
 (ORresult.outlier <- obs.resid(holzinger.outlier, model))
 plot(ORresult)
 plot(ORresult.outlier)
+
+#-------------------------------------------------------------------
+#Confirmatory with lavaan
+model <- 'F1 =~  Remndrs + SntComp + WrdMean
+F2 =~ MissNum + MxdArit + OddWrds
+F3 =~ Boots + Gloves + Hatchts'
+
+(obs.resid2 <- obs.resid(holzinger, model, orthogonal=TRUE))
+(obs.resid2.outlier <- obs.resid(holzinger.outlier, model, orthogonal=TRUE))
+plot(obs.resid2)
+plot(obs.resid2.outlier)
 
 }
 }

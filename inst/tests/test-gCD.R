@@ -23,11 +23,11 @@ test_that('gCD run', {
     #-------------------------------------------------------------------
     #Confirmatory with lavaan
     model <- 'F1 =~  Remndrs + SntComp + WrdMean
-    F2 =~ MissNum + MissNum + OddWrds
+    F2 =~ MissNum + MxdArit + OddWrds
     F3 =~ Boots + Gloves + Hatchts'
     
-    gCDresult <- gCD(holzinger, model)
-    gCDresult.outlier <- gCD(holzinger.outlier, model)
+    gCDresult <- gCD(holzinger, model, orthogonal=TRUE)
+    gCDresult.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE)
     expect_is(gCDresult, 'gCD')
     expect_is(plot(gCDresult), 'trellis')
     expect_is(gCDresult.outlier, 'gCD')

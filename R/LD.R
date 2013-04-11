@@ -60,11 +60,11 @@
 #' #-------------------------------------------------------------------
 #' #Confirmatory with lavaan
 #' model <- 'F1 =~  Remndrs + SntComp + WrdMean
-#' F2 =~ MissNum + MissNum + OddWrds
+#' F2 =~ MissNum + MxdArit + OddWrds
 #' F3 =~ Boots + Gloves + Hatchts'
 #' 
-#' (LDresult <- LD(holzinger, model))	  
-#' (LDresult.outlier <- LD(holzinger.outlier, model))
+#' (LDresult <- LD(holzinger, model, orthogonal=TRUE))	  
+#' (LDresult.outlier <- LD(holzinger.outlier, model, orthogonal=TRUE))
 #' plot(LDresult)
 #' plot(LDresult.outlier)
 #' 

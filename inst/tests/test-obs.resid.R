@@ -18,5 +18,17 @@ test_that('obs.resid run', {
     expect_is(ORresult, 'obs.resid')
     expect_is(ORresult.outlier, 'obs.resid')
     expect_is(plot(ORresult), 'trellis')
-    expect_is(plot(ORresult.outlier), 'trellis')    
+    expect_is(plot(ORresult.outlier), 'trellis')
+    
+    #-------------------------------------------------------------------    
+    model <- 'F1 =~  Remndrs + SntComp + WrdMean
+    F2 =~ MissNum + MxdArit + OddWrds
+    F3 =~ Boots + Gloves + Hatchts'
+    
+    obs.resid2 <- obs.resid(holzinger, model, orthogonal=TRUE)
+    obs.resid2.outlier <- obs.resid(holzinger.outlier, model, orthogonal=TRUE)
+    expect_is(obs.resid2, "obs.resid")
+    expect_is(obs.resid2.outlier, "obs.resid")
+    expect_is(plot(obs.resid2), 'trellis')
+    expect_is(plot(obs.resid2.outlier), 'trellis')
 })

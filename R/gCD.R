@@ -62,11 +62,11 @@
 #' #-------------------------------------------------------------------
 #' #Confirmatory with lavaan
 #' model <- 'F1 =~  Remndrs + SntComp + WrdMean
-#' F2 =~ MissNum + MissNum + OddWrds
+#' F2 =~ MissNum + MxdArit + OddWrds
 #' F3 =~ Boots + Gloves + Hatchts'
 #' 
-#' (gCDresult2 <- gCD(holzinger, model))      
-#' (gCDresult2.outlier <- gCD(holzinger.outlier, model))
+#' (gCDresult2 <- gCD(holzinger, model, orthogonal=TRUE))      
+#' (gCDresult2.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE))
 #' plot(gCDresult2)
 #' plot(gCDresult2.outlier)
 #' 
