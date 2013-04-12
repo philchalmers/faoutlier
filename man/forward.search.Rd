@@ -6,7 +6,7 @@
 \usage{
   forward.search(data, model, criteria = c("LD", "mah"),
     n.subsets = 1000, p.base = 0.4, na.rm = TRUE,
-    digits = 5, print.messages = TRUE)
+    digits = 5, print.messages = TRUE, ...)
 
   \method{print}{forward.search} (x, stat = "X2", ...)
 
@@ -19,8 +19,9 @@
 
   \item{model}{if a single numeric number declares number
   of factors to extract in exploratory factor analysis. If
-  \code{class(model)} is a sem then a confirmatory approach
-  is performed instead}
+  \code{class(model)} is a sem (semmod), or lavaan
+  (character), then a confirmatory approach is performed
+  instead}
 
   \item{criteria}{character strings indicating the forward
   search method Can contain \code{'LD'} for likelihood
@@ -103,6 +104,16 @@ model <- specifyModel()
 	  F1 <-> F1,   NA,     1
 	  F2 <-> F2,   NA,     1
 	  F3 <-> F3,   NA,     1
+
+(FS <- forward.search(holzinger, model))
+(FS.outlier <- forward.search(holzinger.outlier, model))
+plot(FS)
+plot(FS.outlier)
+
+#Confirmatory with lavaan
+model <- 'F1 =~  Remndrs + SntComp + WrdMean
+F2 =~ MissNum + MxdArit + OddWrds
+F3 =~ Boots + Gloves + Hatchts'
 
 (FS <- forward.search(holzinger, model))
 (FS.outlier <- forward.search(holzinger.outlier, model))

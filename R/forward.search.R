@@ -15,8 +15,8 @@
 #' @aliases forward.search
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor analysis. If \code{class(model)} is a sem then a confirmatory approach 
-#' is performed instead
+#' exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
+#' then a confirmatory approach is performed instead
 #' @param criteria character strings indicating the forward search method
 #' Can contain \code{'LD'} for likelihood distance, \code{'mah'} for Mahalanobis
 #' distance, or \code{'res'} for model implied residuals 
@@ -64,12 +64,22 @@
 #' (FS.outlier <- forward.search(holzinger.outlier, model))
 #' plot(FS)
 #' plot(FS.outlier)
+#' 
+#' #Confirmatory with lavaan 
+#' model <- 'F1 =~  Remndrs + SntComp + WrdMean
+#' F2 =~ MissNum + MxdArit + OddWrds
+#' F3 =~ Boots + Gloves + Hatchts'
+#' 
+#' (FS <- forward.search(holzinger, model))      
+#' (FS.outlier <- forward.search(holzinger.outlier, model))
+#' plot(FS)
+#' plot(FS.outlier)
 #'
 #'
 #' }
 forward.search <- function(data, model, criteria = c('LD', 'mah'), 
 	n.subsets = 1000, p.base= .4, na.rm = TRUE, digits = 5, print.messages = TRUE, ...)
-{		
+{	    
 	if(na.rm) data <- na.omit(data)
 	N <- nrow(data)
 	p <- ncol(data)
@@ -223,6 +233,77 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /	(ncol(C)*(ncol(C) + 1))))	
 	    ret <- list(LD=LDstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)	    
 	}
+	if(class(model) == "character"){         
+	    if(!require(lavaan)) require(lavaan)        
+	    STATISTICS <- rep(NA, n.subsets)
+	    for(i in 1:n.subsets){	        
+	        samplesemMod <- lavaan::sem(model, data=data[-i,], ...)
+	        STATISTICS[i] <- samplesemMod@Fit@test[[1]]$stat
+	    }        
+	    orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
+	    nbaseID <- setdiff(ID, baseID)
+	    basedata <- data[baseID, ]
+	    basemodels <- list()
+	    orderentered <- c()
+	    for (LOOP in 1:length(nbaseID)){	
+	        basemodels[[LOOP]] <- lavaan::sem(model, data=basedata, ...)	    	
+	        stat <- c()
+	        RANK <- rep(0, length(nbaseID))		
+	        if(any(criteria == 'LD')){	
+	            for(j in 1:length(nbaseID)){
+	                tmpmod <- lavaan::sem(model, data=data, ...)
+	                stat[j] <- tmpmod@Fit@test[[1]]$stat
+	            }		
+	            RANK <- RANK + rank(stat)
+	        }
+	        if(any(criteria == 'mah')){	
+	            stat <- mahalanobis(data[nbaseID, ], colMeans(data[baseID, ]), 
+	                                cov(data[baseID, ]))
+	            RANK <- RANK + rank(stat)	
+	        }
+	        if(any(criteria == 'res')){ 
+	            stat <- c()
+	            for(j in 1:length(nbaseID)){					
+	                tmp <- obs.resid(rbind(basedata, data[nbaseID[j], ]), model)
+	                stat[j] <- tmp$std_res[nrow(basedata)+1, ] %*% 
+	                    tmp$std_res[nrow(basedata)+1, ]
+	            }
+	            RANK <- RANK + rank(stat)
+	        }
+	        RANK <- rank(RANK)
+	        newID <- nbaseID[min(RANK) == RANK]
+	        if(length(newID) > 1) newID <- newID[1]
+	        orderentered <- c(orderentered, newID)
+	        baseID <- c(baseID, newID)
+	        nbaseID <- setdiff(ID, baseID)
+	        basedata <- data[baseID, ]
+	        if(print.messages){
+	            cat('Remaining iterations:', length(nbaseID), '\n')	
+	            flush.console()		
+	        }
+	    }		    
+	    basemodels[[LOOP+1]] <- lavaan::sem(model, data=data,  ...)
+	    LDstat <- RMR <- Cooksstat <- c()		
+	    for(i in 1:(length(basemodels)-1)){
+	        LDstat[i] <- basemodels[[i]]@Fit@test[[1]]$stat
+	        theta <- basemodels[[i]]@Fit@x
+	        vcov <- vcov(basemodels[[i]])
+	        theta2 <- basemodels[[i+1]]@Fit@x
+	        Cooksstat[i] <- (theta-theta2) %*% vcov %*% (theta-theta2)			
+	        Chat <- basemodels[[i]]@Fit@Sigma.hat[[1]]
+	        C <- basemodels[[i]]@SampleStats@cov[[1]]			
+	        RMR[i] <- sqrt(2*sum(((C - Chat)^2) /
+	                                 (ncol(C)*(ncol(C) + 1))))
+	    }		
+	    Cooksstat <- c(NA, Cooksstat)
+	    orderentered <- c(NA, orderentered)
+	    LDstat[i+1] <- basemodels[[i+1]]@Fit@test[[1]]$stat
+	    Chat <- basemodels[[i+1]]@Fit@Sigma.hat[[1]]
+	    C <- basemodels[[i+1]]@SampleStats@cov[[1]]
+	    RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /	(ncol(C)*(ncol(C) + 1))))	
+	    ret <- list(LD=LDstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)	    
+	}
+	
 	class(ret) <- 'forward.search'
 	ret
 }
