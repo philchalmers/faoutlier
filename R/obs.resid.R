@@ -74,7 +74,7 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	N <- nrow(data)	
 	if(is.numeric(model)){		
 		R <- cor(data)
-		mod <- factanal(data, model, rotation='none', scores = 'regression')
+		mod <- factanal(data, model, rotation='none', scores = 'regression', ...)
 		scores <- mod$scores		
 		ret$fascores <- scores
 		Lambda <- unclass(mod$loadings)
@@ -89,7 +89,7 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	if(class(model) == "semmod"){
         C <- cov(data)
         vnames <- colnames(C)
-        mod <- sem(model, C, N)
+        mod <- sem(model, C, N, ...)
         scores <- fscores(mod, data)        
         ret$fascores <- scores
         lnames <- setdiff(colnames(mod$P), vnames)

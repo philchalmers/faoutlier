@@ -77,7 +77,7 @@ LD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	if(is.numeric(model)){		
 		MLmod <- factanal(data,model)$STATISTIC		
 		for(i in 1:nrow(data)){  
-			tmp <- factanal(data[-i, ],model)
+			tmp <- factanal(data[-i, ],model, ...)
 			LR[i] <- tmp$STATISTIC
 		}
 	}

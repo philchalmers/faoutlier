@@ -68,7 +68,7 @@
 #'
 #' }
 forward.search <- function(data, model, criteria = c('LD', 'mah'), 
-	n.subsets = 1000, p.base= .4, na.rm = TRUE, digits = 5, print.messages = TRUE)
+	n.subsets = 1000, p.base= .4, na.rm = TRUE, digits = 5, print.messages = TRUE, ...)
 {		
 	if(na.rm) data <- na.omit(data)
 	N <- nrow(data)
@@ -154,7 +154,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    STATISTICS <- rep(NA, n.subsets)
 	    sampleCov <- cov(data)	    
 	    for(i in 1:n.subsets){	        
-	        samplesemMod <- sem(model, cov(data[-i,]), N-1)
+	        samplesemMod <- sem(model, cov(data[-i,]), N-1, ...)
 	        STATISTICS[i] <- samplesemMod$criterion * (samplesemMod$N - 1)
 	    }        
         orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
@@ -164,13 +164,13 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    orderentered <- c()
 	    for (LOOP in 1:length(nbaseID)){	
 	        tmpcov <- cov(basedata)
-	        basemodels[[LOOP]] <- sem(model, tmpcov, nrow(basedata))	    	
+	        basemodels[[LOOP]] <- sem(model, tmpcov, nrow(basedata), ...)	    	
 	        stat <- c()
 	        RANK <- rep(0, length(nbaseID))		
 			if(any(criteria == 'LD')){	
 				for(j in 1:length(nbaseID)){
 					tmpcov <- cov(rbind(basedata, data[nbaseID[j], ]))					
-					tmpmod <- sem(model, tmpcov, nrow(basedata) + 1)
+					tmpmod <- sem(model, tmpcov, nrow(basedata) + 1, ...)
 					stat[j] <- tmpmod$criterion * (tmpmod$N - 1)
 				}		
 				RANK <- RANK + rank(stat)
@@ -202,7 +202,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    	}
 	    }	
 	    tmpcov <- cov(data)	    
-	    basemodels[[LOOP+1]] <- sem(model, tmpcov, N)
+	    basemodels[[LOOP+1]] <- sem(model, tmpcov, N, ...)
 	    LDstat <- RMR <- Cooksstat <- c()		
 	    for(i in 1:(length(basemodels)-1)){
 	    	LDstat[i] <- basemodels[[i]]$criterion * (basemodels[[i]]$N - 1)			
