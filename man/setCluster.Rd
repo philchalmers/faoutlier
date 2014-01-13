@@ -1,0 +1,44 @@
+\name{setCluster}
+\alias{setCluster}
+\title{Define a parallel cluster object to be used in internal functions}
+\usage{
+  setCluster(ncores, remove = FALSE)
+}
+\arguments{
+  \item{ncores}{number of cores to be used in the returned
+  object which is passed to \code{parallel::makeCluster()}.
+  If no input is given the maximum number of available
+  cores will be used}
+
+  \item{remove}{logical; remove previously defined cluster
+  object?}
+}
+\description{
+  This function defines a object that is placed in a
+  relevant internal environment defined in faoutlier.
+  Internal functions will utilize this object automatically
+  to capitalize on parallel processing architecture. The
+  object defined is a call from
+  \code{parallel::makeCluster()}. Note that if you are
+  defining other parallel objects (for simulation desings,
+  for example) it is not recommended to define a cluster.
+}
+\examples{
+\dontrun{
+
+#make 4 cores available for parallel computing
+setCluster(4)
+
+#' #stop and remove cores
+setCluster(remove = TRUE)
+
+#use all available cores
+setCluster()
+
+}
+}
+\author{
+  Phil Chalmers \email{rphilip.chalmers@gmail.com}
+}
+\keyword{parallel}
+
