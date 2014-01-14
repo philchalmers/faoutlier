@@ -12,14 +12,14 @@
 #' @aliases gCD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
-#' then a confirmatory approach is performed instead
+#'   exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
+#'   then a confirmatory approach is performed instead
 #' @param na.rm logical; remove rows with missing data? Note that this is required for 
-#' EFA analysis
+#'   EFA analysis
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#' \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}
+#' \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluser}}
 #' @references
 #' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for 
 #' exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21. 
@@ -28,8 +28,9 @@
 #' @examples 
 #' 
 #' \dontrun{
-#' data(holzinger)
-#' data(holzinger.outlier)
+#' 
+#' #run all gCD functions using multiple cores
+#' setCluster()
 #'
 #' #Exploratory
 #' nfact <- 3
@@ -73,59 +74,58 @@
 #' }
 gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 {	
+    f_numeric <- function(ind, data, model, theta){        
+        tmp1 <- cor(data[-ind,])
+        tmp2 <- mlfact(tmp1, model)	
+        vcovmat <- solve(tmp2$hessian)
+        h2 <- tmp2$par 			
+        DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
+        gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
+        ret <- list(dfbeta = DFBETA, gCD = gCD)
+    }
+    f_sem <- function(ind, data, model, objective, ...){
+        tmp2 <- sem::sem(model, data=data[-ind, ], objective=objective, ...)
+        vcovmat <- tmp2$vcov
+        h2 <- tmp2$coeff 			
+        DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
+        gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
+        ret <- list(dfbeta = DFBETA, gCD = gCD)
+    }
+    f_lavaan <- function(ind, data, model, ...){
+        tmp <- lavaan::sem(model, data[-i, ], ...)
+        vcovmat <- vcov(tmp)
+        h2 <- coef(tmp)
+        DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
+        gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
+        ret <- list(dfbeta = DFBETA, gCD = gCD)
+    }
+    
 	if(na.rm) data <- na.omit(data)
 	N <- nrow(data)
+    index <- as.list(1:N)
 	if(is.numeric(model)){	
 		mod <- mlfact(cor(data), model)
-		theta <- mod$par 		
-		gCD <- c()	
-		DFBETAS <- matrix(0, N, length(theta))
-		for(i in 1:N){
-			tmp1 <- cor(data[-i,])
-			tmp2 <- mlfact(tmp1, model)	
-			vcovmat <- solve(tmp2$hessian)
-			h2 <- tmp2$par 			
-			DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
-			gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
-		}	
-		gCD <- round(gCD,digits)
-		DFBETAS <- round(DFBETAS,digits)
-		ret <- list(dfbetas = DFBETAS, gCD = gCD)
+		theta <- mod$par
+		tmp <- myLapply(index, FUN=f_numeric, theta=theta, model=model, data=data)
 	}	
 	if(class(model) == "semmod"){
-	    mod <- sem::sem(model, data=data, ...)
-	    theta <- mod$coeff		
-	    gCD <- c()	
-	    DFBETAS <- matrix(0, N, length(theta))
-	    for(i in 1:nrow(data)){
-	        tmp1 <- cov(data[-i, ])
-	        tmp2 <- sem::sem(model, tmp1, N-1, ...)
-	        vcovmat <- tmp2$vcov
-	        h2 <- tmp2$coeff 			
-	        DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
-	        gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
-	    }	
-	    gCD <- round(gCD,digits)
-	    DFBETAS <- round(DFBETAS,digits)
-	    ret <- list(dfbetas = DFBETAS, gCD = gCD)    
+	    objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
+	    mod <- sem::sem(model, data=data, objective=objective, ...)
+	    theta <- mod$coeff
+	    tmp <- myLapply(index, FUN=f_sem, theta=theta, model=model, data=data, 
+                        objective=objective, ...)    
 	}
 	if(class(model) == "character"){      
         if(!require(lavaan)) require(lavaan)
 	    mod <- lavaan::sem(model, data=data, ...)
 	    theta <- coef(mod)
-	    gCD <- c()    
-	    DFBETAS <- matrix(0, N, length(theta))
-	    for(i in 1:nrow(data)){
-	        tmp <- lavaan::sem(model, data[-i, ], ...)
-	        vcovmat <- vcov(tmp)
-	        h2 <- coef(tmp)
-	        DFBETAS[i, ] <- (theta - h2)/sqrt(diag(vcovmat))
-	        gCD[i] <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
-	    }
-	    gCD <- round(gCD,digits)
-	    DFBETAS <- round(DFBETAS,digits)
-	    ret <- list(dfbetas = DFBETAS, gCD = gCD)    
+        tmp <- myLapply(index, FUN=f_lavaan, theta=theta, model=model, data=data, ...)    
 	}
+    gCD <- lapply(tmp, function(x) x$gCD)
+    gCD <- do.call(c, gCD)
+    dfbetas <- lapply(tmp, function(x) x$dfbeta)
+    dfbetas <- do.call(rbind, dfbetas)
+    ret <- list(dfbetas = dfbetas, gCD = gCD)    
 	class(ret) <- 'gCD'
 	ret	
 }

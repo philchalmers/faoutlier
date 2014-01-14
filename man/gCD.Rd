@@ -61,8 +61,9 @@
 }
 \examples{
 \dontrun{
-data(holzinger)
-data(holzinger.outlier)
+
+#run all gCD functions using multiple cores
+setCluster()
 
 #Exploratory
 nfact <- 3
@@ -116,7 +117,7 @@ plot(gCDresult2.outlier)
 }
 \seealso{
   \code{\link{LD}}, \code{\link{obs.resid}},
-  \code{\link{robustMD}}
+  \code{\link{robustMD}}, \code{\link{setCluser}}
 }
 \keyword{cooks}
 

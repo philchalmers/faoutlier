@@ -4,9 +4,9 @@
 \alias{print.LD}
 \title{Likelihood Distance}
 \usage{
-  LD(data, model, na.rm = TRUE, digits = 5, ...)
+  LD(data, model, na.rm = TRUE, ...)
 
-  \method{print}{LD} (x, ncases = 10, ...)
+  \method{print}{LD} (x, ncases = 10, digits = 5, ...)
 
   \method{plot}{LD} (x, y = NULL,
     main = "Likelihood Distance", type = c("p", "h"),
@@ -24,12 +24,12 @@
   \item{na.rm}{logical; remove rows with missing data? Note
   that this is required for EFA analysis}
 
-  \item{digits}{number of digits to round in the final
-  result}
-
   \item{x}{an object of class \code{LD}}
 
   \item{ncases}{number of extreme cases to display}
+
+  \item{digits}{number of digits to round in the printed
+  result}
 
   \item{...}{additional parameters to be passed}
 
@@ -57,8 +57,9 @@
 }
 \examples{
 \dontrun{
-data(holzinger)
-data(holzinger.outlier)
+
+#run all LD functions using multiple cores
+setCluster()
 
 #Exploratory
 nfact <- 3
@@ -112,7 +113,7 @@ plot(LDresult.outlier)
 }
 \seealso{
   \code{\link{gCD}}, \code{\link{obs.resid}},
-  \code{\link{robustMD}}
+  \code{\link{robustMD}}, \code{\link{setCluser}}
 }
 \keyword{cooks}
 

@@ -80,8 +80,9 @@
 }
 \examples{
 \dontrun{
-data(holzinger)
-data(holzinger.outlier)
+
+#run all internal gCD and LD functions using multiple cores
+setCluster()
 
 #Exploratory
 nfact <- 3
@@ -128,7 +129,7 @@ plot(FS.outlier)
 }
 \seealso{
   \code{\link{gCD}}, \code{\link{LD}},
-  \code{\link{robustMD}}
+  \code{\link{robustMD}}, \code{\link{setCluser}}
 }
 \keyword{forward.search}
 

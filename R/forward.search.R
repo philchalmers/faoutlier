@@ -15,29 +15,30 @@
 #' @aliases forward.search
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
-#' then a confirmatory approach is performed instead
+#'   exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
+#'   then a confirmatory approach is performed instead
 #' @param criteria character strings indicating the forward search method
-#' Can contain \code{'LD'} for likelihood distance, \code{'mah'} for Mahalanobis
-#' distance, or \code{'res'} for model implied residuals 
+#'   Can contain \code{'LD'} for likelihood distance, \code{'mah'} for Mahalanobis
+#'   distance, or \code{'res'} for model implied residuals 
 #' @param n.subsets a scalar indicating how many samples to draw to find 
-#' a homogeneous starting base group
+#'   a homogeneous starting base group
 #' @param p.base proportion of sample size to use as the base group
 #' @param na.rm logical; remove rows with missing data? Note that this is required for 
-#' EFA analysis and \code{sem} fitted models
+#'   EFA analysis and \code{sem} fitted models
 #' @param digits number of digits to round in the final result
 #' @param print.messages logical; print how many iterations are remaining?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#' \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}
+#' \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}, \code{\link{setCluser}}
 #' @keywords forward.search
 #' @export forward.search
 #' @examples 
 #' 
 #' \dontrun{
-#' data(holzinger)
-#' data(holzinger.outlier)
 #'
+#' #run all internal gCD and LD functions using multiple cores
+#' setCluster()
+#' 
 #' #Exploratory
 #' nfact <- 3
 #' (FS <- forward.search(holzinger, nfact))
@@ -313,8 +314,8 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 #' @method print forward.search
 #' @param x an object of class \code{forward.search}
 #' @param stat type of statistic to use. Could be 'X2', 'RMR', or 'gCD' for 
-#' the model chi squared value, root mean square residual, or generalized Cook's distance,  
-#' respectively
+#'   the model chi squared value, root mean square residual, or generalized Cook's distance,  
+#'   respectively
 #' @param ... additional parameters to be passed
 print.forward.search <- function(x, stat = 'X2', ...)
 {

@@ -10,14 +10,13 @@
 #' @aliases LD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor analysis. If \code{class(model)} is a sem (semmod), lavaan (character), 
-#' then a confirmatory approach is performed instead
+#'   exploratory factor analysis. If \code{class(model)} is a sem (semmod), lavaan (character), 
+#'   then a confirmatory approach is performed instead
 #' @param na.rm logical; remove rows with missing data? Note that this is required for 
-#' EFA analysis
-#' @param digits number of digits to round in the final result
+#'   EFA analysis
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#' \code{\link{gCD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}
+#' \code{\link{gCD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluser}}
 #' @references
 #' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for 
 #' exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21.
@@ -26,9 +25,10 @@
 #' @examples 
 #' 
 #' \dontrun{
-#' data(holzinger)
-#' data(holzinger.outlier)
 #'
+#' #run all LD functions using multiple cores
+#' setCluster()
+#' 
 #' #Exploratory
 #' nfact <- 3
 #' (LDresult <- LD(holzinger, nfact))
@@ -69,36 +69,41 @@
 #' plot(LDresult.outlier)
 #' 
 #' }
-LD <- function(data, model, na.rm = TRUE, digits = 5, ...)
-{		
+LD <- function(data, model, na.rm = TRUE, ...)
+{	
+    f_numeric <- function(ind, data, model, ...){
+        tmp <- factanal(data[-ind, ], model, ...)
+        tmp$STATISTIC
+    }
+    f_sem <- function(ind, data, model, objective, ...){
+        tmp <- sem::sem(model, data=data[-ind, ], objective=objective, ...)
+        tmp$criterion * (tmp$N - 1)
+    }
+    f_lavaan <- function(ind, data, model, ...){
+        tmp <- lavaan::sem(model, data=data[-ind, ], ...)            
+        tmp@Fit@test[[1L]]$stat
+    }
+    
 	rownames(data) <- 1:nrow(data)
 	if(na.rm) data <- na.omit(data)
-	LR <- c()
+    index <- matrix(1L:nrow(data))
 	if(is.numeric(model)){		
-		MLmod <- factanal(data,model)$STATISTIC		
-		for(i in 1:nrow(data)){  
-			tmp <- factanal(data[-i, ],model, ...)
-			LR[i] <- tmp$STATISTIC
-		}
+		MLmod <- factanal(data,model, ...)$STATISTIC
+		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, data=data, model=model, ...)
 	}
 	if(class(model) == "semmod"){
-	    MLmod <- sem::sem(model, data=data)
-        MLmod <- MLmod$criterion * MLmod$N	    
-	    for(i in 1:nrow(data)){  
-	        tmp <- sem::sem(model, cov(data[-i, ]), nrow(data) - 1, ...)            
-	        LR[i] <- tmp$criterion * (tmp$N - 1)
-	    }	    
+        objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
+	    MLmod <- sem::sem(model, data=data, objective=objective, ...)
+        MLmod <- MLmod$criterion * (MLmod$N - 1)
+	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, data=data, model=model, objective=objective, ...)
 	}
-	if(class(model) == "character"){        
+	if(class(model) == "character"){
         MLmod <- lavaan::sem(model, data=data, ...)
         MLmod <- MLmod@Fit@test[[1]]$stat
-        for(i in 1:nrow(data)){  
-            tmp <- lavaan::sem(model, data[-i, ], ...)            
-            LR[i] <- tmp@Fit@test[[1]]$stat
-        }
+        LR <- myApply(index, MARGIN=1L, FUN=f_lavaan, data=data, model=model, ...)
 	}
 	deltaX2 <- LR - MLmod 	
-	deltaX2 <- round(deltaX2, digits)
+	deltaX2 <- deltaX2
 	names(deltaX2) <- rownames(data)
 	class(deltaX2) <- 'LD'
 	deltaX2
@@ -109,8 +114,9 @@ LD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 #' @method print LD
 #' @param x an object of class \code{LD}
 #' @param ncases number of extreme cases to display
+#' @param digits number of digits to round in the printed result
 #' @param ... additional parameters to be passed 
-print.LD <- function(x, ncases = 10, ...)
+print.LD <- function(x, ncases = 10, digits = 5, ...)
 {
 	sorted <- sort(x)
 	if(ncases %% 2 != 0) ncases <- ncases + 1
@@ -119,7 +125,7 @@ print.LD <- function(x, ncases = 10, ...)
 	ret <- matrix(sorted)
 	rownames(ret) <- names(sorted)
 	colnames(ret) <- 'LD'
-	return(print(ret))	
+	return(print(round(ret, digits)))	
 }
 
 #' @S3method plot LD

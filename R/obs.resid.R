@@ -7,10 +7,10 @@
 #' @aliases obs.resid
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#' exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
-#' then a confirmatory approach is performed instead
+#'   exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
+#'   then a confirmatory approach is performed instead
 #' @param na.rm logical; remove rows with missing data? Note that this is required for 
-#' EFA analysis and \code{sem} fitted models
+#'   EFA analysis and \code{sem} fitted models
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
@@ -128,8 +128,8 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5, ...)
 #' @method print obs.resid
 #' @param x an object of class \code{obs.resid}
 #' @param restype type of residual used, either \code{'obs'} for observation value  
-#' (inner product), \code{'res'} or \code{'std_res'} for unstandardized and standardized 
-#' for each variable, respectively  
+#'   (inner product), \code{'res'} or \code{'std_res'} for unstandardized and standardized 
+#'   for each variable, respectively  
 #' @param ... additional parameters to be passed 
 print.obs.resid <- function(x, restype = 'obs', ...)
 {
