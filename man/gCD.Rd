@@ -4,14 +4,12 @@
 \alias{print.gCD}
 \title{Generalized Cook's Distance}
 \usage{
-  gCD(data, model, na.rm = TRUE, digits = 5, ...)
+gCD(data, model, na.rm = TRUE, digits = 5, ...)
 
-  \method{print}{gCD} (x, head = 0.05, DFBETAS = FALSE,
-    ...)
+\method{print}{gCD}(x, head = 0.05, DFBETAS = FALSE, ...)
 
-  \method{plot}{gCD} (x, y = NULL,
-    main = "Generalized Cook Distance", type = c("p", "h"),
-    ylab = "gCD", ...)
+\method{plot}{gCD}(x, y = NULL, main = "Generalized Cook Distance",
+  type = c("p", "h"), ylab = "gCD", ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -49,15 +47,13 @@
   \item{ylab}{the y label of the plot}
 }
 \description{
-  Compute generalize Cook's distances (gCD's) for
-  exploratory and confirmatory FA. Can return DFBETA matrix
-  if requested.
+Compute generalize Cook's distances (gCD's) for exploratory
+and confirmatory FA. Can return DFBETA matrix if requested.
 }
 \details{
-  Note that \code{gCD} is not limited to confirmatory
-  factor analysis and can apply to nearly any model being
-  studied where detection of influential observations is
-  important.
+Note that \code{gCD} is not limited to confirmatory factor
+analysis and can apply to nearly any model being studied
+where detection of influential observations is important.
 }
 \examples{
 \dontrun{
@@ -107,17 +103,17 @@ plot(gCDresult2.outlier)
 }
 }
 \author{
-  Phil Chalmers \email{rphilip.chalmers@gmail.com}
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \references{
-  Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old
-  and new ideas for data screening and assumption testing
-  for exploratory and confirmatory factor analysis.
-  \emph{Frontiers in Psychology, 3}, 1-21.
+Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and
+new ideas for data screening and assumption testing for
+exploratory and confirmatory factor analysis.
+\emph{Frontiers in Psychology, 3}, 1-21.
 }
 \seealso{
-  \code{\link{LD}}, \code{\link{obs.resid}},
-  \code{\link{robustMD}}, \code{\link{setCluser}}
+\code{\link{LD}}, \code{\link{obs.resid}},
+\code{\link{robustMD}}, \code{\link{setCluster}}
 }
 \keyword{cooks}
 

@@ -19,7 +19,7 @@
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#' \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluser}}
+#' \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluster}}
 #' @references
 #' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for 
 #' exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21. 
@@ -92,7 +92,7 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
         ret <- list(dfbeta = DFBETA, gCD = gCD)
     }
     f_lavaan <- function(ind, data, model, ...){
-        tmp <- lavaan::sem(model, data[-i, ], ...)
+        tmp <- lavaan::sem(model, data[-ind, ], ...)
         vcovmat <- vcov(tmp)
         h2 <- coef(tmp)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))

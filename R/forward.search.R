@@ -29,7 +29,7 @@
 #' @param print.messages logical; print how many iterations are remaining?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#' \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}, \code{\link{setCluser}}
+#' \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}, \code{\link{setCluster}}
 #' @keywords forward.search
 #' @export forward.search
 #' @examples 

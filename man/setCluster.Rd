@@ -2,7 +2,7 @@
 \alias{setCluster}
 \title{Define a parallel cluster object to be used in internal functions}
 \usage{
-  setCluster(ncores, remove = FALSE)
+setCluster(ncores, remove = FALSE)
 }
 \arguments{
   \item{ncores}{number of cores to be used in the returned
@@ -14,14 +14,14 @@
   object?}
 }
 \description{
-  This function defines a object that is placed in a
-  relevant internal environment defined in faoutlier.
-  Internal functions will utilize this object automatically
-  to capitalize on parallel processing architecture. The
-  object defined is a call from
-  \code{parallel::makeCluster()}. Note that if you are
-  defining other parallel objects (for simulation desings,
-  for example) it is not recommended to define a cluster.
+This function defines a object that is placed in a relevant
+internal environment defined in faoutlier. Internal
+functions will utilize this object automatically to
+capitalize on parallel processing architecture. The object
+defined is a call from \code{parallel::makeCluster()}. Note
+that if you are defining other parallel objects (for
+simulation desings, for example) it is not recommended to
+define a cluster.
 }
 \examples{
 \dontrun{
@@ -38,7 +38,7 @@ setCluster()
 }
 }
 \author{
-  Phil Chalmers \email{rphilip.chalmers@gmail.com}
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \keyword{parallel}
 

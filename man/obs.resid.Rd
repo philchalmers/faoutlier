@@ -4,13 +4,12 @@
 \alias{print.obs.resid}
 \title{Model predicted residual outliers}
 \usage{
-  obs.resid(data, model, na.rm = TRUE, digits = 5, ...)
+obs.resid(data, model, na.rm = TRUE, digits = 5, ...)
 
-  \method{print}{obs.resid} (x, restype = "obs", ...)
+\method{print}{obs.resid}(x, restype = "obs", ...)
 
-  \method{plot}{obs.resid} (x, y = NULL,
-    main = "Observed Residuals", type = c("p", "h"),
-    restype = "obs", ...)
+\method{plot}{obs.resid}(x, y = NULL, main = "Observed Residuals",
+  type = c("p", "h"), restype = "obs", ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -46,8 +45,8 @@
   and lines}
 }
 \description{
-  Compute model predicted residuals for each variable using
-  regression estimated factor scores.
+Compute model predicted residuals for each variable using
+regression estimated factor scores.
 }
 \examples{
 \dontrun{
@@ -96,17 +95,16 @@ plot(obs.resid2.outlier)
 }
 }
 \author{
-  Phil Chalmers \email{rphilip.chalmers@gmail.com}
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \references{
-  Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old
-  and new ideas for data screening and assumption testing
-  for exploratory and confirmatory factor analysis.
-  \emph{Frontiers in Psychology, 3}, 1-21.
+Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and
+new ideas for data screening and assumption testing for
+exploratory and confirmatory factor analysis.
+\emph{Frontiers in Psychology, 3}, 1-21.
 }
 \seealso{
-  \code{\link{gCD}}, \code{\link{LD}},
-  \code{\link{robustMD}}
+\code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}
 }
 \keyword{covariance}
 

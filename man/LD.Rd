@@ -4,13 +4,12 @@
 \alias{print.LD}
 \title{Likelihood Distance}
 \usage{
-  LD(data, model, na.rm = TRUE, ...)
+LD(data, model, na.rm = TRUE, ...)
 
-  \method{print}{LD} (x, ncases = 10, digits = 5, ...)
+\method{print}{LD}(x, ncases = 10, digits = 5, ...)
 
-  \method{plot}{LD} (x, y = NULL,
-    main = "Likelihood Distance", type = c("p", "h"),
-    ylab = "LD", absolute = FALSE, ...)
+\method{plot}{LD}(x, y = NULL, main = "Likelihood Distance", type = c("p",
+  "h"), ylab = "LD", absolute = FALSE, ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -47,13 +46,13 @@
   deviations?}
 }
 \description{
-  Compute likelihood distances between models when removing
-  the \eqn{i_{th}} case.
+Compute likelihood distances between models when removing
+the \eqn{i_{th}} case.
 }
 \details{
-  Note that \code{LD} is not limited to confirmatory factor
-  analysis and can apply to nearly any model being studied
-  where detection of influential observations is important.
+Note that \code{LD} is not limited to confirmatory factor
+analysis and can apply to nearly any model being studied
+where detection of influential observations is important.
 }
 \examples{
 \dontrun{
@@ -103,17 +102,17 @@ plot(LDresult.outlier)
 }
 }
 \author{
-  Phil Chalmers \email{rphilip.chalmers@gmail.com}
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \references{
-  Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old
-  and new ideas for data screening and assumption testing
-  for exploratory and confirmatory factor analysis.
-  \emph{Frontiers in Psychology, 3}, 1-21.
+Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and
+new ideas for data screening and assumption testing for
+exploratory and confirmatory factor analysis.
+\emph{Frontiers in Psychology, 3}, 1-21.
 }
 \seealso{
-  \code{\link{gCD}}, \code{\link{obs.resid}},
-  \code{\link{robustMD}}, \code{\link{setCluser}}
+\code{\link{gCD}}, \code{\link{obs.resid}},
+\code{\link{robustMD}}, \code{\link{setCluster}}
 }
 \keyword{cooks}
 

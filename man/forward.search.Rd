@@ -4,15 +4,13 @@
 \alias{print.forward.search}
 \title{Forward search algorithm for outlier detection}
 \usage{
-  forward.search(data, model, criteria = c("LD", "mah"),
-    n.subsets = 1000, p.base = 0.4, na.rm = TRUE,
-    digits = 5, print.messages = TRUE, ...)
+forward.search(data, model, criteria = c("LD", "mah"), n.subsets = 1000,
+  p.base = 0.4, na.rm = TRUE, digits = 5, print.messages = TRUE, ...)
 
-  \method{print}{forward.search} (x, stat = "X2", ...)
+\method{print}{forward.search}(x, stat = "X2", ...)
 
-  \method{plot}{forward.search} (x, y = NULL, stat = "X2",
-    main = "Forward Search", type = c("p", "h"),
-    ylab = "obs.resid", ...)
+\method{plot}{forward.search}(x, y = NULL, stat = "X2",
+  main = "Forward Search", type = c("p", "h"), ylab = "obs.resid", ...)
 }
 \arguments{
   \item{data}{matrix or data.frame}
@@ -63,20 +61,20 @@
   \item{ylab}{the y label of the plot}
 }
 \description{
-  The forward search algorithm begins by selecting a
-  homogeneous subset of cases based on a maximum likelihood
-  criteria and continues to add individual cases at each
-  iteration given an acceptance criteria. By default the
-  function add cases that contribute most to the likelihood
-  function and that have the closest robust Mahalanobis
-  distance, however model implied residuals may be included
-  as well.
+The forward search algorithm begins by selecting a
+homogeneous subset of cases based on a maximum likelihood
+criteria and continues to add individual cases at each
+iteration given an acceptance criteria. By default the
+function add cases that contribute most to the likelihood
+function and that have the closest robust Mahalanobis
+distance, however model implied residuals may be included
+as well.
 }
 \details{
-  Note that \code{forward.search} is not limited to
-  confirmatory factor analysis and can apply to nearly any
-  model being studied where detection of influential
-  observations is important.
+Note that \code{forward.search} is not limited to
+confirmatory factor analysis and can apply to nearly any
+model being studied where detection of influential
+observations is important.
 }
 \examples{
 \dontrun{
@@ -125,11 +123,11 @@ plot(FS.outlier)
 }
 }
 \author{
-  Phil Chalmers \email{rphilip.chalmers@gmail.com}
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \seealso{
-  \code{\link{gCD}}, \code{\link{LD}},
-  \code{\link{robustMD}}, \code{\link{setCluser}}
+\code{\link{gCD}}, \code{\link{LD}},
+\code{\link{robustMD}}, \code{\link{setCluster}}
 }
 \keyword{forward.search}
 
