@@ -3,7 +3,6 @@
 #' Compute model predicted residuals for each variable using regression
 #' estimated factor scores. 
 #' 
-#' 
 #' @aliases obs.resid
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
@@ -14,7 +13,7 @@
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#' \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}
+#'   \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}
 #' @references
 #' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for 
 #' exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21. 

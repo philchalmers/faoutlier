@@ -4,16 +4,15 @@
 #' computing methods found in the \code{MASS} package. This function is generally only applicable
 #' to models with continuous variables.
 #' 
-#' 
 #' @aliases robustMD 
 #' @param data matrix or data.frame 
 #' @param method type of estimation for robust means and covariance
-#' (see \code{\link{cov.rob}})
+#'   (see \code{\link{cov.rob}})
 #' @param na.rm logical; remove rows with missing data?
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#' \code{\link{gCD}}, \code{\link{obs.resid}}, \code{\link{LD}}
+#'   \code{\link{gCD}}, \code{\link{obs.resid}}, \code{\link{LD}}
 #' @references
 #' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for 
 #' exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21.
@@ -25,7 +24,6 @@
 #' data(holzinger)
 #' output <- robustMD(holzinger)
 #' output
-#' summary(output)
 #' plot(output)
 #' plot(output, type = 'qqplot')
 #' }

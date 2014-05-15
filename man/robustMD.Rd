@@ -43,7 +43,6 @@ to models with continuous variables.
 data(holzinger)
 output <- robustMD(holzinger)
 output
-summary(output)
 plot(output)
 plot(output, type = 'qqplot')
 }

@@ -2,12 +2,10 @@
 #' 
 #' Compute generalize Cook's distances (gCD's) for exploratory 
 #' and confirmatory FA. Can return DFBETA matrix if requested.
-#' 
 #'
 #' Note that \code{gCD} is not limited to confirmatory factor analysis and 
 #' can apply to nearly any model being studied
 #' where detection of influential observations is important. 
-#'
 #' 
 #' @aliases gCD
 #' @param data matrix or data.frame 
@@ -19,7 +17,7 @@
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#' \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluster}}
+#'   \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluster}}
 #' @references
 #' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for 
 #' exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21. 

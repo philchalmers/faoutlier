@@ -4,9 +4,6 @@
 #' likelihood ratio tests, model implied residuals, and various 
 #' graphical methods to help detect and summarize influential 
 #' cases that can affect exploratory and confirmatory factor analyses. 
-#'  
-#' 
-#'  
 #' 
 #' @name faoutlier
 #' @docType package

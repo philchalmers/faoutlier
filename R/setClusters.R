@@ -8,8 +8,8 @@
 #' 
 #' @aliases setCluster
 #' @param ncores number of cores to be used in the returned object which is
-#' passed to \code{parallel::makeCluster()}. If no input is given the maximum number of available
-#' cores will be used
+#'   passed to \code{parallel::makeCluster()}. If no input is given the maximum number of available
+#'   cores will be used
 #' @param remove logical; remove previously defined cluster object?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @keywords parallel
