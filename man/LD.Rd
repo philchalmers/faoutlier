@@ -5,7 +5,7 @@
 \alias{print.LD}
 \title{Likelihood Distance}
 \usage{
-LD(data, model, na.rm = TRUE, ...)
+LD(data, model, ...)
 
 \method{print}{LD}(x, ncases = 10, digits = 5, ...)
 
@@ -16,11 +16,9 @@ LD(data, model, na.rm = TRUE, ...)
 \item{data}{matrix or data.frame}
 
 \item{model}{if a single numeric number declares number of factors to extract in
-exploratory factor analysis. If \code{class(model)} is a sem (semmod), lavaan (character),
+exploratory factor analysis (requires complete dataset, i.e., no missing).
+If \code{class(model)} is a sem (semmod), or lavaan (character),
 then a confirmatory approach is performed instead}
-
-\item{na.rm}{logical; remove rows with missing data? Note that this is required for
-EFA analysis}
 
 \item{x}{an object of class \code{LD}}
 

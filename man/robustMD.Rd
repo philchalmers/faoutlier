@@ -5,9 +5,9 @@
 \alias{robustMD}
 \title{Robust Mahalanobis}
 \usage{
-robustMD(data, method = "mve", na.rm = TRUE, digits = 5)
+robustMD(data, method = "mve")
 
-\method{print}{robmah}(x, gt = 0, ...)
+\method{print}{robmah}(x, gt = 0, digits = 5, ...)
 
 \method{plot}{robmah}(x, y = NULL, type = "xyplot", main, ...)
 }
@@ -16,8 +16,6 @@ robustMD(data, method = "mve", na.rm = TRUE, digits = 5)
 
 \item{method}{type of estimation for robust means and covariance
 (see \code{\link{cov.rob}})}
-
-\item{na.rm}{logical; remove rows with missing data?}
 
 \item{digits}{number of digits to round in the final result}
 

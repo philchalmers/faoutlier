@@ -8,9 +8,6 @@
 #' @param model if a single numeric number declares number of factors to extract in 
 #'   exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
 #'   then a confirmatory approach is performed instead
-#' @param na.rm logical; remove rows with missing data? Note that this is required for 
-#'   EFA analysis and \code{sem} fitted models
-#' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
 #'   \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}
@@ -65,13 +62,14 @@
 #' plot(obs.resid2.outlier)
 #'
 #' }
-obs.resid <- function(data, model, na.rm = TRUE, digits = 5, ...)
+obs.resid <- function(data, model, ...)
 {	
 	ret <- list()
 	rownames(data) <- 1:nrow(data)
-	if(na.rm) data <- na.omit(data)	
 	N <- nrow(data)	
-	if(is.numeric(model)){		
+	if(any(is.na(data)))
+	    stop('All routines require complete datasets (no NA\'s)')
+	if(is.numeric(model)){
 		R <- cor(data)
 		mod <- factanal(data, model, rotation='none', scores = 'regression', ...)
 		scores <- mod$scores		
@@ -101,11 +99,10 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5, ...)
         ret$res <- e
         ret$std_res <- eji        
 	}
-	if(class(model) == "character"){            
-	    if(!require(lavaan)) require(lavaan)
+	if(class(model) == "character"){
         C <- cov(data)
 	    mod <- lavaan::sem(model, data=data, ...)
-        scores <- predict(mod)
+        scores <- lavaan::predict(mod)
         ret$fascores <- scores       
         Lambda <- mod@Model@GLIST$lambda
         Theta <- mod@Model@GLIST$theta

@@ -10,10 +10,9 @@
 #' @aliases LD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#'   exploratory factor analysis. If \code{class(model)} is a sem (semmod), lavaan (character), 
+#'   exploratory factor analysis (requires complete dataset, i.e., no missing). 
+#'   If \code{class(model)} is a sem (semmod), or lavaan (character), 
 #'   then a confirmatory approach is performed instead
-#' @param na.rm logical; remove rows with missing data? Note that this is required for 
-#'   EFA analysis
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
 #'   \code{\link{gCD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluster}}
@@ -69,7 +68,7 @@
 #' plot(LDresult.outlier)
 #' 
 #' }
-LD <- function(data, model, na.rm = TRUE, ...)
+LD <- function(data, model, ...)
 {	
     f_numeric <- function(ind, data, model, ...){
         tmp <- factanal(data[-ind, ], model, ...)
@@ -85,10 +84,11 @@ LD <- function(data, model, na.rm = TRUE, ...)
     }
     
 	rownames(data) <- 1:nrow(data)
-	if(na.rm) data <- na.omit(data)
     index <- matrix(1L:nrow(data))
 	if(is.numeric(model)){		
-		MLmod <- factanal(data,model, ...)$STATISTIC
+	    if(any(is.na(data)))
+	        stop('Numeric model requires complete dataset (no NA\'s)')
+		MLmod <- factanal(data, model, ...)$STATISTIC
 		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, data=data, model=model, ...)
 	}
 	if(class(model) == "semmod"){

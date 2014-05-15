@@ -6,7 +6,7 @@
 \title{Forward search algorithm for outlier detection}
 \usage{
 forward.search(data, model, criteria = c("LD", "mah"), n.subsets = 1000,
-  p.base = 0.4, na.rm = TRUE, digits = 5, print.messages = TRUE, ...)
+  p.base = 0.4, print.messages = TRUE, ...)
 
 \method{print}{forward.search}(x, stat = "X2", ...)
 
@@ -28,11 +28,6 @@ distance, or \code{'res'} for model implied residuals}
 a homogeneous starting base group}
 
 \item{p.base}{proportion of sample size to use as the base group}
-
-\item{na.rm}{logical; remove rows with missing data? Note that this is required for
-EFA analysis and \code{sem} fitted models}
-
-\item{digits}{number of digits to round in the final result}
 
 \item{print.messages}{logical; print how many iterations are remaining?}
 

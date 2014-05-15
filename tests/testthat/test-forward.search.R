@@ -10,7 +10,7 @@ test_that('forward.search run', {
     
     #-------------------------------------------------------------------    
     suppressMessages(model <- specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))    
-    FS.outlier <- forward.search(holzinger.outlier, model, print.messages = FALSE)
+    FS.outlier <- suppressWarnings(forward.search(holzinger.outlier, model, print.messages = FALSE))
     expect_is(FS.outlier, 'forward.search')
     expect_is(plot(FS.outlier), 'trellis')
     

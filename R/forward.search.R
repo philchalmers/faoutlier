@@ -22,9 +22,6 @@
 #' @param n.subsets a scalar indicating how many samples to draw to find 
 #'   a homogeneous starting base group
 #' @param p.base proportion of sample size to use as the base group
-#' @param na.rm logical; remove rows with missing data? Note that this is required for 
-#'   EFA analysis and \code{sem} fitted models
-#' @param digits number of digits to round in the final result
 #' @param print.messages logical; print how many iterations are remaining?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
@@ -79,9 +76,11 @@
 #'
 #' }
 forward.search <- function(data, model, criteria = c('LD', 'mah'), 
-	n.subsets = 1000, p.base= .4, na.rm = TRUE, digits = 5, print.messages = TRUE, ...)
+	n.subsets = 1000, p.base= .4, print.messages = TRUE, ...)
 {	    
-	if(na.rm) data <- na.omit(data)
+    if(any(is.na(data)))
+        stop('All routines require complete datasets (no NA\'s) so that the search
+             gives meaninful results.')
 	N <- nrow(data)
 	p <- ncol(data)
 	ID <- 1:N

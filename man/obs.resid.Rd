@@ -5,7 +5,7 @@
 \alias{print.obs.resid}
 \title{Model predicted residual outliers}
 \usage{
-obs.resid(data, model, na.rm = TRUE, digits = 5, ...)
+obs.resid(data, model, ...)
 
 \method{print}{obs.resid}(x, restype = "obs", ...)
 
@@ -18,11 +18,6 @@ obs.resid(data, model, na.rm = TRUE, digits = 5, ...)
 \item{model}{if a single numeric number declares number of factors to extract in
 exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character),
 then a confirmatory approach is performed instead}
-
-\item{na.rm}{logical; remove rows with missing data? Note that this is required for
-EFA analysis and \code{sem} fitted models}
-
-\item{digits}{number of digits to round in the final result}
 
 \item{x}{an object of class \code{obs.resid}}
 

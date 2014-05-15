@@ -10,11 +10,9 @@
 #' @aliases gCD
 #' @param data matrix or data.frame 
 #' @param model if a single numeric number declares number of factors to extract in 
-#'   exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
+#'   exploratory factor analysis (requires complete dataset, i.e., no missing). 
+#'   If \code{class(model)} is a sem (semmod), or lavaan (character), 
 #'   then a confirmatory approach is performed instead
-#' @param na.rm logical; remove rows with missing data? Note that this is required for 
-#'   EFA analysis
-#' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
 #'   \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluster}}
@@ -70,7 +68,7 @@
 #' plot(gCDresult2.outlier)
 #' 
 #' }
-gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
+gCD <- function(data, model, ...)
 {	
     f_numeric <- function(ind, data, model, theta){        
         tmp1 <- cor(data[-ind,])
@@ -98,10 +96,11 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
         ret <- list(dfbeta = DFBETA, gCD = gCD)
     }
     
-	if(na.rm) data <- na.omit(data)
 	N <- nrow(data)
     index <- as.list(1:N)
 	if(is.numeric(model)){	
+	    if(any(is.na(data)))
+	        stop('Numeric model requires complete dataset (no NA\'s)')
 		mod <- mlfact(cor(data), model)
 		theta <- mod$par
 		tmp <- myLapply(index, FUN=f_numeric, theta=theta, model=model, data=data)
@@ -113,10 +112,9 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	    tmp <- myLapply(index, FUN=f_sem, theta=theta, model=model, data=data, 
                         objective=objective, ...)    
 	}
-	if(class(model) == "character"){      
-        if(!require(lavaan)) require(lavaan)
+	if(class(model) == "character"){
 	    mod <- lavaan::sem(model, data=data, ...)
-	    theta <- coef(mod)
+	    theta <- lavaan::coef(mod)
         tmp <- myLapply(index, FUN=f_lavaan, theta=theta, model=model, data=data, ...)    
 	}
     gCD <- lapply(tmp, function(x) x$gCD)

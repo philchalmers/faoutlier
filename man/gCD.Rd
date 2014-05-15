@@ -5,7 +5,7 @@
 \alias{print.gCD}
 \title{Generalized Cook's Distance}
 \usage{
-gCD(data, model, na.rm = TRUE, digits = 5, ...)
+gCD(data, model, ...)
 
 \method{print}{gCD}(x, head = 0.05, DFBETAS = FALSE, ...)
 
@@ -16,13 +16,9 @@ gCD(data, model, na.rm = TRUE, digits = 5, ...)
 \item{data}{matrix or data.frame}
 
 \item{model}{if a single numeric number declares number of factors to extract in
-exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character),
+exploratory factor analysis (requires complete dataset, i.e., no missing).
+If \code{class(model)} is a sem (semmod), or lavaan (character),
 then a confirmatory approach is performed instead}
-
-\item{na.rm}{logical; remove rows with missing data? Note that this is required for
-EFA analysis}
-
-\item{digits}{number of digits to round in the final result}
 
 \item{x}{an object of class \code{gCD}}
 
