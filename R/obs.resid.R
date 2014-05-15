@@ -137,7 +137,7 @@ print.obs.resid <- function(x, restype = 'obs', ...)
 	stat <- c()    
 	for(i in 1:length(x$id))
 		stat[i] <- x$std_res[i, ] %*% x$std_res[i, ]
-    if(restype == 'obs') return(print(stat))
+    if(restype == 'obs') return(stat)
 }
 
 #' @rdname obs.resid

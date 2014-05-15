@@ -12,7 +12,7 @@ test_that('obs.resid run', {
     expect_is(plot(ORresult.outlier), 'trellis')    
     
     #-------------------------------------------------------------------    
-    suppressMessages(model <- specifyModel(file='sem-model.txt', quiet=TRUE))    
+    suppressMessages(model <- specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))    
     ORresult <- obs.resid(holzinger, model)
     ORresult.outlier <- obs.resid(holzinger.outlier, model)
     expect_is(ORresult, 'obs.resid')
@@ -31,4 +31,23 @@ test_that('obs.resid run', {
     expect_is(obs.resid2.outlier, "obs.resid")
     expect_is(plot(obs.resid2), 'trellis')
     expect_is(plot(obs.resid2.outlier), 'trellis')
+})
+
+test_that('gCD categorical', {
+    set.seed(1234)
+    cut <- rnorm(ncol(holzinger.outlier), 0 , .25)
+    dat <- holzinger.outlier
+    for(i in 1:length(cut))
+        dat[,i] <- ifelse(holzinger.outlier[,i] < cut[i], 0, 1)
+    
+    dat <- as.data.frame(dat)
+    model <- 'F1 =~  Remndrs + SntComp + WrdMean
+    F2 =~ MissNum + MxdArit + OddWrds
+    F3 =~ Boots + Gloves + Hatchts'
+    
+    obs.resid2 <- obs.resid(dat, model, orthogonal=TRUE, ordered=colnames(dat))
+    expect_is(obs.resid2, "obs.resid")
+    out <- print(obs.resid2)
+    expect_equal(head(out), c(7.936152, 2.542361, 3.686347, 41.886093, 43.566606, 43.181056),
+                 tolerance = 1e-4)
 })

@@ -83,7 +83,7 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
         ret <- list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_sem <- function(ind, data, model, objective, ...){
+    f_sem <- function(ind, data, model, objective, theta, ...){
         tmp2 <- sem::sem(model, data=data[-ind, ], objective=objective, ...)
         vcovmat <- tmp2$vcov
         h2 <- tmp2$coeff 			
@@ -91,7 +91,7 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
         ret <- list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_lavaan <- function(ind, data, model, ...){
+    f_lavaan <- function(ind, data, model, theta, ...){
         tmp <- lavaan::sem(model, data[-ind, ], ...)
         vcovmat <- vcov(tmp)
         h2 <- coef(tmp)

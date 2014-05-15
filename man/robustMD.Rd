@@ -3,14 +3,11 @@
 \alias{plot.robmah}
 \alias{print.robmah}
 \alias{robustMD}
-\alias{summary.robmah}
 \title{Robust Mahalanobis}
 \usage{
 robustMD(data, method = "mve", na.rm = TRUE, digits = 5)
 
-\method{print}{robmah}(x, ...)
-
-\method{summary}{robmah}(object, gt = 0, ...)
+\method{print}{robmah}(x, gt = 0, ...)
 
 \method{plot}{robmah}(x, y = NULL, type = "xyplot", main, ...)
 }
@@ -26,11 +23,9 @@ robustMD(data, method = "mve", na.rm = TRUE, digits = 5)
 
 \item{x}{an object of class \code{robmah}}
 
-\item{...}{additional parameters to be passed}
-
-\item{object}{an object of class \code{robmah}}
-
 \item{gt}{only print values with MD's greater than \code{gt}}
+
+\item{...}{additional parameters to be passed}
 
 \item{y}{empty parameter passed to \code{plot}}
 
@@ -40,7 +35,8 @@ robustMD(data, method = "mve", na.rm = TRUE, digits = 5)
 }
 \description{
 Obtain Mahalanobis distances using the robust
-computing methods found in the \code{MASS} package.
+computing methods found in the \code{MASS} package. This function is generally only applicable
+to models with continuous variables.
 }
 \examples{
 \dontrun{

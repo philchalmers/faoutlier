@@ -1,7 +1,8 @@
 #' Robust Mahalanobis 
 #' 
 #' Obtain Mahalanobis distances using the robust 
-#' computing methods found in the \code{MASS} package.
+#' computing methods found in the \code{MASS} package. This function is generally only applicable
+#' to models with continuous variables.
 #' 
 #' 
 #' @aliases robustMD 
@@ -49,19 +50,12 @@ robustMD <- function(data, method = 'mve', na.rm = TRUE, digits = 5)
 
 #' @rdname robustMD 
 #' @param x an object of class \code{robmah}
+#' @param gt only print values with MD's greater than \code{gt}
 #' @param ... additional parameters to be passed 
 #' @export
-print.robmah <- function(x, ...)
+print.robmah <- function(x, gt = 0, ...)
 {
-	return(print(x$mah))	
-}
-
-#' @rdname robustMD
-#' @param object an object of class \code{robmah}
-#' @param gt only print values with MD's greater than \code{gt}
-#' @export
-summary.robmah <- function(object, gt = 0, ...)
-{  
+    object <- x
     p <- object$mah_p
     t0 <- ifelse(p < .0001, 1,0)
     t1 <- ifelse(p < .001, 1, 0)
@@ -74,9 +68,9 @@ summary.robmah <- function(object, gt = 0, ...)
     nstar[nstar == 3] <- "***"
     nstar[nstar == 4] <- "****"
     ret <- data.frame(man=object$mah, p=object$mah_p, sig=nstar)
-	ret <- ret[object$mah > gt, ]
+    ret <- ret[object$mah > gt, ]
     print(ret, quote = FALSE)
-    invisible(ret)
+    invisible(ret)	
 }
 
 #' @param y empty parameter passed to \code{plot}

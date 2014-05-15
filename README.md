@@ -1,8 +1,8 @@
 #faoutlier
 
-Factor analysis outlier and influential case detection in R. Provides 
-tools useful for detecting and summarize influential cases that
-can affect exploratory and confirmatory factor analysis models. 
+Tools for detecting and summarize influential cases that
+can affect exploratory and confirmatory factor analysis models as well as
+structural equation models more generally.
 
 #Installing from Github
 

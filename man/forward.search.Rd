@@ -56,7 +56,7 @@ respectively}
 The forward search algorithm begins by selecting a homogeneous subset
 of cases based on a maximum likelihood criteria and continues to add individual
 cases at each iteration given an acceptance criteria. By default the function
-add cases that contribute most to the likelihood function and that have
+will add cases that contribute most to the likelihood function and that have
 the closest robust Mahalanobis distance, however model implied residuals
 may be included as well.
 }
