@@ -91,8 +91,8 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
     }
     f_lavaan <- function(ind, data, model, theta, ...){
         tmp <- lavaan::sem(model, data[-ind, ], ...)
-        vcovmat <- vcov(tmp)
-        h2 <- coef(tmp)
+        vcovmat <- lavaan::vcov(tmp)
+        h2 <- lavaan::coef(tmp)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)  
         ret <- list(dfbeta = DFBETA, gCD = gCD)
