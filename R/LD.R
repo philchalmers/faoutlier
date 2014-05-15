@@ -109,13 +109,12 @@ LD <- function(data, model, na.rm = TRUE, ...)
 	deltaX2
 }
 
-#' @S3method print LD
 #' @rdname LD
-#' @method print LD
 #' @param x an object of class \code{LD}
 #' @param ncases number of extreme cases to display
 #' @param digits number of digits to round in the printed result
 #' @param ... additional parameters to be passed 
+#' @export
 print.LD <- function(x, ncases = 10, digits = 5, ...)
 {
 	sorted <- sort(x)
@@ -128,14 +127,13 @@ print.LD <- function(x, ncases = 10, digits = 5, ...)
 	return(print(round(ret, digits)))	
 }
 
-#' @S3method plot LD
 #' @rdname LD
-#' @method plot LD
 #' @param y a \code{NULL} value ignored by the plotting function
 #' @param type type of plot to use, default displays points and lines
 #' @param main the main title of the plot
 #' @param ylab the y label of the plot
 #' @param absolute logical; use absolute values instead of deviations?
+#' @export
 plot.LD <- function(x, y = NULL, main = 'Likelihood Distance', 
 	type = c('p','h'), ylab = 'LD', absolute = FALSE, ...)
 {    

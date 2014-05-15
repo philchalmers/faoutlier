@@ -130,13 +130,12 @@ gCD <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	ret	
 }
 
-#' @S3method print gCD
 #' @rdname gCD
-#' @method print gCD
 #' @param x an object of class \code{gCD}
 #' @param head a ratio of how many extreme gCD cases to display
 #' @param DFBETAS logical; attach DFBETA matrix attribute to returned result? 
 #' @param ... additional parameters to be passed 
+#' @export
 print.gCD <- function(x, head = .05, DFBETAS = FALSE, ...)
 {
 	ID <- 1:length(x$gCD)
@@ -152,13 +151,12 @@ print.gCD <- function(x, head = .05, DFBETAS = FALSE, ...)
 	return(print(ret))	
 }
 
-#' @S3method plot gCD
 #' @rdname gCD
-#' @method plot gCD
 #' @param y a \code{NULL} value ignored by the plotting function
 #' @param main the main title of the plot
 #' @param type type of plot to use, default displays points and lines
 #' @param ylab the y label of the plot
+#' @export
 plot.gCD <- function(x, y = NULL, main = 'Generalized Cook Distance', 
 	type = c('p','h'), ylab = 'gCD', ...)
 {

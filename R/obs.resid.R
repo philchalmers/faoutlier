@@ -123,14 +123,13 @@ obs.resid <- function(data, model, na.rm = TRUE, digits = 5, ...)
 	ret
 }
 
-#' @S3method print obs.resid
 #' @rdname obs.resid
-#' @method print obs.resid
 #' @param x an object of class \code{obs.resid}
 #' @param restype type of residual used, either \code{'obs'} for observation value  
 #'   (inner product), \code{'res'} or \code{'std_res'} for unstandardized and standardized 
 #'   for each variable, respectively  
 #' @param ... additional parameters to be passed 
+#' @export
 print.obs.resid <- function(x, restype = 'obs', ...)
 {
     if(restype == 'res') return(print(x$res))
@@ -141,12 +140,11 @@ print.obs.resid <- function(x, restype = 'obs', ...)
     if(restype == 'obs') return(print(stat))
 }
 
-#' @S3method plot obs.resid
 #' @rdname obs.resid
-#' @method plot obs.resid
 #' @param y a \code{NULL} value ignored by the plotting function
 #' @param main the main title of the plot
 #' @param type type of plot to use, default displays points and lines
+#' @export
 plot.obs.resid <- function(x, y = NULL, main = 'Observed Residuals', 
 	type = c('p','h'), restype = 'obs', ...)
 {    

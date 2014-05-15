@@ -309,14 +309,13 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	ret
 }
 
-#' @S3method print forward.search
 #' @rdname forward.search
-#' @method print forward.search
 #' @param x an object of class \code{forward.search}
 #' @param stat type of statistic to use. Could be 'X2', 'RMR', or 'gCD' for 
 #'   the model chi squared value, root mean square residual, or generalized Cook's distance,  
 #'   respectively
 #' @param ... additional parameters to be passed
+#' @export
 print.forward.search <- function(x, stat = 'X2', ...)
 {
 	if(stat == 'X2') ret <- x$LD
@@ -326,13 +325,12 @@ print.forward.search <- function(x, stat = 'X2', ...)
 	return(print(ret))
 }
 
-#' @S3method plot forward.search
 #' @rdname forward.search
-#' @method plot forward.search
 #' @param y a \code{null} value ignored by \code{plot}
 #' @param main the main title of the plot
 #' @param type type of plot to use, default displays points and lines
 #' @param ylab the y label of the plot
+#' @export
 plot.forward.search <- function(x, y = NULL, stat = 'X2', main = 'Forward Search', 
 	type = c('p','h'), ylab = 'obs.resid', ...)
 {    

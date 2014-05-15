@@ -47,21 +47,19 @@ robustMD <- function(data, method = 'mve', na.rm = TRUE, digits = 5)
 	ret
 }
 
-#' @S3method print robmah
 #' @rdname robustMD 
-#' @method print robmah 
 #' @param x an object of class \code{robmah}
 #' @param ... additional parameters to be passed 
+#' @export
 print.robmah <- function(x, ...)
 {
 	return(print(x$mah))	
 }
 
-#' @S3method summary robmah
 #' @rdname robustMD
-#' @method summary robmah 
 #' @param object an object of class \code{robmah}
 #' @param gt only print values with MD's greater than \code{gt}
+#' @export
 summary.robmah <- function(object, gt = 0, ...)
 {  
     p <- object$mah_p
@@ -81,12 +79,11 @@ summary.robmah <- function(object, gt = 0, ...)
     invisible(ret)
 }
 
-#' @S3method plot robmah
 #' @param y empty parameter passed to \code{plot}
 #' @param type type of plot to display, can be either \code{'qqplot'} or \code{'xyplot'}
 #' @param main title for plot. If missing titles will be generated automatically
 #' @rdname robustMD
-#' @method plot robmah 
+#' @export
 plot.robmah <- function(x, y = NULL, type = 'xyplot', main, ...){    
 	mah <- x$mah
 	N <- length(mah)
