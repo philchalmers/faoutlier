@@ -17,8 +17,8 @@ check: build
 	R CMD check $(PKGNAME)_$(PKGVERS).tar.gz --as-cran
 	make clean
 
-news:
-	sed -e 's/^-/  -/' -e 's/^## *//' -e 's/^# //' <NEWS.md | fmt -80 >NEWS
+test:
+	Rscript -e 'library("testthat",quietly=TRUE);library("faoutlier",quietly=TRUE);require("methods",quietly=TRUE);test_dir("tests/testthat")' 
 
 clean:
 	$(RM) src/*.o

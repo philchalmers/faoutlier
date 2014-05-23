@@ -1,5 +1,7 @@
 context('forward.search')
 
+setCluster()
+
 test_that('forward.search run', {    
     set.seed(1234)
     
