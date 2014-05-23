@@ -240,8 +240,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /	(ncol(C)*(ncol(C) + 1))))	
 	    ret <- list(LD=LDstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)	    
 	}
-	if(class(model) == "character"){         
-	    if(!require(lavaan)) require(lavaan)
+	if(class(model) == "character"){
 	    STATISTICS <- myApply(matrix(1:n.subsets), 1, function(i, data, Samples, model){
 	        tmpdat <- data[Samples[ ,i], ]
 	        samplesemMod <- try(lavaan::sem(model, data=tmpdat, ...), TRUE)
@@ -299,7 +298,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    for(i in 1:(length(basemodels)-1)){
 	        LDstat[i] <- basemodels[[i]]@Fit@test[[1]]$stat
 	        theta <- basemodels[[i]]@Fit@x
-	        vcov <- vcov(basemodels[[i]])
+	        vcov <- lavaan::vcov(basemodels[[i]])
 	        theta2 <- basemodels[[i+1]]@Fit@x
 	        Cooksstat[i] <- (theta-theta2) %*% vcov %*% (theta-theta2)			
 	        Chat <- basemodels[[i]]@Fit@Sigma.hat[[1]]

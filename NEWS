@@ -1,0 +1,8 @@
+Changes in version 0.4
+
+  - better use of the parallel package for faster computing in most functions (most notably
+  in the forward.search implementation)
+
+  - numerical tests added for better package stability
+
+  - more flexible passing of lavaan-type models and other functions used within the package
