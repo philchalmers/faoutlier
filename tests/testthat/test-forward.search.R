@@ -24,10 +24,11 @@ test_that('forward.search run', {
     model <- 'F1 =~  Remndrs + SntComp + WrdMean
     F2 =~ MissNum + MxdArit + OddWrds
     F3 =~ Boots + Gloves + Hatchts'
-    FS.outlier <- forward.search(holzinger.outlier, model, print.messages = FALSE)
+    FS.outlier <- forward.search(holzinger.outlier, model, print.messages = FALSE, n.subsets = 200,
+                                 p.base = .7)
     expect_is(FS.outlier, 'forward.search')
     expect_is(plot(FS.outlier), 'trellis')
     expect_equal(FS.outlier$LD[c(1, length(FS.outlier$LD))], 
-                 c(13.11631, 111.39844), tolerance = 1e-5)
+                 c(26.96743, 111.39844), tolerance = 1e-5)
     
 })
