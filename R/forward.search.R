@@ -88,11 +88,11 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	for(i in 1:n.subsets)
 		Samples[ ,i] <- sample(1:N, floor(p.base*N))	
 	if(is.numeric(model)){
-		STATISTICS <- rep(NA, n.subsets)
-		for(i in 1:n.subsets){
-			mod <- factanal(data[Samples[ ,i], ], model)
-			STATISTICS[i] <- mod$STATISTIC
-		}
+		STATISTICS <- myApply(matrix(1:n.subsets), 1, function(i, data, Samples, model){
+            ret <- try(factanal(data[Samples[ ,i], ], model)$STATISTIC, TRUE)
+            if(is(ret, 'try-error')) ret <- Inf
+		    return(ret)
+		}, data=data, Samples=Samples, model=model)
 		orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
 		nbaseID <- setdiff(ID, baseID)
 		basedata <- data[baseID, ]
@@ -105,9 +105,12 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 			basemodels[[LOOP]]$R <- tmpcor
  			stat <- c()
 			RANK <- rep(0, length(nbaseID))
-			if(any(criteria == 'LD')){				
-				for(j in 1:length(nbaseID))
-					stat[j] <- mlfact(cor(rbind(basedata, data[nbaseID[j], ])), model)$value
+			if(any(criteria == 'LD')){	
+			    stat <- myApply(matrix(1:length(nbaseID)), 1, function(j, basedata, nbaseID, model){
+			        ret <- try(mlfact(cor(rbind(basedata, data[nbaseID[j], ])), model)$value, TRUE)
+			        if(is(ret, 'try-error')) ret <- Inf
+			        return(ret)
+			    }, basedata=basedata, nbaseID=nbaseID, model=model)
 				RANK <- RANK + rank(stat)
 			}
 			if(any(criteria == 'mah')){	
@@ -160,29 +163,33 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 			(ncol(Rhat)*(ncol(Rhat) + 1))))
 		ret <- list(LD=LDstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)		
 	}
-	if(class(model) == "semmod"){        
-	    STATISTICS <- rep(NA, n.subsets)
-	    sampleCov <- cov(data)	    
-	    for(i in 1:n.subsets){	        
-	        samplesemMod <- sem(model, cov(data[-i,]), N-1, ...)
-	        STATISTICS[i] <- samplesemMod$criterion * (samplesemMod$N - 1)
-	    }        
+	if(class(model) == "semmod"){
+	    sampleCov <- cov(data)
+	    STATISTICS <- myApply(matrix(1:n.subsets), 1, function(i, data, Samples, model){
+            tmpdat <- data[Samples[ ,i], ]
+	        samplesemMod <- try(sem::sem(model, cov(tmpdat), nrow(tmpdat), ...), TRUE)
+            if(is(samplesemMod, 'try-error')) return(Inf)
+            ret <- samplesemMod$criterion * (samplesemMod$N - 1)
+            return(ifelse(ret < 0, Inf, ret))
+	    }, data=data, Samples=Samples, model=model)
         orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
 	    nbaseID <- setdiff(ID, baseID)
 	    basedata <- data[baseID, ]
+	    stat <- c()
 	    basemodels <- list()
 	    orderentered <- c()
 	    for (LOOP in 1:length(nbaseID)){	
 	        tmpcov <- cov(basedata)
-	        basemodels[[LOOP]] <- sem(model, tmpcov, nrow(basedata), ...)	    	
-	        stat <- c()
+	        basemodels[[LOOP]] <- sem(model, tmpcov, nrow(basedata), ...)
 	        RANK <- rep(0, length(nbaseID))		
 			if(any(criteria == 'LD')){	
-				for(j in 1:length(nbaseID)){
-					tmpcov <- cov(rbind(basedata, data[nbaseID[j], ]))					
-					tmpmod <- sem(model, tmpcov, nrow(basedata) + 1, ...)
-					stat[j] <- tmpmod$criterion * (tmpmod$N - 1)
-				}		
+                stat <- myApply(matrix(1:length(nbaseID)), 1, function(j, basedata, nbaseID, model){
+                    tmpcov <- cov(rbind(basedata, data[nbaseID[j], ]))    				
+                    tmpmod <- try(sem::sem(model, tmpcov, nrow(basedata) + 1, ...), TRUE)
+                    if(is(tmpmod, 'try-error')) return(Inf)
+                    ret <- tmpmod$criterion * (tmpmod$N - 1)
+                    return(ifelse(ret < 0, Inf, ret))
+                }, basedata=basedata, nbaseID=nbaseID, model=model)				
 				RANK <- RANK + rank(stat)
 			}
 			if(any(criteria == 'mah')){	
@@ -234,12 +241,14 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    ret <- list(LD=LDstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)	    
 	}
 	if(class(model) == "character"){         
-	    if(!require(lavaan)) require(lavaan)        
-	    STATISTICS <- rep(NA, n.subsets)
-	    for(i in 1:n.subsets){	        
-	        samplesemMod <- lavaan::sem(model, data=data[-i,], ...)
-	        STATISTICS[i] <- samplesemMod@Fit@test[[1]]$stat
-	    }        
+	    if(!require(lavaan)) require(lavaan)
+	    STATISTICS <- myApply(matrix(1:n.subsets), 1, function(i, data, Samples, model){
+	        tmpdat <- data[Samples[ ,i], ]
+	        samplesemMod <- try(lavaan::sem(model, data=tmpdat, ...), TRUE)
+            if(is(samplesemMod, 'try-error')) return(Inf)
+            ret <- samplesemMod@Fit@test[[1]]$stat
+	        return(ifelse(is.na(ret), Inf, ret))
+	    }, data=data, Samples=Samples, model=model)
 	    orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
 	    nbaseID <- setdiff(ID, baseID)
 	    basedata <- data[baseID, ]
@@ -250,10 +259,13 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	        stat <- c()
 	        RANK <- rep(0, length(nbaseID))		
 	        if(any(criteria == 'LD')){	
-	            for(j in 1:length(nbaseID)){
-	                tmpmod <- lavaan::sem(model, data=data, ...)
-	                stat[j] <- tmpmod@Fit@test[[1]]$stat
-	            }		
+	            stat <- myApply(matrix(1:length(nbaseID)), 1, function(j, basedata, nbaseID, model){
+	                tmpdat <- rbind(basedata, data[nbaseID[j], ])        			
+	                tmpmod <- try(lavaan::sem(model, data=tmpdat, ...), TRUE)
+	                if(is(tmpmod, 'try-error')) return(Inf)
+	                ret <- tmpmod@Fit@test[[1]]$stat
+	                return(ifelse(is.na(ret), Inf, ret))
+	            }, basedata=basedata, nbaseID=nbaseID, model=model)	
 	            RANK <- RANK + rank(stat)
 	        }
 	        if(any(criteria == 'mah')){	
