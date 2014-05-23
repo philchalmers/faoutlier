@@ -10,6 +10,7 @@ test_that('gCD run', {
     expect_is(plot(gCDresult), 'trellis')
     expect_is(gCDresult.outlier, 'gCD')
     expect_is(plot(gCDresult.outlier), 'trellis')
+    expect_equal(gCDresult$gCD[1:3], c(1.646295e-04, 6.672447e-05, 1.033961e-04), tolerance=1e-5)
     
     #-------------------------------------------------------------------    
     suppressMessages(model <- specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))
@@ -19,6 +20,7 @@ test_that('gCD run', {
     expect_is(plot(gCDresult), 'trellis')
     expect_is(gCDresult.outlier, 'gCD')
     expect_is(plot(gCDresult.outlier), 'trellis')
+    expect_equal(gCDresult$gCD[1:3], c(1.339090e-05, 4.191384e-06, 3.585573e-05), tolerance=1e-5)
     
     #-------------------------------------------------------------------
     #Confirmatory with lavaan
@@ -28,8 +30,8 @@ test_that('gCD run', {
     
     gCDresult <- gCD(holzinger, model, orthogonal=TRUE)
     gCDresult.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE)
-    expect_equal(head(gCDresult.outlier$gCD), c(0.0104, 0.0000, 0.0001, 0.0001, 0.0000, 0.0002),
-                 tolerance = 1e-2)
+    expect_equal(gCDresult.outlier$gCD[1:3], c(1.040270e-02, 1.746456e-05, 8.223349e-05),
+                 tolerance = 1e-5)
     expect_is(gCDresult, 'gCD')
     expect_is(plot(gCDresult), 'trellis')
     expect_is(gCDresult.outlier, 'gCD')

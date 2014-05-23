@@ -26,12 +26,12 @@
 #' plot(output)
 #' plot(output, type = 'qqplot')
 #' }
-robustMD <- function(data, method = 'mve')
+robustMD <- function(data, method = 'mve', ...)
 {	
 	ret <- list()
 	id <- 1:nrow(data)
 	rownames(data) <- id
-	rob <- cov.rob(data, method = method)	
+	rob <- cov.rob(data, method = method, ...)	
 	ret$ID <- id
 	ret$mah <- mahalanobis(data, rob$center, rob$cov)
 	ret$mah_p <- pchisq(ret$mah, ncol(data), lower.tail = FALSE)
@@ -46,7 +46,7 @@ robustMD <- function(data, method = 'mve')
 #' @rdname robustMD 
 #' @param x an object of class \code{robmah}
 #' @param gt only print values with MD's greater than \code{gt}
-#' @param ... additional parameters to be passed 
+#' @param ... additional arguments to pass to \code{MASS::cov.rob()}
 #' @export
 print.robmah <- function(x, gt = 0, digits = 5, ...)
 {

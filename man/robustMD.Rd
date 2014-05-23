@@ -5,7 +5,7 @@
 \alias{robustMD}
 \title{Robust Mahalanobis}
 \usage{
-robustMD(data, method = "mve")
+robustMD(data, method = "mve", ...)
 
 \method{print}{robmah}(x, gt = 0, digits = 5, ...)
 
@@ -23,7 +23,7 @@ robustMD(data, method = "mve")
 
 \item{gt}{only print values with MD's greater than \code{gt}}
 
-\item{...}{additional parameters to be passed}
+\item{...}{additional arguments to pass to \code{MASS::cov.rob()}}
 
 \item{y}{empty parameter passed to \code{plot}}
 
