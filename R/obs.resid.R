@@ -69,6 +69,8 @@ obs.resid <- function(data, model, ...)
 	N <- nrow(data)	
 	if(any(is.na(data)))
 	    stop('All routines require complete datasets (no NA\'s)')
+    if(!all(sapply(data, function(x) is.numeric(x) || is.integer(x))))
+        stop('data must conist of numeric elements')
 	if(is.numeric(model)){
 		R <- cor(data)
 		mod <- factanal(data, model, rotation='none', scores = 'regression', ...)
@@ -100,6 +102,9 @@ obs.resid <- function(data, model, ...)
         ret$std_res <- eji        
 	}
 	if(class(model) == "character"){
+        dots <- list(...)
+        if(!is.null(dots$ordered))
+            stop('observed residuals only defined for continuous data')
         mod <- lavaan::sem(model, data=data, ...)
         C <- mod@SampleStats@cov[[1L]]
         scores <- lavaan::predict(mod)
