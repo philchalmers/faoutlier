@@ -100,17 +100,18 @@ obs.resid <- function(data, model, ...)
         ret$std_res <- eji        
 	}
 	if(class(model) == "character"){
-        C <- cov(data)
-	    mod <- lavaan::sem(model, data=data, ...)
+        mod <- lavaan::sem(model, data=data, ...)
+        C <- mod@SampleStats@cov[[1L]]
         scores <- lavaan::predict(mod)
         ret$fascores <- scores       
         Lambda <- mod@Model@GLIST$lambda
         Theta <- mod@Model@GLIST$theta
         Psi <- mod@Model@GLIST$psi
-        e <- data - scores %*% t(Lambda) 
+        dat <- data[,mod@Data@ov.names[[1L]]]
+        e <- dat - scores %*% t(Lambda) 
         VAR <- Theta %*% solve(C) %*% Theta
         eji <- t(solve(diag(sqrt(diag(VAR)))) %*% t(scale(e, scale = FALSE)))
-        colnames(eji) <- colnames(e) <- colnames(data)
+        colnames(eji) <- colnames(e) <- colnames(dat)
         ret$res <- e
         ret$std_res <- eji               
 	}
