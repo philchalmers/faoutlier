@@ -13,7 +13,7 @@ test_that('gCD run', {
     expect_equal(gCDresult$gCD[1:3], c(1.646295e-04, 6.672447e-05, 1.033961e-04), tolerance=1e-5)
     
     #-------------------------------------------------------------------    
-    suppressMessages(model <- specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))
+    suppressMessages(model <- sem::specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))
     gCDresult <- gCD(holzinger, model)
     gCDresult.outlier <- suppressWarnings(gCD(holzinger.outlier, model))
     expect_is(gCDresult, 'gCD')

@@ -37,7 +37,7 @@
 #'
 #' #-------------------------------------------------------------------
 #' #Confirmatory with sem
-#' model <- specifyModel()
+#' model <- sem::specifyModel()
 #'    F1 -> Remndrs,    lam11
 #' 	  F1 -> SntComp,    lam21
 #' 	  F1 -> WrdMean,    lam31

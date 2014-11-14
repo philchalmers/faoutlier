@@ -1,5 +1,5 @@
 Package: faoutlier
-Version: 0.4
+Version: 0.4.1
 Date: 2013-04-15
 Type: Package
 Title: Influential case detection methods for factor analysis and SEM
@@ -13,10 +13,10 @@ Description: Tools for detecting and summarize influential cases that
 Roxygen: list(wrap = FALSE)
 Depends:
     R (>= 2.14),
-    parallel,
-    sem
+    parallel
 Imports:
     lattice,
+    sem,
     lavaan,
     MASS
 Suggests:

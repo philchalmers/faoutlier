@@ -14,7 +14,7 @@ test_that('obs.resid run', {
     expect_is(plot(ORresult.outlier), 'trellis')    
     
     #-------------------------------------------------------------------    
-    suppressMessages(model <- specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))    
+    suppressMessages(model <- sem::specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))    
     ORresult <- obs.resid(holzinger, model)
     ORresult.outlier <- obs.resid(holzinger.outlier, model)
     expect_equal(ORresult$std_res[1:3], c(0.2548177, -0.5300287, -1.8518586),

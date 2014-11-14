@@ -13,7 +13,7 @@ test_that('forward.search run', {
     expect_equal(FS$LD[c(1, length(FS$LD))], c(3.717805, 26.293829), tolerance = 1e-5)
     
     #-------------------------------------------------------------------    
-    suppressMessages(model <- specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))    
+    suppressMessages(model <- sem::specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))    
     FS.outlier <- suppressWarnings(forward.search(holzinger.outlier, model, print.messages = FALSE))
     expect_is(FS.outlier, 'forward.search')
     expect_is(plot(FS.outlier), 'trellis')

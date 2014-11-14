@@ -1,3 +1,7 @@
+Changes in version 0.5
+
+  - avoid masking lavaan::sem with sem::sem
+
 Changes in version 0.4
 
   - better use of the parallel package for faster computing in most functions (most notably
