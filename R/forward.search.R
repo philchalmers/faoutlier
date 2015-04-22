@@ -17,7 +17,7 @@
 #'   exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan (character), 
 #'   then a confirmatory approach is performed instead
 #' @param criteria character strings indicating the forward search method
-#'   Can contain \code{'LD'} for likelihood distance, \code{'mah'} for Mahalanobis
+#'   Can contain \code{'GOF'} for goodness of fit distance, \code{'mah'} for Mahalanobis
 #'   distance, or \code{'res'} for model implied residuals 
 #' @param n.subsets a scalar indicating how many samples to draw to find 
 #'   a homogeneous starting base group
@@ -25,14 +25,15 @@
 #' @param print.messages logical; print how many iterations are remaining?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#'   \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}, \code{\link{setCluster}}
+#'   \code{\link{gCD}}, \code{\link{GOF}}, \code{\link{LD}}, 
+#'   \code{\link{robustMD}}, \code{\link{setCluster}}
 #' @keywords forward.search
 #' @export forward.search
 #' @examples 
 #' 
 #' \dontrun{
 #'
-#' #run all internal gCD and LD functions using multiple cores
+#' #run all internal gCD and GOF functions using multiple cores
 #' setCluster()
 #' 
 #' #Exploratory
@@ -75,7 +76,7 @@
 #'
 #'
 #' }
-forward.search <- function(data, model, criteria = c('LD', 'mah'), 
+forward.search <- function(data, model, criteria = c('GOF', 'mah'), 
 	n.subsets = 1000, p.base= .4, print.messages = TRUE, ...)
 {	    
     if(any(is.na(data)))
@@ -105,7 +106,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 			basemodels[[LOOP]]$R <- tmpcor
  			stat <- c()
 			RANK <- rep(0, length(nbaseID))
-			if(any(criteria == 'LD')){	
+			if(any(criteria == 'GOF')){	
 			    stat <- myApply(matrix(1:length(nbaseID)), 1, function(j, basedata, nbaseID, model){
 			        ret <- try(mlfact(cor(rbind(basedata, data[nbaseID[j], ])), model)$value, TRUE)
 			        if(is(ret, 'try-error')) ret <- Inf
@@ -142,9 +143,9 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 		basemodels[[LOOP+1]] <- mlfact(cor(data), model)	
 		basemodels[[LOOP+1]]$N <- nrow(data)
 		basemodels[[LOOP+1]]$R <- cor(data)
-		LDstat <- RMR <- Cooksstat <- c()		
+		GOFstat <- RMR <- Cooksstat <- c()		
 		for(i in 1:(length(basemodels)-1)){
-			LDstat[i] <- basemodels[[i]]$value * (length(orgbaseID) + i - 1)
+			GOFstat[i] <- basemodels[[i]]$value * (length(orgbaseID) + i - 1)
 			theta <- basemodels[[i]]$par	
 			hess <- basemodels[[i]]$hessian
 			theta2 <- basemodels[[i+1]]$par	
@@ -156,12 +157,12 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 		}
 		Cooksstat <- c(NA, Cooksstat)
 		orderentered <- c(NA, orderentered)
-		LDstat[i+1] <- basemodels[[i+1]]$value * N
+		GOFstat[i+1] <- basemodels[[i+1]]$value * N
 		Rhat <- basemodels[[i+1]]$loadings %*% t(basemodels[[i+1]]$loadings)
 		diag(Rhat) <- 1
 		RMR[i+1] <- sqrt(2*sum(((basemodels[[i+1]]$R - Rhat)^2) / 
 			(ncol(Rhat)*(ncol(Rhat) + 1))))
-		ret <- list(LD=LDstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)		
+		ret <- list(GOF=GOFstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)		
 	}
 	if(class(model) == "semmod"){
 	    sampleCov <- cov(data)
@@ -182,7 +183,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	        tmpcov <- cov(basedata)
 	        basemodels[[LOOP]] <- sem::sem(model, tmpcov, nrow(basedata), ...)
 	        RANK <- rep(0, length(nbaseID))		
-			if(any(criteria == 'LD')){	
+			if(any(criteria == 'GOF')){	
                 stat <- myApply(matrix(1:length(nbaseID)), 1, function(j, basedata, nbaseID, model){
                     tmpcov <- cov(rbind(basedata, data[nbaseID[j], ]))    				
                     tmpmod <- try(sem::sem(model, tmpcov, nrow(basedata) + 1, ...), TRUE)
@@ -220,9 +221,9 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    }	
 	    tmpcov <- cov(data)	    
 	    basemodels[[LOOP+1]] <- sem::sem(model, tmpcov, N, ...)
-	    LDstat <- RMR <- Cooksstat <- c()		
+	    GOFstat <- RMR <- Cooksstat <- c()		
 	    for(i in 1:(length(basemodels)-1)){
-	    	LDstat[i] <- basemodels[[i]]$criterion * (basemodels[[i]]$N - 1)			
+	    	GOFstat[i] <- basemodels[[i]]$criterion * (basemodels[[i]]$N - 1)			
 	    	theta <- basemodels[[i]]$coeff	
 	    	vcov <- basemodels[[i]]$vcov
 	    	theta2 <- basemodels[[i+1]]$coeff
@@ -234,11 +235,11 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    }		
 	    Cooksstat <- c(NA, Cooksstat)
 	    orderentered <- c(NA, orderentered)
-	    LDstat[i+1] <- basemodels[[i+1]]$criterion * (basemodels[[i+1]]$N - 1)
+	    GOFstat[i+1] <- basemodels[[i+1]]$criterion * (basemodels[[i+1]]$N - 1)
 	    Chat <- basemodels[[i+1]]$C
 	    C <- basemodels[[i+1]]$S
 	    RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /	(ncol(C)*(ncol(C) + 1))))	
-	    ret <- list(LD=LDstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)	    
+	    ret <- list(GOF=GOFstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)	    
 	}
 	if(class(model) == "character"){
 	    STATISTICS <- myApply(matrix(1:n.subsets), 1, function(i, data, Samples, model){
@@ -257,7 +258,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	        basemodels[[LOOP]] <- lavaan::sem(model, data=basedata, ...)	    	
 	        stat <- c()
 	        RANK <- rep(0, length(nbaseID))		
-	        if(any(criteria == 'LD')){	
+	        if(any(criteria == 'GOF')){	
 	            stat <- myApply(matrix(1:length(nbaseID)), 1, function(j, basedata, nbaseID, model){
 	                tmpdat <- rbind(basedata, data[nbaseID[j], ])        			
 	                tmpmod <- try(lavaan::sem(model, data=tmpdat, ...), TRUE)
@@ -294,9 +295,9 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	        }
 	    }		    
 	    basemodels[[LOOP+1]] <- lavaan::sem(model, data=data,  ...)
-	    LDstat <- RMR <- Cooksstat <- c()		
+	    GOFstat <- RMR <- Cooksstat <- c()		
 	    for(i in 1:(length(basemodels)-1)){
-	        LDstat[i] <- basemodels[[i]]@Fit@test[[1]]$stat
+	        GOFstat[i] <- basemodels[[i]]@Fit@test[[1]]$stat
 	        theta <- basemodels[[i]]@Fit@x
 	        vcov <- lavaan::vcov(basemodels[[i]])
 	        theta2 <- basemodels[[i+1]]@Fit@x
@@ -308,11 +309,11 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    }		
 	    Cooksstat <- c(NA, Cooksstat)
 	    orderentered <- c(NA, orderentered)
-	    LDstat[i+1] <- basemodels[[i+1]]@Fit@test[[1]]$stat
+	    GOFstat[i+1] <- basemodels[[i+1]]@Fit@test[[1]]$stat
 	    Chat <- basemodels[[i+1]]@Fit@Sigma.hat[[1]]
 	    C <- basemodels[[i+1]]@SampleStats@cov[[1]]
 	    RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /	(ncol(C)*(ncol(C) + 1))))	
-	    ret <- list(LD=LDstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)	    
+	    ret <- list(GOF=GOFstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)	    
 	}
 	
 	class(ret) <- 'forward.search'
@@ -328,7 +329,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 #' @export
 print.forward.search <- function(x, stat = 'X2', ...)
 {
-	if(stat == 'X2') ret <- x$LD
+	if(stat == 'X2') ret <- x$GOF
 	if(stat == 'RMR') ret <- x$RMR
 	if(stat == 'gCD') ret <- x$gCD
 	names(ret) <- x$ord
@@ -346,7 +347,7 @@ plot.forward.search <- function(x, y = NULL, stat = 'X2', main = 'Forward Search
 {    
 	id <- x$ord
 	Input <- 1:length(id)
-	if(stat == 'X2') stat2 <- x$LD
+	if(stat == 'X2') stat2 <- x$GOF
 	if(stat == 'RMR') stat2 <- x$RMR
 	if(stat == 'gCD') stat2 <- x$gCD
 	dat <- data.frame(stat2,Input,id)	

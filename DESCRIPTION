@@ -13,12 +13,13 @@ Description: Tools for detecting and summarize influential cases that
 Roxygen: list(wrap = FALSE)
 Depends:
     R (>= 2.14),
+    mvtnorm,
     parallel
 Imports:
     lattice,
+    sem,
     lavaan,
     mirt,
-    sem,
     MASS
 Suggests:
     testthat

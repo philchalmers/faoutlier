@@ -6,7 +6,7 @@
 \alias{print.forward.search}
 \title{Forward search algorithm for outlier detection}
 \usage{
-forward.search(data, model, criteria = c("LD", "mah"), n.subsets = 1000,
+forward.search(data, model, criteria = c("GOF", "mah"), n.subsets = 1000,
   p.base = 0.4, print.messages = TRUE, ...)
 
 \method{print}{forward.search}(x, stat = "X2", ...)
@@ -22,7 +22,7 @@ exploratory factor analysis. If \code{class(model)} is a sem (semmod), or lavaan
 then a confirmatory approach is performed instead}
 
 \item{criteria}{character strings indicating the forward search method
-Can contain \code{'LD'} for likelihood distance, \code{'mah'} for Mahalanobis
+Can contain \code{'GOF'} for goodness of fit distance, \code{'mah'} for Mahalanobis
 distance, or \code{'res'} for model implied residuals}
 
 \item{n.subsets}{a scalar indicating how many samples to draw to find
@@ -64,7 +64,7 @@ where detection of influential observations is important.
 \examples{
 \dontrun{
 
-#run all internal gCD and LD functions using multiple cores
+#run all internal gCD and GOF functions using multiple cores
 setCluster()
 
 #Exploratory
@@ -112,7 +112,8 @@ plot(FS.outlier)
 Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \seealso{
-\code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}, \code{\link{setCluster}}
+\code{\link{gCD}}, \code{\link{GOF}}, \code{\link{LD}},
+  \code{\link{robustMD}}, \code{\link{setCluster}}
 }
 \keyword{forward.search}
 

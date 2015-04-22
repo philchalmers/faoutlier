@@ -1,7 +1,6 @@
 #' Likelihood Distance
 #' 
-#' Compute likelihood distances between models when removing the \eqn{i_{th}}
-#' case.
+#' Compute likelihood distances between models when removing the \eqn{i_{th}} case.
 #' 
 #' Note that \code{LD} is not limited to confirmatory factor analysis and 
 #' can apply to nearly any model being studied
@@ -12,10 +11,13 @@
 #' @param model if a single numeric number declares number of factors to extract in 
 #'   exploratory factor analysis (requires complete dataset, i.e., no missing). 
 #'   If \code{class(model)} is a sem (semmod), or lavaan (character), 
-#'   then a confirmatory approach is performed instead
+#'   then a confirmatory approach is performed instead. Finally, if the model is defined with
+#'   \code{mirt::mirt.model()} then distances will be computed for categorical data with the 
+#'   mirt package
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#'   \code{\link{gCD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluster}}
+#'   \code{\link{gCD}}, \code{\link{GOF}}, \code{\link{obs.resid}}, 
+#'   \code{\link{robustMD}}, \code{\link{setCluster}}
 #' @references
 #' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for 
 #' exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21.
@@ -67,20 +69,32 @@
 #' plot(LDresult)
 #' plot(LDresult.outlier)
 #' 
+#' # categorical data with mirt 
+#' library(mirt)
+#' data(LSAT7)
+#' dat <- expand.table(LSAT7)
+#' model <- mirt.model('F = 1-5')
+#' LDresult <- LD(dat, model)
+#' plot(LDresult)
+#' 
 #' }
 LD <- function(data, model, ...)
 {	
     f_numeric <- function(ind, data, model, ...){
-        tmp <- factanal(data[-ind, ], model, ...)
-        tmp$STATISTIC
+        res <- factanal(data[-ind, ], model, ...)
+        Sigma <- res$loadings %*% t(res$loadings) + diag(res$uniquenesses)
+        sum(dmvnorm(data, sigma=Sigma, log=TRUE))
     }
     f_sem <- function(ind, data, model, objective, ...){
-        tmp <- sem::sem(model, data=data[-ind, ], objective=objective, ...)
-        tmp$criterion * (tmp$N - 1)
+        logLik(sem::sem(model, data=data[-ind, ], objective=objective, ...))
     }
     f_lavaan <- function(ind, data, model, ...){
-        tmp <- lavaan::sem(model, data=data[-ind, ], ...)            
-        tmp@Fit@test[[1L]]$stat
+        logLik(lavaan::sem(model, data=data[-ind, ], ...))
+    }
+    f_mirt <- function(ind, data, model, large, ...){
+        large$Freq[[1L]][ind] <- large$Freq[[1L]][ind] - 1L
+        tmp <- mirt::mirt(data=data, model=model, verbose=FALSE, large=large, ...)
+        tmp@logLik
     }
     
 	rownames(data) <- 1:nrow(data)
@@ -88,22 +102,33 @@ LD <- function(data, model, ...)
 	if(is.numeric(model)){		
 	    if(any(is.na(data)))
 	        stop('Numeric model requires complete dataset (no NA\'s)')
-		MLmod <- factanal(data, model, ...)$STATISTIC
+		MLmod <- f_numeric(nrow(data) + 1, data=data, model=model, ...)
 		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, data=data, model=model, ...)
 	}
 	if(class(model) == "semmod"){
+	    stop('semmod objects under construction') #TODO
         objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    MLmod <- sem::sem(model, data=data, objective=objective, ...)
-        MLmod <- MLmod$criterion * (MLmod$N - 1)
+	    if(requireNamespace('sem')){
+            MLmod <- logLik(MLmod)
+	    }
 	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, data=data, model=model, objective=objective, ...)
 	}
 	if(class(model) == "character"){
         MLmod <- lavaan::sem(model, data=data, ...)
-        MLmod <- MLmod@Fit@test[[1]]$stat
+        MLmod <- lavaan::logLik(MLmod)
         LR <- myApply(index, MARGIN=1L, FUN=f_lavaan, data=data, model=model, ...)
 	}
-	deltaX2 <- LR - MLmod 	
-	deltaX2 <- deltaX2
+    if(class(model) == "mirt.model"){
+        large <- MLmod_full <- mirt::mirt(data=data, model=model, large = TRUE)
+        index <- matrix(1L:length(large$Freq[[1L]]))
+        MLmod_full <- mirt::mirt(data=data, model=model, verbose = FALSE, large=large, ...)
+        MLmod <- MLmod_full@logLik
+        LR <- myApply(index, MARGIN=1L, FUN=f_mirt, data=data, model=model, large=large, ...)
+    }
+	deltaX2 <- 2*(MLmod - LR)
+	if(class(model) == "mirt.model")
+	    deltaX2 <- mirt::expand.table(cbind(as.vector(deltaX2), large$Freq[[1L]]))
 	names(deltaX2) <- rownames(data)
 	class(deltaX2) <- 'LD'
 	deltaX2
