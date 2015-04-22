@@ -34,7 +34,7 @@ setCluster <- function(ncores, remove = FALSE){
             message('There is no visible CLUSTER() definition')
             return(invisible())
         }
-        stopCluster(faoutlierClusterEnv$CLUSTER)
+        parallel::stopCluster(faoutlierClusterEnv$CLUSTER)
         faoutlierClusterEnv$CLUSTER <- NULL
         faoutlierClusterEnv$ncores <- 1L
         return(invisible())
@@ -44,10 +44,10 @@ setCluster <- function(ncores, remove = FALSE){
         return(invisible())
     }
     if(missing(ncores))
-        ncores <- detectCores()
+        ncores <- parallel::detectCores()
     if(!is.numeric(ncores))
         stop('ncores must be numeric')
-    faoutlierClusterEnv$CLUSTER <- makeCluster(ncores)
+    faoutlierClusterEnv$CLUSTER <- parallel::makeCluster(ncores)
     faoutlierClusterEnv$ncores <- as.integer(ncores)
     return(invisible())
 }

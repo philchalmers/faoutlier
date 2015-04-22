@@ -88,8 +88,8 @@ obs.resid <- function(data, model, ...)
 	if(class(model) == "semmod"){
         C <- cov(data)
         vnames <- colnames(C)
-        mod <- sem(model, C, N, ...)
-        scores <- fscores(mod, data)        
+        mod <- sem::sem(model, C, N, ...)
+        scores <- sem::fscores(mod, data)        
         ret$fascores <- scores
         lnames <- setdiff(colnames(mod$P), vnames)
         Lambda <- mod$A[1:length(vnames), (length(vnames)+1):ncol(mod$A)]

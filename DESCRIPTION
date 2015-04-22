@@ -1,5 +1,5 @@
 Package: faoutlier
-Version: 0.4.1
+Version: 0.4.2
 Date: 2013-04-15
 Type: Package
 Title: Influential case detection methods for factor analysis and SEM
@@ -16,8 +16,9 @@ Depends:
     parallel
 Imports:
     lattice,
-    sem,
     lavaan,
+    mirt,
+    sem,
     MASS
 Suggests:
     testthat

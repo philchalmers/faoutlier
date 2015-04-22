@@ -4,3 +4,4 @@ test/
 COPYING
 Makefile
 .travis.yml
+.Rprofile

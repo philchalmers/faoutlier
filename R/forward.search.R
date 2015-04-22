@@ -180,7 +180,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    orderentered <- c()
 	    for (LOOP in 1:length(nbaseID)){	
 	        tmpcov <- cov(basedata)
-	        basemodels[[LOOP]] <- sem(model, tmpcov, nrow(basedata), ...)
+	        basemodels[[LOOP]] <- sem::sem(model, tmpcov, nrow(basedata), ...)
 	        RANK <- rep(0, length(nbaseID))		
 			if(any(criteria == 'LD')){	
                 stat <- myApply(matrix(1:length(nbaseID)), 1, function(j, basedata, nbaseID, model){
@@ -219,7 +219,7 @@ forward.search <- function(data, model, criteria = c('LD', 'mah'),
 	    	}
 	    }	
 	    tmpcov <- cov(data)	    
-	    basemodels[[LOOP+1]] <- sem(model, tmpcov, N, ...)
+	    basemodels[[LOOP+1]] <- sem::sem(model, tmpcov, N, ...)
 	    LDstat <- RMR <- Cooksstat <- c()		
 	    for(i in 1:(length(basemodels)-1)){
 	    	LDstat[i] <- basemodels[[i]]$criterion * (basemodels[[i]]$N - 1)			
