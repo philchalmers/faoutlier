@@ -90,7 +90,7 @@ LD <- function(data, model, ...)
         logLik(sem::sem(model, data=data[-ind, ], objective=objective, ...))
     }
     f_lavaan <- function(ind, data, model, ...){
-        logLik(lavaan::sem(model, data=data[-ind, ], ...))
+        lavaan::logLik(lavaan::sem(model, data=data[-ind, ], ...))
     }
     f_mirt <- function(ind, data, model, large, ...){
         large$Freq[[1L]][ind] <- large$Freq[[1L]][ind] - 1L
@@ -107,12 +107,10 @@ LD <- function(data, model, ...)
 		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, data=data, model=model, ...)
 	}
 	if(class(model) == "semmod"){
-	    stop('semmod objects under construction') #TODO
+	    stop('semmod objects under construction. Use GOF() for now instead') #TODO
         objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    MLmod <- sem::sem(model, data=data, objective=objective, ...)
-	    if(requireNamespace('sem')){
-            MLmod <- logLik(MLmod)
-	    }
+        MLmod <- logLik(MLmod) ## TODO, this doesn't resolve correctly
 	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, data=data, model=model, objective=objective, ...)
 	}
 	if(class(model) == "character"){

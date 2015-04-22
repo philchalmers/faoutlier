@@ -9,10 +9,8 @@
 #' @docType package
 #' @title Influential case detection methods for FA and SEM
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
-#' @import MASS parallel lattice mvtnorm graphics
+#' @import MASS parallel lattice mvtnorm graphics sem
 #' @importFrom lavaan logLik
-#' @importFrom lavaan sem
-#' @importFrom mirt fscores
 #' @keywords package
 NULL
 
