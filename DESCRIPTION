@@ -21,8 +21,6 @@ Imports:
     lavaan,
     mirt,
     MASS
-Suggests:
-    testthat
 ByteCompile: yes
 LazyLoad: yes
 LazyData: yes
