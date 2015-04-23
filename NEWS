@@ -1,5 +1,9 @@
 Changes in version 0.5
 
+  - several orgainizational overahauls
+
+  - split LD() into LD() and GOF() for better clarity
+
   - avoid masking lavaan::sem with sem::sem
 
 Changes in version 0.4
