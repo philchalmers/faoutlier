@@ -8,7 +8,7 @@
 \usage{
 robustMD(data, method = "mve", ...)
 
-\method{print}{robmah}(x, gt = 0, digits = 5, ...)
+\method{print}{robmah}(x, ncases = 10, digits = 5, ...)
 
 \method{plot}{robmah}(x, y = NULL, type = "xyplot", main, ...)
 }
@@ -22,7 +22,7 @@ robustMD(data, method = "mve", ...)
 
 \item{x}{an object of class \code{robmah}}
 
-\item{gt}{only print values with MD's greater than \code{gt}}
+\item{ncases}{number of extreme cases to print}
 
 \item{digits}{number of digits to round in the final result}
 

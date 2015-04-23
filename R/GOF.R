@@ -139,7 +139,7 @@ GOF <- function(data, model, ...)
 #' @export
 print.GOF <- function(x, ncases = 10, digits = 5, ...)
 {
-	sorted <- sort(x)
+	sorted <- x[order(abs(x), decreasing = TRUE)]
 	if(ncases %% 2 != 0) ncases <- ncases + 1
 	sorted <- c(sorted[1:(ncases/2)],
 		sorted[(length(sorted)-(ncases/2 + 1)):length(sorted)])

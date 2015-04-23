@@ -8,7 +8,7 @@
 \usage{
 gCD(data, model, ...)
 
-\method{print}{gCD}(x, head = 0.05, DFBETAS = FALSE, ...)
+\method{print}{gCD}(x, ncases = 10, DFBETAS = FALSE, ...)
 
 \method{plot}{gCD}(x, y = NULL, main = "Generalized Cook Distance",
   type = c("p", "h"), ylab = "gCD", ...)
@@ -25,9 +25,9 @@ then a confirmatory approach is performed instead}
 
 \item{x}{an object of class \code{gCD}}
 
-\item{head}{a ratio of how many extreme gCD cases to display}
+\item{ncases}{number of extreme cases to display}
 
-\item{DFBETAS}{logical; attach DFBETA matrix attribute to returned result?}
+\item{DFBETAS}{logical; return DFBETA matrix in addition to gCD? If TRUE, a list is returned}
 
 \item{y}{a \code{NULL} value ignored by the plotting function}
 
