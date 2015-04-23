@@ -9,9 +9,9 @@
 forward.search(data, model, criteria = c("GOF", "mah"), n.subsets = 1000,
   p.base = 0.4, print.messages = TRUE, ...)
 
-\method{print}{forward.search}(x, stat = "X2", ...)
+\method{print}{forward.search}(x, ncases = 10, stat = "GOF", ...)
 
-\method{plot}{forward.search}(x, y = NULL, stat = "X2",
+\method{plot}{forward.search}(x, y = NULL, stat = "GOF",
   main = "Forward Search", type = c("p", "h"), ylab = "obs.resid", ...)
 }
 \arguments{
@@ -36,7 +36,9 @@ a homogeneous starting base group}
 
 \item{x}{an object of class \code{forward.search}}
 
-\item{stat}{type of statistic to use. Could be 'X2', 'RMR', or 'gCD' for
+\item{ncases}{number of final cases to print in the sequence}
+
+\item{stat}{type of statistic to use. Could be 'GOF', 'RMR', or 'gCD' for
 the model chi squared value, root mean square residual, or generalized Cook's distance,
 respectively}
 
