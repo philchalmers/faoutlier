@@ -1,35 +1,36 @@
 #' Likelihood Distance
-#' 
-#' Compute likelihood distances between models when removing the \eqn{i_{th}} case.
-#' 
-#' Note that \code{LD} is not limited to confirmatory factor analysis and 
+#'
+#' Compute likelihood distances between models when removing the \eqn{i_{th}} case. If there are no
+#' missing data then the \code{\link{GOF}} will often provide equivalent results.
+#'
+#' Note that \code{LD} is not limited to confirmatory factor analysis and
 #' can apply to nearly any model being studied
 #' where detection of influential observations is important.
 #'
 #' @aliases LD
-#' @param data matrix or data.frame 
-#' @param model if a single numeric number declares number of factors to extract in 
-#'   exploratory factor analysis (requires complete dataset, i.e., no missing). 
-#'   If \code{class(model)} is a sem (semmod), or lavaan (character), 
+#' @param data matrix or data.frame
+#' @param model if a single numeric number declares number of factors to extract in
+#'   exploratory factor analysis (requires complete dataset, i.e., no missing).
+#'   If \code{class(model)} is a sem (semmod), or lavaan (character),
 #'   then a confirmatory approach is performed instead. Finally, if the model is defined with
-#'   \code{mirt::mirt.model()} then distances will be computed for categorical data with the 
+#'   \code{mirt::mirt.model()} then distances will be computed for categorical data with the
 #'   mirt package
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
-#'   \code{\link{gCD}}, \code{\link{GOF}}, \code{\link{obs.resid}}, 
+#'   \code{\link{gCD}}, \code{\link{GOF}}, \code{\link{obs.resid}},
 #'   \code{\link{robustMD}}, \code{\link{setCluster}}
 #' @references
-#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for 
+#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for
 #' exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21.
 #' @keywords cooks
 #' @export LD
-#' @examples 
-#' 
+#' @examples
+#'
 #' \dontrun{
 #'
 #' #run all LD functions using multiple cores
 #' setCluster()
-#' 
+#'
 #' #Exploratory
 #' nfact <- 3
 #' (LDresult <- LD(holzinger, nfact))
@@ -52,34 +53,34 @@
 #' 	  F1 <-> F1,   NA,     1
 #' 	  F2 <-> F2,   NA,     1
 #' 	  F3 <-> F3,   NA,     1
-#' 
-#' (LDresult <- LD(holzinger, model))	  
+#'
+#' (LDresult <- LD(holzinger, model))
 #' (LDresult.outlier <- LD(holzinger.outlier, model))
 #' plot(LDresult)
 #' plot(LDresult.outlier)
-#' 
+#'
 #' #-------------------------------------------------------------------
 #' #Confirmatory with lavaan
 #' model <- 'F1 =~  Remndrs + SntComp + WrdMean
 #' F2 =~ MissNum + MxdArit + OddWrds
 #' F3 =~ Boots + Gloves + Hatchts'
-#' 
-#' (LDresult <- LD(holzinger, model, orthogonal=TRUE))	  
+#'
+#' (LDresult <- LD(holzinger, model, orthogonal=TRUE))
 #' (LDresult.outlier <- LD(holzinger.outlier, model, orthogonal=TRUE))
 #' plot(LDresult)
 #' plot(LDresult.outlier)
-#' 
-#' # categorical data with mirt 
+#'
+#' # categorical data with mirt
 #' library(mirt)
 #' data(LSAT7)
 #' dat <- expand.table(LSAT7)
 #' model <- mirt.model('F = 1-5')
 #' LDresult <- LD(dat, model)
 #' plot(LDresult)
-#' 
+#'
 #' }
 LD <- function(data, model, ...)
-{	
+{
     f_numeric <- function(ind, data, model, ...){
         res <- factanal(data[-ind, ], model, ...)
         Sigma <- res$loadings %*% t(res$loadings) + diag(res$uniquenesses)
@@ -96,10 +97,10 @@ LD <- function(data, model, ...)
         tmp <- mirt::mirt(data=data, model=model, verbose=FALSE, large=large, ...)
         tmp@logLik
     }
-    
+
 	rownames(data) <- 1:nrow(data)
     index <- matrix(1L:nrow(data))
-	if(is.numeric(model)){		
+	if(is.numeric(model)){
 	    if(any(is.na(data)))
 	        stop('Numeric model requires complete dataset (no NA\'s)')
 		MLmod <- f_numeric(nrow(data) + 1, data=data, model=model, ...)
@@ -138,18 +139,18 @@ LD <- function(data, model, ...)
 #' @param x an object of class \code{LD}
 #' @param ncases number of extreme cases to display
 #' @param digits number of digits to round in the printed result
-#' @param ... additional parameters to be passed 
+#' @param ... additional parameters to be passed
 #' @export
 print.LD <- function(x, ncases = 10, digits = 5, ...)
 {
 	sorted <- sort(x)
 	if(ncases %% 2 != 0) ncases <- ncases + 1
-	sorted <- c(sorted[1:(ncases/2)], 
+	sorted <- c(sorted[1:(ncases/2)],
 		sorted[(length(sorted)-(ncases/2 + 1)):length(sorted)])
 	ret <- matrix(sorted)
 	rownames(ret) <- names(sorted)
 	colnames(ret) <- 'LD'
-	return(print(round(ret, digits)))	
+	return(print(round(ret, digits)))
 }
 
 #' @rdname LD
@@ -159,13 +160,13 @@ print.LD <- function(x, ncases = 10, digits = 5, ...)
 #' @param ylab the y label of the plot
 #' @param absolute logical; use absolute values instead of deviations?
 #' @export
-plot.LD <- function(x, y = NULL, main = 'Likelihood Distance', 
+plot.LD <- function(x, y = NULL, main = 'Likelihood Distance',
 	type = c('p','h'), ylab = 'LD', absolute = FALSE, ...)
-{    
+{
 	LD <- if(absolute) abs(as.numeric(x)) else as.numeric(x)
-	ID <- 1:length(x)	
-	dat <- data.frame(LD,ID)	
-	ret <- lattice::xyplot(LD~ID, dat, type = type, main = main, ylab = ylab, 
+	ID <- 1:length(x)
+	dat <- data.frame(LD,ID)
+	ret <- lattice::xyplot(LD~ID, dat, type = type, main = main, ylab = ylab,
 	                       panel = function(...){
                                panel.xyplot(ID, LD, type='h')
                                panel.xyplot(ID, LD, type='p')
