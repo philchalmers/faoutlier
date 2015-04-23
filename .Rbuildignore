@@ -5,4 +5,3 @@ COPYING
 Makefile
 .travis.yml
 .Rprofile
-inst/
