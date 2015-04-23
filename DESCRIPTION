@@ -1,6 +1,6 @@
 Package: faoutlier
 Version: 0.5
-Date: 2013-04-15
+Date: 2015-04-23
 Type: Package
 Title: Influential case detection methods for factor analysis and SEM
 Authors@R: c(
