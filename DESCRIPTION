@@ -22,8 +22,10 @@ Imports:
     mirt,
     MASS
 Suggests:
-    testthat
+    testthat,
+    R.rsp
 ByteCompile: yes
+VignetteBuilder: R.rsp
 LazyLoad: yes
 LazyData: yes
 Repository: github
