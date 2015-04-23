@@ -1,0 +1,2615 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass apa6
+\options doc, floatsintext
+\use_default_options false
+\begin_modules
+natbibapa
+knitr
+\end_modules
+\maintain_unincluded_children false
+\begin_local_layout
+Style Journal
+LatexName             journal
+LatexType             Command
+#	InTitle               0
+InPreamble            1
+End
+\end_local_layout
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command bibtex
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 0
+\use_package mhchem 1
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plainnat
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+faoutlier: An R Package for Detecting Outliers and Influential Cases in
+ Exploratory and Confirmatory Factor Analysis
+\end_layout
+
+\begin_layout Author
+R.
+ Philip Chalmers & David B.
+ Flora
+\end_layout
+
+\begin_layout ShortTitle
+faoutlier package
+\end_layout
+
+\begin_layout LeftHeader
+Chalmers & Flora
+\end_layout
+
+\begin_layout Affiliation
+York University
+\end_layout
+
+\begin_layout Abstract
+Like any statistical modeling procedure, results from both exploratory and
+ confirmatory factor analysis are vulnerable to disproportionate influence
+ from unusual or outlying cases.
+ Because the common factor model is a type of multiple regression model,
+ concepts from regression case diagnostics can be applied to factor analysis.
+ However, extant factor analysis software does not implement these case
+ diagnostic methods.
+ In this paper, we briefly review these methods and present a new 
+\family typewriter
+R
+\family default
+ package called 
+\family typewriter
+faoutlier
+\family default
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "faoutlier"
+
+\end_inset
+
+ that implements a number of case diagnostic measures, including Mahalanobis
+ distance, factor model-based outliers, likelihood distance, and generalized
+ Cook's distance, as well as a forward search procedure.
+\end_layout
+
+\begin_layout Keywords
+exploratory factor analysis, confirmatory factor analysis, outliers, influence,
+ forward search, R
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<computation, cache=FALSE, include=FALSE>>= 
+\end_layout
+
+\begin_layout Plain Layout
+
+load('R/objects.Rdata')
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Like any statistical modeling procedure, results from both exploratory factor
+ analysis (EFA) and confirmatory factor analysis (CFA) are vulnerable to
+ disproportionate influence from unusual or outlying cases.
+ Nonetheless, the importance of data screening is often ignored or misconstrued
+ in empirical research articles utilizing factor analysis.
+ Perhaps some researchers have an overly indiscriminate impression that,
+ as a large sample procedure, factor analysis is generally 
+\begin_inset Quotes eld
+\end_inset
+
+robust
+\begin_inset Quotes erd
+\end_inset
+
+ to the influence of unusual observations, or they may simply be unaware
+ of this issue.
+ Additionally, popular software packages for either EFA or CFA tend not
+ to have built-in routines for examining outliers and potentially influential
+ cases in the same sense that such routines are commonly available in ordinary
+ regression modeling procedures.
+ Nonetheless, as we describe below, principles from regression modeling
+ diagnostics apply analogously to factor analysis.
+ Thus, the purposes of this paper are to provide a brief review of case-diagnost
+ic methods for factor analysis and to present an 
+\family typewriter
+R
+\family default
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "R"
+
+\end_inset
+
+ package called 
+\family typewriter
+faoutlier
+\family default
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "faoutlier"
+
+\end_inset
+
+ that implements these methods.
+ 
+\family typewriter
+faoutlier
+\family default
+ contains functions for calculating robust Mahalanobis distance statistics,
+ case-level residuals, generalized Cook’s distance, and likelihood distance,
+ as well as a forward-search algorithm, each of which is described below.
+ By making this set of computerized functions readily accessible to researchers
+ in a freely available package, we hope that screening data for outlying
+ and highly influential observations will become a more common practice
+ in factor analysis.
+ 
+\end_layout
+
+\begin_layout Standard
+Given its rapid rise in popularity, we assume that the reader has a basic
+ familiarity with data analysis using the freely available statistical computing
+ environment R; if not, there are numerous introductory books 
+\begin_inset CommandInset citation
+LatexCommand citep
+before "e.g.,"
+key "Dalgaard2008"
+
+\end_inset
+
+ and web guides 
+\begin_inset CommandInset citation
+LatexCommand citep
+before "e.g.,"
+key "Revelle2007"
+
+\end_inset
+
+ available.
+ To use the 
+\family typewriter
+faoutlier
+\family default
+ package in 
+\family typewriter
+R
+\family default
+, it must first be installed (using 
+\family typewriter
+install.packages('faoutlier')
+\family default
+) and loaded (using 
+\family typewriter
+library(faoutlier)
+\family default
+ or 
+\family typewriter
+require(faoutlier)
+\family default
+).
+ The 
+\family typewriter
+faoutlier
+\family default
+ package comes with two data sets, 
+\family typewriter
+holzinger
+\family default
+ and 
+\family typewriter
+holzinger.outlier
+\family default
+, which we use below to illustrate the package’s functions.
+ The nine-variable 
+\family typewriter
+holzinger
+\family default
+ data consist of 
+\begin_inset Formula $N=101$
+\end_inset
+
+ simulated cases which were sampled from a standardized multivariate normal
+ distribution.
+ The generating correlation matrix for these simulated data matches a correlatio
+n matrix in 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "BrowneCudeckTateneniEtAl2008"
+
+\end_inset
+
+ based on data due to Holzinger that was published in 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Harman1960"
+
+\end_inset
+
+.
+ A three-factor EFA model fits both the original correlation matrix and
+ our simulated data very well.
+ The 
+\family typewriter
+holzinger.outlier
+\family default
+ data were created by replacing the first case from 
+\family typewriter
+holzinger
+\family default
+ with a case that equaled the original case with 
+\begin_inset Formula $Z=2$
+\end_inset
+
+ added to its values for five of the observed variables and 
+\begin_inset Formula $Z=2$
+\end_inset
+
+ subtracted from the other four observed variables.
+ This case then shows up as an influential outlier in subsequent analyses.
+ See 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "FloraLaBrishChalmers2012"
+
+\end_inset
+
+ for further detail and factor analyses of both data sets.
+ 
+\end_layout
+
+\begin_layout Section
+The Common Factor Model 
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Thurstone1947"
+
+\end_inset
+
+ common factor model is the basis for modern EFA and CFA 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "MacCallum2009"
+
+\end_inset
+
+; 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "LawleyMaxwell1963"
+
+\end_inset
+
+ showed that it can be expressed as a linear model with observed variables
+ as dependent variables and factors as predictors: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+y_{j}=\lambda_{1}\eta_{1}+\lambda_{2}\eta_{2}+\ldots+\lambda_{m}\eta_{m}+\epsilon_{j},
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $y_{j}$
+\end_inset
+
+ is the jth observed variable from a battery of 
+\begin_inset Formula $p$
+\end_inset
+
+ observed variables, 
+\begin_inset Formula $\eta_{k}$
+\end_inset
+
+ is the 
+\begin_inset Formula $k$
+\end_inset
+
+th of 
+\begin_inset Formula $m$
+\end_inset
+
+ common factors, 
+\begin_inset Formula $\lambda_{k}$
+\end_inset
+
+ is the regression coefficient, or factor loading, relating factor 
+\begin_inset Formula $k$
+\end_inset
+
+ to 
+\begin_inset Formula $y_{j}$
+\end_inset
+
+, and 
+\begin_inset Formula $j$
+\end_inset
+
+ is the residual, or unique factor, for 
+\begin_inset Formula $y_{j}$
+\end_inset
+
+.
+ In matrix form the model is: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathbf{y}=\mathbf{\Lambda}\mathbf{\eta}+\mathbf{\epsilon},\label{eq:linear-factor-model}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $y$
+\end_inset
+
+ is a vector of the 
+\begin_inset Formula $p$
+\end_inset
+
+ observed variables, 
+\begin_inset Formula $\mathbf{\Lambda}$
+\end_inset
+
+ is a 
+\begin_inset Formula $p\times m$
+\end_inset
+
+ matrix of factor loadings, 
+\begin_inset Formula $\mathbf{\eta}$
+\end_inset
+
+ is a vector of 
+\begin_inset Formula $m$
+\end_inset
+
+ common factors, and 
+\begin_inset Formula $\mathbf{\epsilon}$
+\end_inset
+
+ is a vector of unique factors.
+ As with the general linear model, the residuals are assumed to be independent
+ of the predictors; that is, all unique factors are uncorrelated with the
+ common factors.
+ Additionally, the unique factors are assumed uncorrelated with each other
+ (although this assumption may be relaxed in CFA).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Jorsekog1969"
+
+\end_inset
+
+ showed how the traditional EFA model can be constrained to produce a “restricte
+d solution” that is commonly understood as the CFA model in the structural
+ equation modeling (SEM) literature.
+ Specifically, in the EFA model, the elements of 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+ are all freely estimated; that is, each of the 
+\begin_inset Formula $m$
+\end_inset
+
+ factors has an estimated relationship (i.e., factor loading) with every observed
+ variable.
+ Factor rotation is then used to aid interpretation.
+ But in the CFA model, depending on 
+\shape italic
+a priori
+\shape default
+ hypotheses, many of the elements of 
+\begin_inset Formula $\Lambda$
+\end_inset
+
+ are constrained to equal zero, often so that each observed variable is
+ determined by one and only one factor.
+ Thus, EFA and CFA are variants of the same general model and the methods
+ we present below apply equivalently to both.
+ 
+\end_layout
+
+\begin_layout Standard
+In practice, parameter estimation proceeds by fitting either a model-implied
+ covariance matrix, 
+\begin_inset Formula $\mathbf{\Sigma}_{\theta}$
+\end_inset
+
+, to the sample covariance matrix, 
+\begin_inset Formula $\mathbf{S}$
+\end_inset
+
+, among observed variables, or by fitting a model-implied correlation matrix,
+ 
+\begin_inset Formula $\mathbf{P_{\theta}}$
+\end_inset
+
+, to the sample correlation matrix, 
+\begin_inset Formula $\mathbf{R}$
+\end_inset
+
+.
+ The model-implied covariance structure is 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathbf{\mathbf{\Sigma}_{\theta}}=\mathbf{\Lambda}\mathbf{\Phi}\mathbf{\Lambda}^{\prime}+\mathbf{\Theta,}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\mathbf{\Sigma}_{\theta}$
+\end_inset
+
+ is the predicted 
+\begin_inset Formula $p\times p$
+\end_inset
+
+ population covariance matrix for the observed variables, 
+\begin_inset Formula $\mathbf{\Phi}$
+\end_inset
+
+ is the 
+\begin_inset Formula $m\times m$
+\end_inset
+
+ interfactor covariance matrix, and 
+\begin_inset Formula $\mathbf{\Theta}$
+\end_inset
+
+ is the 
+\begin_inset Formula $p\times p$
+\end_inset
+
+ matrix unique factor covariance matrix that often contains only diagonal
+ elements (i.e., the unique factor variances).
+ The correlation structure is then 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathbf{P_{\theta}}=\mathbf{\Lambda}^{*}\mathbf{\Phi^{*}}\mathbf{\Lambda}^{*\prime}+\mathbf{\Theta^{*},}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\mathbf{P}_{\theta}$
+\end_inset
+
+ is the predicted correlation matrix and, in that a correlation matrix is
+ simply a re-scaled covariance matrix, we can view 
+\begin_inset Formula $\mathbf{\Lambda}^{∗}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathbf{\Phi}^{∗}$
+\end_inset
+
+, and 
+\begin_inset Formula $\mathbf{\Theta}^{∗}$
+\end_inset
+
+ as re-scaled versions of 
+\begin_inset Formula $\mathbf{\Lambda}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathbf{\Phi}$
+\end_inset
+
+, and 
+\begin_inset Formula $\mathbf{\Theta}$
+\end_inset
+
+, respectively.
+ There is an historical tendency to conduct EFA using correlations and CFA
+ using covariances, but of course it is possible to use either covariances
+ or correlations for both EFA and CFA 
+\begin_inset CommandInset citation
+LatexCommand citep
+after "on the analysis of correlations vs. covariances"
+before "see"
+key "Bentler2007,Cudeck1989"
+
+\end_inset
+
+.
+ Because the common factors are unobserved and thus have an arbitrary scale,
+ it is conventional to define them as standardized (i.e., with variance equal
+ to one), thereby establishing 
+\begin_inset Formula $\mathbf{\Phi}$
+\end_inset
+
+ as the interfactor correlation matrix.
+ This convention imposes necessary identification restrictions that allow
+ the model parameters to be estimated (although alternative restrictions
+ are possible, such as the marker variable approach often used with CFA).
+ In addition to constraining the factor variances, EFA requires a diagonal
+ 
+\begin_inset Formula $\mathbf{\Theta}$
+\end_inset
+
+, with the unique factor variances along the diagonal.
+ 
+\end_layout
+
+\begin_layout Standard
+The goal of model estimation is thus to find the parameter estimates that
+ optimize the match of the predicted covariance or correlation matrix to
+ the observed sample covariance or correlation matrix.
+ An historically popular EFA estimation method is “principal axis factor
+ analysis,” which obtains factor loading estimates from the eigenstructure
+ of a matrix formed by 
+\begin_inset Formula $\mathbf{R}-\mathbf{\hat{{\Theta}}}$
+\end_inset
+
+.
+ But given modern computing capabilities, we agree with 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "MacCallum2009"
+
+\end_inset
+
+ that factor models should instead be estimated using an iterative algorithm
+ to minimize a model fitting function, such as the ordinary (or unweighted)
+ least squares (OLS) or maximum likelihood (ML) functions.
+ The functions in 
+\family typewriter
+faoutlier
+\family default
+ utilize ML estimation for both EFA and CFA.
+ 
+\end_layout
+
+\begin_layout Section
+Case-level diagnostics for factor analysis of continuous variables 
+\end_layout
+
+\begin_layout Standard
+Univariate plots and bivariate scatterplots of raw data can be effective
+ for identifying outlying cases which can have distorting effects on the
+ results of a factor analysis.
+ Although it is always wise to graph one’s data, relying on scatterplots
+ alone for identification of outliers is not foolproof, especially when
+ there is a large number of variables, as often occurs in applications of
+ factor analysis.
+ Additionally, cases that appear to be outliers in a scatterplot might not
+ actually be 
+\shape italic
+influential
+\shape default
+ in that they produce distorted or otherwise misleading factor analysis
+ results; conversely, certain influential cases might not be apparent in
+ a traditional bivariate scatterplot.
+ 
+\end_layout
+
+\begin_layout Subsection
+Outlying status 
+\end_layout
+
+\begin_layout Standard
+An important property of statistics such as 
+\shape italic
+Mahalanobis distance (MD)
+\shape default
+ is that they are based on the full multivariate distribution of observed
+ variables, and as such can uncover outlying observations that may not easily
+ appear as outliers in a univariate distribution or bivariate scatterplot.
+ The 
+\shape italic
+MD
+\shape default
+ for a given observation can be measured with 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+MD_{i}=(\mathbf{y}_{i}-\bar{{\mathbf{y}}})^{\prime}\mathbf{S}^{-1}(\mathbf{y}_{i}-\bar{{\mathbf{y}}})
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\mathbf{y}_{i}$
+\end_inset
+
+ is the vector of observed variable scores for case 
+\begin_inset Formula $i$
+\end_inset
+
+, 
+\begin_inset Formula $\bar{{\mathbf{y}}}$
+\end_inset
+
+ is the vector of observed variable means, and 
+\series bold
+
+\begin_inset Formula $\mathbf{S}$
+\end_inset
+
+
+\series default
+ is the sample covariance matrix.
+ However, this 
+\shape italic
+MD
+\shape default
+ measure is itself sensitive to outliers, in that any potential outlying
+ case is included in the calculation of 
+\begin_inset Formula $\bar{{\mathbf{y}}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{S}$
+\end_inset
+
+.
+ Thus, robust Mahalanobis distance measures are based on estimates of 
+\begin_inset Formula $\bar{{\mathbf{y}}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{S}$
+\end_inset
+
+ which are resistant to outliers.
+ 
+\family typewriter
+faoutlie
+\family default
+r includes a function 
+\family typewriter
+robustMD()
+\family default
+ which uses the 
+\family typewriter
+MASS
+\family default
+ package to calculate 
+\shape italic
+MD
+\shape default
+ using the traditional product-moment estimates of 
+\begin_inset Formula $\bar{{\mathbf{y}}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathbf{S}$
+\end_inset
+
+ as well as two robust 
+\shape italic
+MD
+\shape default
+ measures, namely the 
+\shape italic
+minimum volume ellipsoid
+\shape default
+ (MVE) and 
+\shape italic
+minimum covariance determinant
+\shape default
+ (MCD) methods for obtaining robust 
+\shape italic
+MDs
+\shape default
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+before "see"
+key "VenablesRipley2002"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Commands to produce 
+\shape italic
+MD
+\shape default
+ values from the 
+\family typewriter
+holzinger
+\family default
+ data are: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<MD, eval=FALSE>>= 
+\end_layout
+
+\begin_layout Plain Layout
+
+data(holzinger) 
+\end_layout
+
+\begin_layout Plain Layout
+
+MD <- robustMD(holzinger) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By default, 
+\family typewriter
+robustMD()
+\family default
+ produces MVE-based 
+\shape italic
+MD
+\shape default
+s.
+ MCD-based or non-robust, classical 
+\shape italic
+MD
+\shape default
+s can be obtained with the method argument, specifically 
+\family typewriter
+robustMD(data, method = 'mcd')
+\family default
+ or 
+\family typewriter
+robustMD(data, method = 'classical')
+\family default
+.
+ Because factor analysis is typically conducted with large samples, it is
+ tedious and error-prone to inspect a simple list of numeric values of 
+\shape italic
+MD
+\shape default
+s.
+ Thus, it is preferable to plot the results; the command 
+\family typewriter
+plot(MD)
+\family default
+ will create an 
+\shape italic
+index plot
+\shape default
+ of the 
+\shape italic
+MD
+\shape default
+s from the 
+\family typewriter
+MD
+\family default
+ object created above (see left panel of Figure 1).
+ This plot shows that there are no extremely aberrant 
+\shape italic
+MD
+\shape default
+ values from 
+\family typewriter
+holzinger
+\family default
+, although Case 76 seems somewhat outlying.
+ Because holzinger was generated from a multivariate normal distribution
+ we do not expect any extreme 
+\shape italic
+MD
+\shape default
+s, but in practice the data generation process is unknown and subjective
+ judgment is needed to determine whether a 
+\shape italic
+MD
+\shape default
+ is extreme enough to warrant concern.
+ Assessing 
+\shape italic
+influence
+\shape default
+ (see below) can aid that judgment.
+ When we repeat the above commands using the 
+\family typewriter
+holzinger.outlier
+\family default
+ data set, the single extreme outlying case, Case 1 with 
+\begin_inset Formula $MD\approx150$
+\end_inset
+
+, is obvious (see right panel of Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Robust-Mahalanobis-distances"
+
+\end_inset
+
+; note the different scale of its y-axis).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figures/MD1.pdf
+	width 49text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figures/MD2.pdf
+	width 49text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Robust Mahalanobis distances for 
+\family typewriter
+holzinger
+\family default
+ (left panel) and 
+\family typewriter
+holzinger.outlier
+\family default
+ (right panel) data sets.
+ Note different y-axis scales for the two panels.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Robust-Mahalanobis-distances"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+These 
+\shape italic
+MD
+\shape default
+ statistics are model-free measures of case-level outlying status in that
+ they are calculated without regard to the actual factor analysis model.
+ As such, they provide no conclusive evidence as to whether an extreme observati
+on is likely to have an excessive effect on the fit of a model to data or
+ on the estimates of a model’s parameters 
+\begin_inset CommandInset citation
+LatexCommand citep
+after "for factor model-based MD measures"
+before "but see"
+key "YuanZhong2008"
+
+\end_inset
+
+.
+ Thus, it is also important to assess model-based outliers and the 
+\shape italic
+influence
+\shape default
+ of cases on model fit and parameter estimation.
+\end_layout
+
+\begin_layout Subsubsection
+Factor model outliers
+\end_layout
+
+\begin_layout Standard
+Because the common factor model is a linear regression model (Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:linear-factor-model"
+
+\end_inset
+
+), many of the well-known concepts about regression diagnostics generalize
+ to factor analysis.
+ Regression diagnostics are a set of methods that can be used to reveal
+ aspects of the data that are problematic for a model that has been fitted
+ to that data 
+\begin_inset CommandInset citation
+LatexCommand citep
+before "e.g.,"
+key "Fox1991,Fox2008"
+
+\end_inset
+
+.
+ Many data characteristics that are problematic for ordinary multiple regression
+ are also problematic for factor analysis; the trick is that in the common
+ factor model, the predictors (the factors) are unobserved.
+ 
+\end_layout
+
+\begin_layout Standard
+In that regression (and hence factor analysis) is a procedure for modeling
+ a dependent variable conditional on one or more predictors, a regression
+ outlier is a case whose dependent variable value is unusual relative to
+ its predicted, or modeled, value given its scores on the predictors 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Fox2008"
+
+\end_inset
+
+.
+ Thus, regression outliers are cases with large residuals.
+ The factor analysis analog to a regression outlier is a case whose value
+ for a particular observed variable is extremely different from its predicted
+ value given its scores on the factors.
+ In other words, cases with large (absolute) values for one or more unique
+ factors, that is, scores on residual terms in 
+\begin_inset Formula $\mathbf{\epsilon}$
+\end_inset
+
+, are factor model outliers.
+ Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:linear-factor-model"
+
+\end_inset
+
+ obviously defines the residuals as 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathbf{\epsilon}=\mathbf{y}-\mathbf{\Lambda\eta.}\label{eq:latent-residual}
+\end{equation}
+
+\end_inset
+
+But because the factor scores (i.e., scores on latent variables in 
+\begin_inset Formula $\mathbf{η}$
+\end_inset
+
+) are unobserved and cannot be calculated precisely, so too the residuals
+ cannot be calculated precisely, even with known population factor loadings,
+ 
+\begin_inset Formula $\mathbf{\Lambda}$
+\end_inset
+
+.
+ Thus, to obtain estimates of the residuals, 
+\begin_inset Formula $\hat{{\epsilon}}$
+\end_inset
+
+, it is necessary first to estimate the factor scores, 
+\begin_inset Formula $\mathbf{\eta}$
+\end_inset
+
+, which themselves must be based on sample estimates of 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\mathbf{\Lambda}$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ and 
+\begin_inset Formula $\mathbf{\Theta}$
+\end_inset
+
+.
+ 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "BollenArminger1991"
+
+\end_inset
+
+ show how a least-squares regression method for estimating factor scores
+ can be applied to obtain 
+\begin_inset Formula $\hat{{\epsilon}}$
+\end_inset
+
+.
+ As implied by Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:latent-residual"
+
+\end_inset
+
+, the estimated residuals 
+\begin_inset Formula $\hat{{\epsilon}}$
+\end_inset
+
+ are unstandardized, in that they are in the metric of the observed variables,
+ 
+\series bold
+
+\begin_inset Formula $\mathbf{y}$
+\end_inset
+
+
+\series default
+.
+ Bollen and Arminger thus present multiple formulas to convert unstandardized
+ residuals into standardized residuals.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+faoutlier
+\family default
+ includes a function 
+\family typewriter
+obs.resid()
+\family default
+ which calculates both unstandardized and standardized factor-model residuals.
+ This function calculates residuals from either an EFA model, in which case
+ it is necessary to indicate the number of factors, or a CFA model, in which
+ case it is necessary to indicate the model specification using syntax based
+ on either the 
+\family typewriter
+sem
+\family default
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "FoxNieByrnes2012"
+
+\end_inset
+
+, 
+\family typewriter
+lavaan
+\family default
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Rosseel2012"
+
+\end_inset
+
+, or 
+\family typewriter
+OpenMx
+\family default
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "BokerNealeMaesEtAl2011"
+
+\end_inset
+
+ packages.
+ The first argument of 
+\family typewriter
+obs.resid()
+\family default
+ names the data, while the second argument gives either the number of factors
+ for the EFA model or a model specification for CFA.
+\end_layout
+
+\begin_layout Standard
+Now, because each case has a residual for every observed variable, it can
+ be especially valuable to plot the residuals rather than attempting to
+ inspect a list of individual numeric values.
+ The commands to calculate and subsequently plot the residuals of the 
+\family typewriter
+holzinger
+\family default
+ data from a three-factor EFA model are:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<resid1, eval=FALSE>>= 
+\end_layout
+
+\begin_layout Plain Layout
+
+nfact <- 3 #set the number of factors for EFA model 
+\end_layout
+
+\begin_layout Plain Layout
+
+resids1 <- obs.resid(holzinger, nfact) 
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(resids1, restype = 'std_res') 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:standardized-residuals"
+
+\end_inset
+
+ illustrates the standardized residuals; unstandardized residuals can be
+ plotted using the argument 
+\family typewriter
+restype = 'res'
+\family default
+ in the plot command above.
+ Because the data were drawn from a standard normal distribution conforming
+ to a known population model, these residuals themselves are approximately
+ normally distributed with no extreme outliers.
+ When we repeat the commands above using the 
+\family typewriter
+holzinger.outlier
+\family default
+ data, Case 1 is a clear factor model outlier for variables 2 and 5 in particula
+r (see right panel of Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:standardized-residuals"
+
+\end_inset
+
+; again note the different scale).
+ We can also obtain a general multivariate statistic computed by summing
+ the squared standardized residual values over each variable with the option
+ 
+\family typewriter
+restype = 'obs'
+\family default
+ (this is the default option).
+ This statistic may be useful since it has more power for detecting multivariate
+ outliers than the univariate counterparts.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figures/std_res1.pdf
+	width 49text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figures/std_res2.pdf
+	width 49text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Standardized factor model residuals for 
+\family typewriter
+holzinger
+\family default
+ (left panel) and 
+\family typewriter
+holzinger.outlier
+\family default
+ (right panel) data sets from a three-factor EFA model.
+ Note different y-axis scales for the two panels.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:standardized-residuals"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Suppose that instead a three-factor CFA model is to be fitted to 
+\family typewriter
+holzinger
+\family default
+ such that the first three observed variables have freely estimated loadings
+ on the first factor, the next three variables load on the second factor,
+ and the last three variables load on the third factor, with all other potential
+ factor loadings constrained to zero (i.e., each observed variable loads on
+ only one factor) while the factors are freely intercorrelated.
+ Using syntax of the 
+\family typewriter
+sem
+\family default
+ package and the 
+\family typewriter
+holzinger
+\family default
+ variable names, we can assign this model specification to an object called
+ 
+\family typewriter
+CFAmodel
+\family default
+ as below 
+\begin_inset CommandInset citation
+LatexCommand citep
+before "see"
+key "FoxNieByrnes2012"
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{verbatim}  
+\end_layout
+
+\begin_layout Plain Layout
+
+CFAmodel <- specifyModel()     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F1 -> Remndrs, lam11     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F1 -> SntComp, lam21     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F1 -> WrdMean, lam31     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F2 -> MissNum, lam41     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F2 -> MxdArit, lam52     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F2 -> OddWrds, lam62     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F3 -> Boots, lam73     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F3 -> Gloves, lam83     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F3 -> Hatchts, lam93     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F1 <-> F1, NA, 1     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F2 <-> F2, NA, 1     
+\end_layout
+
+\begin_layout Plain Layout
+
+   F3 <-> F3, NA, 1 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{verbatim}
+\end_layout
+
+\end_inset
+
+We then calculate and plot standardized residuals from this three-factor
+ CFA model by again using the 
+\family typewriter
+obs.resid()
+\family default
+ function:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<resid2, eval=FALSE>>= 
+\end_layout
+
+\begin_layout Plain Layout
+
+resids1 <- obs.resid(holzinger, CFAmodel) 
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(resids1, restype = 'std_res') 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+An additional benefit when fitting a CFA model is that the ML estimation
+ method used is full-information, meaning that cases with missing data can
+ be included in the analysis and even evaluated as to whether they are influenti
+al outliers given their valid responses.
+ By default in 
+\family typewriter
+faoutlier
+\family default
+, all functions have an 
+\family typewriter
+na.rm = TRUE
+\family default
+ option which can be over-written to 
+\family typewriter
+FALSE
+\family default
+ when the incomplete cases are of interest.
+ 
+\end_layout
+
+\begin_layout Standard
+Although the 
+\family typewriter
+holzinger
+\family default
+ data do not contain any notable outliers from this three-factor CFA model,
+ it is important to recognize that the presence of outliers or influential
+ observations can be indicative of model misspecification 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "PekMacCallum2011"
+
+\end_inset
+
+.
+ Here, although a three-factor EFA model fits the 
+\family typewriter
+holzinger
+\family default
+ data very well, this three-factor CFA model does not actually have a good
+ fit (RMSEA = .175; CFI = .85) because constraining the secondary loadings
+ from the EFA model to zero for the CFA model is overly restrictive 
+\begin_inset CommandInset citation
+LatexCommand citep
+before "see"
+key "ProoijenKloot2001"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsection
+Influence
+\end_layout
+
+\begin_layout Standard
+Just as in ordinary regression analysis, in the context of factor analysis
+ an outlying case (or set of cases) may or may not have considerable 
+\shape italic
+influence
+\shape default
+ on modeling results 
+\begin_inset CommandInset citation
+LatexCommand citep
+before "see"
+key "FloraLaBrishChalmers2012,PekMacCallum2011,YuanZhong2008"
+
+\end_inset
+
+.
+ Case influence refers to the extent that an individual case (or a set of
+ cases) impacts modeling results and can exert itself with respect to overall
+ model fit or estimates of individual parameters.
+ In regression analysis, it is well-known that cases with extreme values
+ of predictors but small residuals (so-called ``good leverage points'')
+ have little impact on the estimated values of regression coefficients but
+ also lead to an increased precision of estimation (in the sense of reduced
+ standard error); conversely, a case with a large residual but small leverage
+ will have little influence on the parameter estimates (although it decreases
+ precision).
+ Although leverage is not directly observable in factor analysis because
+ the predictors are unobserved these phenomena occur analogously 
+\begin_inset CommandInset citation
+LatexCommand citep
+before "see"
+key "YuanZhong2008"
+
+\end_inset
+
+.
+ Thus, perhaps more than considering outlying status of cases, it is important
+ to assess case influence on factor analysis results.
+ Influence is most commonly measured with deletion statistics, which measure
+ the change in a particular statistic that occurs when a particular case
+ is deleted from the sample.
+ Another approach to determining influence is through a forward search algorithm.
+ Below, we describe the deletion statistics and forward search algorithm
+ implemented in 
+\family typewriter
+faoutlier
+\family default
+.
+\end_layout
+
+\begin_layout Subsubsection
+Likelihood distance
+\end_layout
+
+\begin_layout Standard
+When a model is estimated with maximum likelihood, the influence of an individua
+l case on overall model fit can be measured with 
+\shape italic
+likelihood distance
+\shape default
+ (
+\shape italic
+LD
+\shape default
+; 
+\begin_inset CommandInset citation
+LatexCommand citealp
+after "for details"
+before "see"
+key "PekMacCallum2011"
+
+\end_inset
+
+).
+ This measure is defined as 
+\begin_inset Formula 
+\[
+LD_{i}=2\left[L(\hat{\theta})-L(\hat{\theta}_{(i)})\right]
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $L(\hat{\theta})$
+\end_inset
+
+ is the log-likelihood of the data given the vector of parameter estimates
+ 
+\begin_inset Formula $\hat{\theta}$
+\end_inset
+
+ obtained with the original, complete sample and 
+\begin_inset Formula $L(\hat{\theta}_{(i)})$
+\end_inset
+
+ is the log-likelihood of the data given the vector of parameter estimates
+ 
+\begin_inset Formula $\hat{\theta}_{(i)}$
+\end_inset
+
+ obtained with case 
+\begin_inset Formula $i$
+\end_inset
+
+ deleted from the sample.
+ A positive 
+\shape italic
+LD
+\shape default
+ value for a given case 
+\begin_inset Formula $i$
+\end_inset
+
+ indicates that its removal leads to worse model fit, whereas a negative
+ value indicates that removal of case 
+\begin_inset Formula $i$
+\end_inset
+
+ improves fit.
+ Note that this definition is closely related to the goodness of fit (GOF)
+ difference in 
+\begin_inset Formula $\chi^{2}$
+\end_inset
+
+ values 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "PekMacCallum2011"
+
+\end_inset
+
+, where 
+\begin_inset Formula $\Delta\chi_{i}^{2}=\chi^{2}(\hat{\theta}_{(i)})-\chi^{2}(\hat{\theta})$
+\end_inset
+
+.
+ Again, we can see that if a model estimated without case 
+\begin_inset Formula $i$
+\end_inset
+
+ fits the data better than with that case included, then a negative 
+\begin_inset Formula $\Delta\chi_{i}^{2}$
+\end_inset
+
+ value will occur.
+ 
+\end_layout
+
+\begin_layout Standard
+The GOF distances for the 
+\family typewriter
+holzinger
+\family default
+ data with a three-factor EFA model may be calculated and plotted using
+ the 
+\family typewriter
+GOF()
+\family default
+ function in 
+\family typewriter
+faoutlier
+\family default
+ as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<LDresult, eval=FALSE>>= 
+\end_layout
+
+\begin_layout Plain Layout
+
+GOFresult <- GOF(holzinger, nfact) 
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(GOFresult) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+As before, the first argument of the function names the data to be modeled,
+ while the second argument names either the number of factors for an EFA
+ model or the name of a model specification object for a CFA model (e.g.,
+ the 
+\family typewriter
+CFAmodel
+\family default
+ object defined above).
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Likelihood-distances"
+
+\end_inset
+
+ shows index plots of the likelihood distances from the three-factor EFA
+ model for both 
+\family typewriter
+holzinger
+\family default
+ and the 
+\family typewriter
+holzinger.outlier
+\family default
+ data.
+ It is clear that while none of the observations in 
+\family typewriter
+holzinger
+\family default
+ has an excessive influence on model fit, the first case in 
+\family typewriter
+holzinger.outlier
+\family default
+ has a very strong deleterious influence on fit.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figures/GOF1.pdf
+	width 49text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figures/GOF2.pdf
+	width 49text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+GOF distances for 
+\family typewriter
+holzinger
+\family default
+ (left panel) and 
+\family typewriter
+holzinger.outlier
+\family default
+ (right panel) data sets from a three-factor EFA model.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Likelihood-distances"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Generalized Cook's distance
+\end_layout
+
+\begin_layout Standard
+Whereas 
+\shape italic
+LD
+\shape default
+ measures the influence of a case on model fit, case influence on a set
+ of parameter estimates from a factor analysis model can be measured with
+ 
+\shape italic
+generalized Cook's Distance
+\shape default
+ (
+\shape italic
+gCD
+\shape default
+; 
+\begin_inset CommandInset citation
+LatexCommand citealp
+key "PekMacCallum2011"
+
+\end_inset
+
+).
+ This measure is defined as 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+gCD_{i}=(\hat{\mathbf{\theta}}-\hat{\mathbf{\theta}}_{(i)})^{\prime}(VAR(\hat{\mathbf{\theta}}_{(i)}))^{-1}(\hat{\mathbf{\theta}}-\hat{\mathbf{\theta}}_{(i)})
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $\hat{\mathbf{\theta}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\hat{\mathbf{\theta}}_{(i)}$
+\end_inset
+
+ are as above and 
+\begin_inset Formula $VAR(\hat{\mathbf{\theta}}_{(i)})$
+\end_inset
+
+ is the estimated asymptotic variance-covariance matrix of the parameter
+ estimates obtained with case 
+\begin_inset Formula $i$
+\end_inset
+
+ deleted.
+ Like 
+\shape italic
+MD
+\shape default
+, 
+\shape italic
+gCD
+\shape default
+ is in a squared metric with values close to zero indicating little case
+ influence on parameter estimates and those far from zero indicating strong
+ influence on parameter estimates.
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+gCD()
+\family default
+ function in 
+\family typewriter
+faoutlier
+\family default
+ calculates 
+\shape italic
+gCD
+\shape default
+ case influence values for either an EFA model or a CFA model.
+ As with the previous functions, the data set is the function's first argument
+ while the model specification (either EFA or CFA) is the second object,
+ as shown below for calculating 
+\shape italic
+gCD
+\shape default
+ values for the 
+\family typewriter
+holzinger
+\family default
+ data with a three-factor EFA model and subsequently plotting them:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<gCD, eval=FALSE>>= 
+\end_layout
+
+\begin_layout Plain Layout
+
+gCDresult <- gCD(holzinger, nfact) 
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(gCDresult) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+When these commands are repeated with the 
+\family typewriter
+holzinger.outlier
+\family default
+ data, an extreme case does appear (see right panel of Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:gCD-for-EFA-and-CFA"
+
+\end_inset
+
+).
+ However, with this particular EFA example, the extreme 
+\shape italic
+gCD
+\shape default
+ occurs for the legitimate Case 37 rather than Case 1, which was the artificiall
+y perturbed case.
+ This result occurs because of the rotational indeterminacy property of
+ EFA and how the model is optimized.
+ In EFA, a factor's coefficients are unique only up to a linear transformation,
+ and because of that models are estimated by focusing only on the optimization
+ of the 
+\shape italic
+communalities
+\shape default
+ (one minus the diagonal of 
+\begin_inset Formula $\mathbf{\Theta}^{*}$
+\end_inset
+
+ in Equation 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:latent-residual"
+
+\end_inset
+
+) rather than the 
+\begin_inset Formula $\mathbf{\Lambda}$
+\end_inset
+
+, 
+\begin_inset Formula $\mathbf{\Phi}$
+\end_inset
+
+, and 
+\begin_inset Formula $\mathbf{\Theta}$
+\end_inset
+
+ matrices directly.
+ Once optimal communalities are obtained, a subsequent extraction method
+ is used to obtain an arbitrary orientation for the initial factor loadings
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "Gorsuch1983"
+
+\end_inset
+
+.
+ An unfortunate consequence of this feature is that individual cases can
+ affect an entire solution in EFA since communality values are estimated
+ based on the full correlation (or covariance) matrix, whereas in CFA a
+ case's overall influence can be isolated and only affect certain elements
+ in the model implied covariance matrix (i.e., 
+\begin_inset Formula $\mathbf{\Sigma_{\theta}}$
+\end_inset
+
+).
+ Thus, although the set of 
+\shape italic
+gCD
+\shape default
+s reveals that there is an extremely influential case, it may not identify
+ the correct case when an EFA model is fitted to the data.
+ When we instead fit the three-factor CFA model specified above to 
+\family typewriter
+holzinger.outlier
+\family default
+, the 
+\shape italic
+gCD
+\shape default
+s calculated with the 
+\family typewriter
+gCD()
+\family default
+ function (i.e., 
+\family typewriter
+gCD(holzinger.outlier, CFAmodel)
+\family default
+) do correctly identify Case 1 as having extreme influence (see the bottom
+ of Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:gCD-for-EFA-and-CFA"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figures/gCD1.pdf
+	width 49text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figures/gCD2.pdf
+	width 49text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figures/gCD3.pdf
+	width 49text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figures/gCD4.pdf
+	width 49text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\shape italic
+gCD
+\shape default
+ for EFA (top) and CFA (bottom), for 
+\family typewriter
+holzinger
+\family default
+ data with (right) and without (left) an outlier.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:gCD-for-EFA-and-CFA"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Forward search
+\end_layout
+
+\begin_layout Standard
+Because deletion statistics 
+\shape italic
+LD
+\shape default
+ and 
+\shape italic
+gCD
+\shape default
+ are calculated by deleting only a single case 
+\begin_inset Formula $i$
+\end_inset
+
+ from the complete data set, they are susceptible to 
+\shape italic
+masking errors
+\shape default
+, which occur when an influential case is not identified as such because
+ it is located in multivariate space close to one or more similarly influential
+ cases.
+ Alternatively, a forward search algorithm can be used to identify groups
+ of influential cases.
+ 
+\family typewriter
+faoutlier
+\family default
+ implements the forward search procedure outlined by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "MavridisMoustaki2008"
+
+\end_inset
+
+.
+ Below we describe this method briefly; see Mavridis and Moustaki for complete
+ details and additional examples.
+\end_layout
+
+\begin_layout Standard
+First, an optimal working subset of the data of initial size 
+\begin_inset Formula $n_{g}$
+\end_inset
+
+ is selected from the full sample of size 
+\begin_inset Formula $n$
+\end_inset
+
+ and the factor analysis model is fitted to these cases.
+ This initial working set is optimal in the sense that the chosen cases
+ combine to maximize the log-likelihood of the data given the model (although
+ other criteria are possible).
+ Next, the search iterates forward in that cases are added, one at a time,
+ to the working set according to one or more criteria, such as contribution
+ to the likelihood function, minimum Mahalanobis distance, or minimum model-impl
+ied residuals from the working set.
+ At iteration 
+\begin_inset Formula $I$
+\end_inset
+
+, the cases are ordered according to their closeness to working set, and
+ the (
+\begin_inset Formula $n_{g}+I$
+\end_inset
+
+) cases closest to the working set are selected to form a new working set.
+ Note that a given observation in a previous working set (including the
+ initial set) is not necessarily included in subsequent working sets; observatio
+ns may enter and leave the working set at each step of the process.
+ However, at the end of the process, all cases have been included in the
+ working set.
+ At this point, a ``forward plot'' of a given statistic by iteration number
+ depicts how distant the observations added toward the end of the search
+ are from the well-fitting observations included at the beginning of the
+ search.
+ For example, if the likelihood ratio goodness of fit statistic for the
+ model is calculated for each iteration (i.e., for each working set), a case
+ or group of cases contributing strongly to model misfit will appear in
+ this plot as outliers above the final iteration or iterations.
+\end_layout
+
+\begin_layout Standard
+Forward search is implemented in 
+\family typewriter
+faoutlier
+\family default
+ with the 
+\family typewriter
+forward.search()
+\family default
+ function.
+ In the same manner as the other functions described above, it is necessary
+ to supply as arguments the data to be analyzed and an EFA or CFA model
+ specification.
+ For example, to conduct a forward search with the 
+\family typewriter
+holzinger
+\family default
+ data for three-factor EFA model and generate the subsequent forward plot,
+ the syntax is
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<forward.search, eval=FALSE>>= 
+\end_layout
+
+\begin_layout Plain Layout
+
+FS <- forward.search(holzinger, nfact) 
+\end_layout
+
+\begin_layout Plain Layout
+
+plot(FS, stat = 'RMR') 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+By default, the initial size of the working set is 40% of the full sample,
+ and 
+\family typewriter
+forward.search()
+\family default
+ will fit the model to 1000 subsamples of size 
+\begin_inset Formula $.4n$
+\end_inset
+
+ to find an optimal initial working set.
+ These defaults may be overridden with the 
+\family typewriter
+p.base
+\family default
+ and 
+\family typewriter
+n.subsets
+\family default
+ arguments, respectively.
+ For example, to specify a 50% working set with 2000 subsets considered
+ for the initial working set, the function call would be 
+\family typewriter
+forward.search(data, model, n.subsets = 2000, p.base = .5)
+\family default
+.
+ Additionally, across iterations 
+\family typewriter
+forward.search()
+\family default
+ adds cases according to their contribution to the likelihood function and
+ the minimum robust 
+\shape italic
+MD
+\shape default
+ from the working set.
+ This default can be overridden with the 
+\family typewriter
+criteria
+\family default
+ argument; for example, to iterate only according to minimized residuals,
+ the function call would be 
+\family typewriter
+forward.search(data, model, criteria = 'res')
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Forward-search-method"
+
+\end_inset
+
+ presents forward plots with the root mean squared residual (RMR) statistic
+ for the 
+\family typewriter
+holzinger
+\family default
+ and 
+\family typewriter
+holzinger.outlier
+\family default
+ data with the three-factor EFA model.
+ With the 
+\family typewriter
+holzinger
+\family default
+ data, one can see that the RMR statistic gradually increases as cases are
+ added across iterations, but with the addition of the last few iterations
+ the model fit does not change dramatically.
+ But with the 
+\family typewriter
+holzinger.outlier
+\family default
+ data, one can see that the final iteration is associated with a substantial,
+ outlying increase in the RMR statistic; this increase is caused by the
+ addition of the non-random outlying data point to the working set.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figures/FS1.pdf
+	width 49text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figures/FS2.pdf
+	width 49text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Forward search method for 
+\family typewriter
+holzinger
+\family default
+ (left panel) and 
+\family typewriter
+holzinger.outlier 
+\family default
+(right panel) data sets from a three-factor EFA model.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Forward-search-method"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Discussion
+\end_layout
+
+\begin_layout Standard
+The 
+\family typewriter
+R
+\family default
+ package 
+\family typewriter
+faoutlier
+\family default
+ provides a suite of functions for detecting multivariate outliers in a
+ data set to be factor analyzed (i.e., robust 
+\shape italic
+MD
+\shape default
+), and more importantly, for identifying factor model outliers 
+\begin_inset CommandInset citation
+LatexCommand citep
+after "residuals"
+before "i.e.,"
+key "BollenArminger1991"
+
+\end_inset
+
+ and influential observations using either case-deletion statistics (i.e.,
+ 
+\shape italic
+LD
+\shape default
+ for model fit and 
+\shape italic
+gCD
+\shape default
+ for parameter estimates) or a forward-search method.
+ As with any parametric procedure, the presence of outliers and influential
+ cases can have serious consequences for factor analytic results.
+ As described above, because factor analysis is the regression of observed
+ variables on factors, principles and procedures from multiple regression
+ case diagnostics can be applied.
+ Unfortunately, extant factor analysis software does not include such procedures.
+ To remedy this shortcoming, use of 
+\family typewriter
+faoutlier
+\family default
+ in concert with other 
+\family typewriter
+R
+\family default
+ packages for factor analysis, such as 
+\family typewriter
+psych
+\family default
+ 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "psych"
+
+\end_inset
+
+ for EFA and 
+\family typewriter
+sem
+\family default
+ for CFA, facilitates a thorough analysis that includes the use of diagnostics
+ for the discovery of outlying or influential cases.
+\end_layout
+
+\begin_layout Standard
+Upon finding outlying or otherwise influential cases, it is important to
+ attempt to identify their source.
+ If such cases are due to researcher or participant error, then they should
+ be corrected or removed.
+ Otherwise, contrary to common practice, methodologists generally recommend
+ that outliers and influential cases not be deleted from the data 
+\begin_inset CommandInset citation
+LatexCommand citep
+before "e.g.,"
+key "BollenArminger1991,PekMacCallum2011,YuanZhong2008"
+
+\end_inset
+
+.
+ Instead, robust procedures that minimize the excessive influence of extreme
+ cases are recommended; one such approach is to factor analyze a MCD estimated
+ covariance matrix 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "PisonRousseeuwFilzmoserEtAl2003"
+
+\end_inset
+
+, which can be calculated with the 
+\family typewriter
+R
+\family default
+ package 
+\family typewriter
+MASS
+\family default
+.
+ Additionally, it is important to recognize that when a model is poorly
+ specified (e.g., the wrong number of factors has been extracted), it is likely
+ that many cases in a sample would be flagged as influential, but when there
+ are only a few bad cases, the model may be consistent with the major regulariti
+es in the data except for these cases 
+\begin_inset CommandInset citation
+LatexCommand citep
+key "PekMacCallum2011"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In closing, we wish to point out that many of the functions in 
+\family typewriter
+faoutlier
+\family default
+ are not limited to factor analysis, and will work with any structural equation
+ model object specified using syntax of the 
+\family typewriter
+sem,
+\family default
+ 
+\family typewriter
+lavaan, 
+\family default
+or 
+\family typewriter
+OpenMx
+\family default
+ package.
+ This generality reflects the theme that disproportionally influential observati
+ons can arise in any modeling procedure, and thus it is prudent to utilize
+ diagnostic procedures as a matter of routine.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "/home/phil/Desktop/Dropbox/tex/bibtex/bib/Main-database"
+options "apacite"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
