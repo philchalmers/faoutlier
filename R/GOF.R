@@ -104,24 +104,23 @@ GOF <- function(data, model, ...)
 	        stop('Numeric model requires complete dataset (no NA\'s)')
 		MLmod <- factanal(data, model, ...)$STATISTIC
 		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, data=data, model=model, ...)
-	}
-	if(class(model) == "semmod"){
+	} else if(class(model) == "semmod"){
         objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    MLmod <- sem::sem(model, data=data, objective=objective, ...)
         MLmod <- MLmod$criterion * (MLmod$N - 1)
 	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, data=data, model=model, objective=objective, ...)
-	}
-	if(class(model) == "character"){
+	} else if(class(model) == "character"){
         MLmod <- lavaan::sem(model, data=data, ...)
         MLmod <- MLmod@Fit@test[[1]]$stat
         LR <- myApply(index, MARGIN=1L, FUN=f_lavaan, data=data, model=model, ...)
-	}
-    if(class(model) == "mirt.model"){
+	} else if(class(model) == "mirt.model"){
         large <- MLmod_full <- mirt::mirt(data=data, model=model, large = TRUE)
         index <- matrix(1L:length(large$Freq[[1L]]))
         MLmod_full <- mirt::mirt(data=data, model=model, verbose = FALSE, large=large, ...)
         MLmod <- G2(MLmod_full)
         LR <- myApply(index, MARGIN=1L, FUN=f_mirt, data=data, model=model, large=large, ...)
+	} else {
+        stop('model class not supported')
     }
 	deltaX2 <- LR - MLmod
 	if(class(model) == "mirt.model")

@@ -163,8 +163,7 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 		RMR[i+1] <- sqrt(2*sum(((basemodels[[i+1]]$R - Rhat)^2) /
 			(ncol(Rhat)*(ncol(Rhat) + 1))))
 		ret <- list(GOF=GOFstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)
-	}
-	if(class(model) == "semmod"){
+	} else if(class(model) == "semmod"){
 	    sampleCov <- cov(data)
 	    STATISTICS <- myApply(matrix(1:n.subsets), 1, function(i, data, Samples, model){
             tmpdat <- data[Samples[ ,i], ]
@@ -240,8 +239,7 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 	    C <- basemodels[[i+1]]$S
 	    RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /	(ncol(C)*(ncol(C) + 1))))
 	    ret <- list(GOF=GOFstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)
-	}
-	if(class(model) == "character"){
+	} else if(class(model) == "character"){
 	    STATISTICS <- myApply(matrix(1:n.subsets), 1, function(i, data, Samples, model){
 	        tmpdat <- data[Samples[ ,i], ]
 	        samplesemMod <- try(lavaan::sem(model, data=tmpdat, ...), TRUE)
@@ -314,6 +312,8 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 	    C <- basemodels[[i+1]]@SampleStats@cov[[1]]
 	    RMR[i+1] <- sqrt(2*sum(((C - Chat)^2) /	(ncol(C)*(ncol(C) + 1))))
 	    ret <- list(GOF=GOFstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)
+	} else {
+	    stop('model class not supported')
 	}
 
 	class(ret) <- 'forward.search'

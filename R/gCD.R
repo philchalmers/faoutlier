@@ -104,18 +104,18 @@ gCD <- function(data, model, ...)
 		mod <- mlfact(cor(data), model)
 		theta <- mod$par
 		tmp <- myLapply(index, FUN=f_numeric, theta=theta, model=model, data=data)
-	}
-	if(class(model) == "semmod"){
+	} else if(class(model) == "semmod"){
 	    objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    mod <- sem::sem(model, data=data, objective=objective, ...)
 	    theta <- mod$coeff
 	    tmp <- myLapply(index, FUN=f_sem, theta=theta, model=model, data=data,
                         objective=objective, ...)
-	}
-	if(class(model) == "character"){
+	} else if(class(model) == "character"){
 	    mod <- lavaan::sem(model, data=data, ...)
 	    theta <- lavaan::coef(mod)
         tmp <- myLapply(index, FUN=f_lavaan, theta=theta, model=model, data=data, ...)
+	} else {
+	    stop('model class not supported')
 	}
     gCD <- lapply(tmp, function(x) x$gCD)
     gCD <- do.call(c, gCD)

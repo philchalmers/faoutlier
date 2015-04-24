@@ -105,25 +105,24 @@ LD <- function(data, model, ...)
 	        stop('Numeric model requires complete dataset (no NA\'s)')
 		MLmod <- f_numeric(nrow(data) + 1, data=data, model=model, ...)
 		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, data=data, model=model, ...)
-	}
-	if(class(model) == "semmod"){
+	} else if(class(model) == "semmod"){
 	    stop('semmod objects under construction. Use GOF() for now instead') #TODO
         objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    MLmod <- sem::sem(model, data=data, objective=objective, ...)
         MLmod <- logLik(MLmod) ## TODO, this doesn't resolve correctly
 	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, data=data, model=model, objective=objective, ...)
-	}
-	if(class(model) == "character"){
+	} else if(class(model) == "character"){
         MLmod <- lavaan::sem(model, data=data, ...)
         MLmod <- lavaan::logLik(MLmod)
         LR <- myApply(index, MARGIN=1L, FUN=f_lavaan, data=data, model=model, ...)
-	}
-    if(class(model) == "mirt.model"){
+	} else if(class(model) == "mirt.model"){
         large <- MLmod_full <- mirt::mirt(data=data, model=model, large = TRUE)
         index <- matrix(1L:length(large$Freq[[1L]]))
         MLmod_full <- mirt::mirt(data=data, model=model, verbose = FALSE, large=large, ...)
         MLmod <- MLmod_full@logLik
         LR <- myApply(index, MARGIN=1L, FUN=f_mirt, data=data, model=model, large=large, ...)
+	} else {
+        stop('model class not supported')
     }
 	deltaX2 <- 2*(MLmod - LR)
 	if(class(model) == "mirt.model")
