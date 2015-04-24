@@ -1,8 +1,8 @@
 Package: faoutlier
 Version: 0.5
-Date: 2015-04-23
+Date: 2015-04-24
 Type: Package
-Title: Influential case detection methods for factor analysis and SEM
+Title: Influential case detection methods for factor analysis and structural equation models
 Authors@R: c(
     person("Phil", "Chalmers",
     email = "rphilip.chalmers@gmail.com", role = c("aut", "cre")))
