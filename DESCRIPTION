@@ -1,6 +1,6 @@
 Package: faoutlier
 Version: 0.5
-Date: 2015-04-25
+Date: 2015-04-26
 Type: Package
 Title: Influential case detection methods for factor analysis and structural equation models
 Authors@R: c(
@@ -12,7 +12,7 @@ Description: Tools for detecting and summarize influential cases that
     structural equation models more generally.
 Roxygen: list(wrap = FALSE)
 Depends:
-    R (>= 2.14),
+    R (>= 3.0.2),
     sem,
     mvtnorm,
     parallel
