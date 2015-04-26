@@ -334,7 +334,8 @@ print.forward.search <- function(x, ncases = 10, stat = 'GOF', ...)
 	if(stat == 'RMR') ret <- x$RMR
 	if(stat == 'gCD') ret <- x$gCD
 	names(ret) <- x$ord
-	return(tail(ret, ncases))
+	print(tail(ret, ncases))
+	return(invisible())
 }
 
 #' @rdname forward.search
