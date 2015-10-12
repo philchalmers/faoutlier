@@ -64,7 +64,7 @@ test_that('GOF mirt', {
     dat <- mirt::expand.table(LSAT7)
     model <- mirt::mirt.model('F = 1-5')
     GOFresult <- GOF(dat, model)
-    expect_equal(as.numeric(GOFresult[c(1,100,1000)]), c(-0.303144119, 0.546566992, 0.003818365),
+    expect_equal(as.numeric(GOFresult[1:3]), c(0.028003080, 0.001699223, 0.034445923),
                  tolerance=1e-5)
     expect_is(GOFresult, 'GOF')
     expect_is(plot(GOFresult), 'trellis')

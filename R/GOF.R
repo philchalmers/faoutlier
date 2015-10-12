@@ -90,7 +90,7 @@ GOF <- function(data, model, M2 = TRUE, ...)
         P <- mirt_mod@Internals$Pl
         2 * sum(F * log(F / (N*P)))
     }
-    fM2 <- function(mirt_mod) M2(mirt_mod)$M2
+    fM2 <- function(mirt_mod) mirt::M2(mirt_mod)$M2
 
     f_numeric <- function(ind, data, model, ...){
         tmp <- factanal(data[-ind, ], model, ...)
