@@ -95,6 +95,15 @@ gCD <- function(data, model, ...)
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
         ret <- list(dfbeta = DFBETA, gCD = gCD)
     }
+    f_mirt <- function(ind, data, large, model, theta, sv, ...){
+        large$Freq[[1L]][ind] <- large$Freq[[1L]][ind] - 1L
+        tmp <- mirt::mirt(data, model, large=large, SE=TRUE, pars=sv, verbose=FALSE, ...)
+        vcovmat <- tmp@vcov
+        h2 <- tmp@Internals$shortpars
+        DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
+        gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
+        ret <- list(dfbeta = DFBETA, gCD = gCD)
+    }
 
 	N <- nrow(data)
     index <- as.list(1:N)
@@ -114,9 +123,16 @@ gCD <- function(data, model, ...)
 	    mod <- lavaan::sem(model, data=data, ...)
 	    theta <- lavaan::coef(mod)
         tmp <- myLapply(index, FUN=f_lavaan, theta=theta, model=model, data=data, ...)
-	} else {
-	    stop('model class not supported')
-	}
+	} else if(class(model) == "mirt.model"){
+	    stop('mirt.model objects not supported', call.=FALSE)
+	    large <- mirt::mirt(data=data, model=model, large=TRUE, verbose=FALSE)
+	    mod <- mirt::mirt(data=data, model=model, large=large, verbose=FALSE, ...)
+	    theta <- mod@Internals$shortpars
+	    sv <- mirt::mod2values(mod)
+	    tmp <- myLapply(index, FUN=f_mirt, theta=theta, model=model, data=data,
+	                    large=large, sv=sv, ...)
+	} else stop('model class not supported')
+
     gCD <- lapply(tmp, function(x) x$gCD)
     gCD <- do.call(c, gCD)
     dfbetas <- lapply(tmp, function(x) x$dfbeta)

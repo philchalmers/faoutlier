@@ -95,7 +95,7 @@ LD <- function(data, model, ...)
     f_mirt <- function(ind, data, model, large, ...){
         large$Freq[[1L]][ind] <- large$Freq[[1L]][ind] - 1L
         tmp <- mirt::mirt(data=data, model=model, verbose=FALSE, large=large, ...)
-        tmp@logLik
+        tmp@Fit$logLik
     }
 
 	rownames(data) <- 1:nrow(data)
@@ -119,7 +119,7 @@ LD <- function(data, model, ...)
         large <- MLmod_full <- mirt::mirt(data=data, model=model, large = TRUE)
         index <- matrix(1L:length(large$Freq[[1L]]))
         MLmod_full <- mirt::mirt(data=data, model=model, verbose = FALSE, large=large, ...)
-        MLmod <- MLmod_full@logLik
+        MLmod <- MLmod_full@Fit$logLik
         LR <- myApply(index, MARGIN=1L, FUN=f_mirt, data=data, model=model, large=large, ...)
 	} else {
         stop('model class not supported')

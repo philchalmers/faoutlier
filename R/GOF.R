@@ -76,7 +76,7 @@ GOF <- function(data, model, ...)
         F <- mirt_mod@Data$Freq[[1L]]
         F <- F[F != 0L]
         N <- sum(F)
-        P <- mirt_mod@Pl
+        P <- mirt_mod@Internals$Pl
         2 * sum(F * log(F / (N*P)))
     }
     f_numeric <- function(ind, data, model, ...){

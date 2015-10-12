@@ -54,5 +54,11 @@ test_that('gCD categorical', {
     expect_is(gCDresult, 'gCD')
     expect_equal(as.numeric(head(gCDresult$gCD)), c(0.0007, 0.0005, 0.0069, 0.0005, 0.0012, 0.0038),
                  tolerance = 1e-2)
+
+#     model <- mirt::mirt.model('F1 = 1-3
+#                             F2 = 4-6
+#                             F3 = 7-9')
+#     gCDresult2 <- suppressWarnings(gCD(dat, model))
+
 })
 
