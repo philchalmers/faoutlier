@@ -2,6 +2,7 @@
 #'
 #' Compute generalize Cook's distances (gCD's) for exploratory
 #' and confirmatory FA. Can return DFBETA matrix if requested.
+#' If mirt is used, then the values will be associated with the unique response patterns instead.
 #'
 #' Note that \code{gCD} is not limited to confirmatory factor analysis and
 #' can apply to nearly any model being studied
@@ -67,6 +68,18 @@
 #' plot(gCDresult2)
 #' plot(gCDresult2.outlier)
 #'
+#' # categorical data with mirt
+#' library(mirt)
+#' data(LSAT7)
+#' dat <- expand.table(LSAT7)
+#' model <- mirt.model('F = 1-5')
+#' result <- gCD(dat, model)
+#' plot(result)
+#'
+#' mod <- mirt(dat, model)
+#' res <- residuals(mod, type = 'exp')
+#' cbind(res, gCD=round(result$gCD, 3))
+#'
 #' }
 gCD <- function(data, model, ...)
 {
@@ -77,7 +90,7 @@ gCD <- function(data, model, ...)
         h2 <- tmp2$par
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
-        ret <- list(dfbeta = DFBETA, gCD = gCD)
+        list(dfbeta = DFBETA, gCD = gCD)
     }
     f_sem <- function(ind, data, model, objective, theta, ...){
         tmp2 <- sem::sem(model, data=data[-ind, ], objective=objective, ...)
@@ -85,7 +98,7 @@ gCD <- function(data, model, ...)
         h2 <- tmp2$coeff
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
-        ret <- list(dfbeta = DFBETA, gCD = gCD)
+        list(dfbeta = DFBETA, gCD = gCD)
     }
     f_lavaan <- function(ind, data, model, theta, ...){
         tmp <- lavaan::sem(model, data[-ind, ], ...)
@@ -93,16 +106,16 @@ gCD <- function(data, model, ...)
         h2 <- lavaan::coef(tmp)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
-        ret <- list(dfbeta = DFBETA, gCD = gCD)
+        list(dfbeta = DFBETA, gCD = gCD)
     }
     f_mirt <- function(ind, data, large, model, theta, sv, ...){
         large$Freq[[1L]][ind] <- large$Freq[[1L]][ind] - 1L
         tmp <- mirt::mirt(data, model, large=large, SE=TRUE, pars=sv, verbose=FALSE, ...)
         vcovmat <- tmp@vcov
-        h2 <- tmp@Internals$shortpars
+        h2 <- mirt::extract.mirt(tmp, 'parvec')
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
-        ret <- list(dfbeta = DFBETA, gCD = gCD)
+        list(dfbeta = DFBETA, gCD = gCD)
     }
 
 	N <- nrow(data)
@@ -124,10 +137,10 @@ gCD <- function(data, model, ...)
 	    theta <- lavaan::coef(mod)
         tmp <- myLapply(index, FUN=f_lavaan, theta=theta, model=model, data=data, ...)
 	} else if(class(model) == "mirt.model"){
-	    stop('mirt.model objects not supported', call.=FALSE)
-	    large <- mirt::mirt(data=data, model=model, large=TRUE, verbose=FALSE)
+	    large <- mirt::mirt(data=data, model=model, large = TRUE)
+	    index <- matrix(1L:length(large$Freq[[1L]]))
 	    mod <- mirt::mirt(data=data, model=model, large=large, verbose=FALSE, ...)
-	    theta <- mod@Internals$shortpars
+	    theta <- mirt::extract.mirt(mod, 'parvec')
 	    sv <- mirt::mod2values(mod)
 	    tmp <- myLapply(index, FUN=f_mirt, theta=theta, model=model, data=data,
 	                    large=large, sv=sv, ...)
@@ -137,7 +150,8 @@ gCD <- function(data, model, ...)
     gCD <- do.call(c, gCD)
     dfbetas <- lapply(tmp, function(x) x$dfbeta)
     dfbetas <- do.call(rbind, dfbetas)
-    names(gCD) <- rownames(data)
+    if(class(model) != "mirt.model")
+        names(gCD) <- rownames(data)
     ret <- list(dfbetas = dfbetas, gCD = gCD)
 	class(ret) <- 'gCD'
 	ret

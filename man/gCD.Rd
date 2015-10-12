@@ -40,6 +40,7 @@ then a confirmatory approach is performed instead}
 \description{
 Compute generalize Cook's distances (gCD's) for exploratory
 and confirmatory FA. Can return DFBETA matrix if requested.
+If mirt is used, then the values will be associated with the unique response patterns instead.
 }
 \details{
 Note that \code{gCD} is not limited to confirmatory factor analysis and
@@ -90,6 +91,18 @@ F3 =~ Boots + Gloves + Hatchts'
 (gCDresult2.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE))
 plot(gCDresult2)
 plot(gCDresult2.outlier)
+
+# categorical data with mirt
+library(mirt)
+data(LSAT7)
+dat <- expand.table(LSAT7)
+model <- mirt.model('F = 1-5')
+result <- gCD(dat, model)
+plot(result)
+
+mod <- mirt(dat, model)
+res <- residuals(mod, type = 'exp')
+cbind(res, gCD=round(result$gCD, 3))
 
 }
 }

@@ -6,7 +6,7 @@
 \alias{print.GOF}
 \title{Goodness of Fit Distance}
 \usage{
-GOF(data, model, ...)
+GOF(data, model, M2 = TRUE, ...)
 
 \method{print}{GOF}(x, ncases = 10, digits = 5, ...)
 
@@ -22,6 +22,8 @@ If \code{class(model)} is a sem (semmod), or lavaan (character),
 then a confirmatory approach is performed instead. Finally, if the model is defined with
 \code{mirt::mirt.model()} then distances will be computed for categorical data with the
 mirt package}
+
+\item{M2}{logical; use the M2 statistic for when using mirt objects instead of G2?}
 
 \item{...}{additional parameters to be passed}
 
@@ -43,6 +45,7 @@ mirt package}
 }
 \description{
 Compute Goodness of Fit distances between models when removing the \eqn{i_{th}} case.
+If mirt is used, then the values will be associated with the unique response patterns instead.
 }
 \details{
 Note that \code{GOF} is not limited to confirmatory factor analysis and
@@ -93,6 +96,15 @@ F3 =~ Boots + Gloves + Hatchts'
 (GOFresult.outlier <- GOF(holzinger.outlier, model, orthogonal=TRUE))
 plot(GOFresult)
 plot(GOFresult.outlier)
+
+
+# categorical data with mirt
+library(mirt)
+data(LSAT7)
+dat <- expand.table(LSAT7)
+model <- mirt.model('F = 1-5')
+result <- GOF(dat, model)
+plot(result)
 
 }
 }

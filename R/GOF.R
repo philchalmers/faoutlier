@@ -1,6 +1,7 @@
 #' Goodness of Fit Distance
 #'
 #' Compute Goodness of Fit distances between models when removing the \eqn{i_{th}} case.
+#' If mirt is used, then the values will be associated with the unique response patterns instead.
 #'
 #' Note that \code{GOF} is not limited to confirmatory factor analysis and
 #' can apply to nearly any model being studied
@@ -14,6 +15,7 @@
 #'   then a confirmatory approach is performed instead. Finally, if the model is defined with
 #'   \code{mirt::mirt.model()} then distances will be computed for categorical data with the
 #'   mirt package
+#' @param M2 logical; use the M2 statistic for when using mirt objects instead of G2?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
 #'   \code{\link{gCD}}, \code{\link{LD}}, \code{\link{obs.resid}},
@@ -69,8 +71,17 @@
 #' plot(GOFresult)
 #' plot(GOFresult.outlier)
 #'
+#'
+#' # categorical data with mirt
+#' library(mirt)
+#' data(LSAT7)
+#' dat <- expand.table(LSAT7)
+#' model <- mirt.model('F = 1-5')
+#' result <- GOF(dat, model)
+#' plot(result)
+#'
 #' }
-GOF <- function(data, model, ...)
+GOF <- function(data, model, M2 = TRUE, ...)
 {
     G2 <- function(mirt_mod){
         F <- mirt_mod@Data$Freq[[1L]]
@@ -79,6 +90,8 @@ GOF <- function(data, model, ...)
         P <- mirt_mod@Internals$Pl
         2 * sum(F * log(F / (N*P)))
     }
+    fM2 <- function(mirt_mod) M2(mirt_mod)$M2
+
     f_numeric <- function(ind, data, model, ...){
         tmp <- factanal(data[-ind, ], model, ...)
         tmp$STATISTIC
@@ -91,10 +104,12 @@ GOF <- function(data, model, ...)
         tmp <- lavaan::sem(model, data=data[-ind, ], ...)
         tmp@Fit@test[[1L]]$stat
     }
-    f_mirt <- function(ind, data, model, large, ...){
+    f_mirt <- function(ind, data, model, large, sv, M2, ...){
         large$Freq[[1L]][ind] <- large$Freq[[1L]][ind] - 1L
-        tmp <- mirt::mirt(data=data, model=model, verbose=FALSE, large=large, ...)
-        G2(tmp)
+        tmp <- mirt::mirt(data=data, model=model, verbose=FALSE, large=large, pars=sv, ...)
+        ret <- if(M2) fM2(tmp)
+            else G2(tmp)
+        ret
     }
 
 	rownames(data) <- 1:nrow(data)
@@ -117,15 +132,17 @@ GOF <- function(data, model, ...)
         large <- MLmod_full <- mirt::mirt(data=data, model=model, large = TRUE)
         index <- matrix(1L:length(large$Freq[[1L]]))
         MLmod_full <- mirt::mirt(data=data, model=model, verbose = FALSE, large=large, ...)
-        MLmod <- G2(MLmod_full)
-        LR <- myApply(index, MARGIN=1L, FUN=f_mirt, data=data, model=model, large=large, ...)
+        sv <- mirt::mod2values(MLmod_full)
+        MLmod <- if(M2) fM2(MLmod_full)
+            else G2(MLmod_full)
+        LR <- myApply(index, MARGIN=1L, FUN=f_mirt, data=data, model=model,
+                      sv=sv, large=large, M2=M2, ...)
 	} else {
         stop('model class not supported')
     }
 	deltaX2 <- LR - MLmod
-	if(class(model) == "mirt.model")
-	    deltaX2 <- mirt::expand.table(cbind(as.vector(deltaX2), large$Freq[[1L]]))
-	names(deltaX2) <- rownames(data)
+	if(class(model) != "mirt.model")
+	    names(deltaX2) <- rownames(data)
 	class(deltaX2) <- 'GOF'
 	deltaX2
 }

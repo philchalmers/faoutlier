@@ -43,7 +43,8 @@ mirt package}
 }
 \description{
 Compute likelihood distances between models when removing the \eqn{i_{th}} case. If there are no
-missing data then the \code{\link{GOF}} will often provide equivalent results.
+missing data then the \code{\link{GOF}} will often provide equivalent results. If mirt is used,
+then the values will be associated with the unique response patterns instead.
 }
 \details{
 Note that \code{LD} is not limited to confirmatory factor analysis and
