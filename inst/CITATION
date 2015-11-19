@@ -1,0 +1,17 @@
+citHeader("To cite faoutlier in publications use:")
+
+citEntry(entry = "Article",
+  title        = "faoutlier: An R Package for Detecting Influential Cases in Exploratory and Confirmatory Factor Analysis.",
+  author       = c(as.person("R. Philip Chalmers"), as.person("David B. Flora")),
+  journal      = "Applied Psychological Measurement",
+  year         = "2015",
+  volume       = "39",
+  number       = "7",
+  pages        = "573--574",
+
+  textVersion  =
+  paste("R.\ Philip Chalmers and David B. Flora (2015).",
+        "faoutlier: An R Package for Detecting Influential Cases in Exploratory and Confirmatory Factor Analysis.",
+        "Applied Psychological Measurement, 39(7), 573-374.")
+)
+
