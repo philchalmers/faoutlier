@@ -87,8 +87,8 @@ LD <- function(data, model, ...)
         Sigma <- res$loadings %*% t(res$loadings) + diag(res$uniquenesses)
         sum(dmvnorm(data, sigma=Sigma, log=TRUE))
     }
-    f_sem <- function(ind, data, model, objective, ...){
-        logLik(sem::sem(model, data=data[-ind, ], objective=objective, ...))
+    f_sem <- function(ind, data, model, ...){
+        logLik(sem::sem(model, data=data[-ind, ], ...))
     }
     f_lavaan <- function(ind, data, model, ...){
         lavaan::logLik(lavaan::sem(model, data=data[-ind, ], ...))
@@ -107,11 +107,9 @@ LD <- function(data, model, ...)
 		MLmod <- f_numeric(nrow(data) + 1, data=data, model=model, ...)
 		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, data=data, model=model, ...)
 	} else if(class(model) == "semmod"){
-	    stop('semmod objects under construction. Use GOF() for now instead') #TODO
-        objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
-	    MLmod <- sem::sem(model, data=data, objective=objective, ...)
-        MLmod <- logLik(MLmod) ## TODO, this doesn't resolve correctly
-	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, data=data, model=model, objective=objective, ...)
+	    MLmod <- sem::sem(model, data=data, ...)
+        MLmod <- logLik(MLmod)
+	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, data=data, model=model, ...)
 	} else if(class(model) == "character"){
         MLmod <- lavaan::sem(model, data=data, ...)
         MLmod <- lavaan::logLik(MLmod)

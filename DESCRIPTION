@@ -2,7 +2,8 @@ Package: faoutlier
 Version: 0.5.1
 Date: 2015-04-26
 Type: Package
-Title: Influential Case Detection Methods for Factor Analysis and Structural Equation Models
+Title: Influential Case Detection Methods for Factor Analysis and Structural
+    Equation Models
 Authors@R: c(
     person("Phil", "Chalmers",
     email = "rphilip.chalmers@gmail.com", role = c("aut", "cre")))
@@ -27,3 +28,4 @@ LazyData: yes
 Repository: github
 License: GPL (>= 2)
 URL: https://github.com/philchalmers/faoutlier
+RoxygenNote: 5.0.1

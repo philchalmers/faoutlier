@@ -14,15 +14,15 @@ test_that('LD run', {
     expect_is(plot(LDresult.outlier), 'trellis')
 
     #-------------------------------------------------------------------
-#     suppressMessages(model <- sem::specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))
-#     LDresult <- LD(holzinger, model)
-#     LDresult.outlier <- LD(holzinger.outlier, model)
-#     expect_equal(as.numeric(LDresult[1:3]), c(-4.945440, -1.943843, -3.330193),
-#                  tolerance=1e-5)
-#     expect_is(LDresult, 'LD')
-#     expect_is(LDresult.outlier, 'LD')
-#     expect_is(plot(LDresult), 'trellis')
-#     expect_is(plot(LDresult.outlier), 'trellis')
+    suppressMessages(model <- sem::specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))
+    LDresult <- LD(holzinger, model)
+    LDresult.outlier <- LD(holzinger.outlier, model)
+    expect_equal(as.numeric(LDresult[1:3]), c(-4.945440, -1.943843, -3.330193),
+                 tolerance=1e-5)
+    expect_is(LDresult, 'LD')
+    expect_is(LDresult.outlier, 'LD')
+    expect_is(plot(LDresult), 'trellis')
+    expect_is(plot(LDresult.outlier), 'trellis')
 
     #-------------------------------------------------------------------
     #Confirmatory with lavaan
