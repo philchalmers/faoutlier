@@ -20,7 +20,7 @@ Depends:
 Imports:
     lattice,
     lavaan,
-    mirt (>= 1.13.5),
+    mirt (>= 1.14),
     MASS
 ByteCompile: yes
 LazyLoad: yes
