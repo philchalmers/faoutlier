@@ -4,12 +4,13 @@
 \alias{setCluster}
 \title{Define a parallel cluster object to be used in internal functions}
 \usage{
-setCluster(ncores, remove = FALSE)
+setCluster(spec, ..., remove = FALSE)
 }
 \arguments{
-\item{ncores}{number of cores to be used in the returned object which is
-passed to \code{parallel::makeCluster()}. If no input is given the maximum number of available
-cores will be used}
+\item{spec}{input that is passed to \code{parallel::makeCluster()}. If no input is given the
+maximum number of available local cores will be used}
+
+\item{...}{additional arguments to pass to \code{parallel::makeCluster}}
 
 \item{remove}{logical; remove previously defined cluster object?}
 }

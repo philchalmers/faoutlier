@@ -4,12 +4,12 @@
 #' Internal functions will utilize this object automatically to capitalize on parallel
 #' processing architecture. The object defined is a call from \code{parallel::makeCluster()}. Note that
 #' if you are defining other parallel objects (for simulation desings, for example) it is not recommended
-#' to define a cluster. 
-#' 
+#' to define a cluster.
+#'
 #' @aliases setCluster
-#' @param ncores number of cores to be used in the returned object which is
-#'   passed to \code{parallel::makeCluster()}. If no input is given the maximum number of available
-#'   cores will be used
+#' @param spec input that is passed to \code{parallel::makeCluster()}. If no input is given the
+#'   maximum number of available local cores will be used
+#' @param ... additional arguments to pass to \code{parallel::makeCluster}
 #' @param remove logical; remove previously defined cluster object?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @keywords parallel
@@ -28,26 +28,24 @@
 #' setCluster()
 #'
 #' }
-setCluster <- function(ncores, remove = FALSE){
+setCluster <- function(spec, ..., remove = FALSE){
+    if(missing(spec))
+        spec <- parallel::detectCores()
     if(remove){
-        if(is.null(faoutlierClusterEnv$CLUSTER)){
+        if(is.null(.faoutlierClusterEnv$CLUSTER)){
             message('There is no visible CLUSTER() definition')
             return(invisible())
         }
-        parallel::stopCluster(faoutlierClusterEnv$CLUSTER)
-        faoutlierClusterEnv$CLUSTER <- NULL
-        faoutlierClusterEnv$ncores <- 1L
+        parallel::stopCluster(.faoutlierClusterEnv$CLUSTER)
+        .faoutlierClusterEnv$CLUSTER <- NULL
+        .faoutlierClusterEnv$ncores <- 1L
         return(invisible())
     }
-    if(!is.null(faoutlierClusterEnv$CLUSTER)){
+    if(!is.null(.faoutlierClusterEnv$CLUSTER)){
         message('CLUSTER() has already been defined')
         return(invisible())
     }
-    if(missing(ncores))
-        ncores <- parallel::detectCores()
-    if(!is.numeric(ncores))
-        stop('ncores must be numeric')
-    faoutlierClusterEnv$CLUSTER <- parallel::makeCluster(ncores)
-    faoutlierClusterEnv$ncores <- as.integer(ncores)
+    .faoutlierClusterEnv$CLUSTER <- parallel::makeCluster(spec)
+    .faoutlierClusterEnv$ncores <- length(.faoutlierClusterEnv$CLUSTER)
     return(invisible())
 }
