@@ -47,5 +47,7 @@ setCluster <- function(spec, ..., remove = FALSE){
     }
     .faoutlierClusterEnv$CLUSTER <- parallel::makeCluster(spec)
     .faoutlierClusterEnv$ncores <- length(.faoutlierClusterEnv$CLUSTER)
+    parSapply(.faoutlierClusterEnv$CLUSTER, 1L:.faoutlierClusterEnv$ncores*2L,
+              function(x) invisible())
     return(invisible())
 }
