@@ -1,3 +1,5 @@
+[![Travis-CI Build Status](https://travis-ci.org/philchalmers/faoutlier.svg?branch=master)](https://travis-ci.org/philchalmers/faoutlier) [![](http://www.r-pkg.org/badges/version/faoutlier)](http://www.r-pkg.org/pkg/faoutlier) ![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)
+
 #faoutlier
 
 Tools for detecting and summarize influential cases that

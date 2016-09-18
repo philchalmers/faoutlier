@@ -14,7 +14,7 @@ test_that('gCD run', {
 
     #-------------------------------------------------------------------
     suppressMessages(model <- sem::specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))
-    gCDresult <- gCD(holzinger, model)
+    gCDresult <- suppressWarnings(gCD(holzinger, model))
     gCDresult.outlier <- suppressWarnings(gCD(holzinger.outlier, model))
     expect_is(gCDresult, 'gCD')
     expect_is(plot(gCDresult), 'trellis')

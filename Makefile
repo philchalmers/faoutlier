@@ -20,6 +20,10 @@ check: build
 test:
 	Rscript -e 'library("testthat",quietly=TRUE);library("faoutlier",quietly=TRUE);require("methods",quietly=TRUE);test_dir("tests/testthat")' 
 
+paralleltest:
+	Rscript -e 'library("testthat",quietly=TRUE);library("faoutlier",quietly=TRUE);require("methods",quietly=TRUE);setCluster();test_dir("tests/testthat")' 
+
+
 clean:
 	$(RM) src/*.o
 	$(RM) src/*.so

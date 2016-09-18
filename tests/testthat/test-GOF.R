@@ -15,8 +15,8 @@ test_that('GOF run', {
 
     #-------------------------------------------------------------------
     suppressMessages(model <- sem::specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))
-    GOFresult <- GOF(holzinger, model)
-    GOFresult.outlier <- GOF(holzinger.outlier, model)
+    GOFresult <- suppressWarnings(GOF(holzinger, model))
+    GOFresult.outlier <- suppressWarnings(GOF(holzinger.outlier, model))
     expect_equal(as.numeric(GOFresult[1:3]), c(-4.945440, -1.943843, -3.330193),
                  tolerance=1e-5)
     expect_is(GOFresult, 'GOF')
@@ -52,7 +52,7 @@ test_that('GOF categorical', {
     F2 =~ MissNum + MxdArit + OddWrds
     F3 =~ Boots + Gloves + Hatchts'
 
-    GOFresult <- GOF(dat, model, orthogonal=TRUE, ordered=colnames(dat))
+    GOFresult <- suppressWarnings(GOF(dat, model, orthogonal=TRUE, ordered=colnames(dat)))
     expect_is(GOFresult, 'GOF')
     expect_equal(as.numeric(head(GOFresult)),
                  c(2.392693, -8.217107, -2.637149, -17.303106, 4.298777, -11.997538),

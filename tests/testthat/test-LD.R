@@ -15,8 +15,8 @@ test_that('LD run', {
 
     #-------------------------------------------------------------------
     suppressMessages(model <- sem::specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))
-    LDresult <- LD(holzinger, model)
-    LDresult.outlier <- LD(holzinger.outlier, model)
+    LDresult <- suppressWarnings(LD(holzinger, model))
+    LDresult.outlier <- suppressWarnings(LD(holzinger.outlier, model))
     expect_equal(as.numeric(LDresult[1:3]), c(-4.945440, -1.943843, -3.330193),
                  tolerance=1e-5)
     expect_is(LDresult, 'LD')
