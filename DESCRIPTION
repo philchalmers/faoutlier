@@ -1,5 +1,5 @@
 Package: faoutlier
-Version: 0.7
+Version: 0.7.1
 Type: Package
 Title: Influential Case Detection Methods for Factor Analysis and Structural
     Equation Models

@@ -1,4 +1,4 @@
-[![Travis-CI Build Status](https://travis-ci.org/philchalmers/faoutlier.svg?branch=master)](https://travis-ci.org/philchalmers/faoutlier) [![](http://www.r-pkg.org/badges/version/faoutlier)](http://www.r-pkg.org/pkg/faoutlier) [![](http://cranlogs.r-pkg.org/badges/grand-total/faoutlier)]( http://cran.rstudio.com/web/packages/faoutlier/index.html)
+[![Travis-CI Build Status](https://travis-ci.org/philchalmers/faoutlier.svg?branch=master)](https://travis-ci.org/philchalmers/faoutlier) [![](http://www.r-pkg.org/badges/version/faoutlier)](http://www.r-pkg.org/pkg/faoutlier) [![](http://cranlogs.r-pkg.org/badges/grand-total/faoutlier)](https://CRAN.R-project.org/package=faoutlier)
 
 # faoutlier
 
@@ -18,7 +18,7 @@ install.packages('devtools')
 library(devtools)
 install_github('philchalmers/faoutlier')
 
-#relaod into you workspace
+#reload into you workspace
 library(faoutlier)
 ```
 
