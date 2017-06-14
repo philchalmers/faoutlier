@@ -2,8 +2,8 @@
 % Please edit documentation in R/forward.search.R
 \name{forward.search}
 \alias{forward.search}
-\alias{plot.forward.search}
 \alias{print.forward.search}
+\alias{plot.forward.search}
 \title{Forward search algorithm for outlier detection}
 \usage{
 forward.search(data, model, criteria = c("GOF", "mah"), n.subsets = 1000,
@@ -111,12 +111,11 @@ plot(FS.outlier)
 
 }
 }
-\author{
-Phil Chalmers \email{rphilip.chalmers@gmail.com}
-}
 \seealso{
 \code{\link{gCD}}, \code{\link{GOF}}, \code{\link{LD}},
   \code{\link{robustMD}}, \code{\link{setCluster}}
 }
+\author{
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
+}
 \keyword{forward.search}
-

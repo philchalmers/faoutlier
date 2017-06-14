@@ -2,8 +2,8 @@
 % Please edit documentation in R/LD.R
 \name{LD}
 \alias{LD}
-\alias{plot.LD}
 \alias{print.LD}
+\alias{plot.LD}
 \title{Likelihood Distance}
 \usage{
 LD(data, model, ...)
@@ -107,9 +107,6 @@ plot(LDresult)
 
 }
 }
-\author{
-Phil Chalmers \email{rphilip.chalmers@gmail.com}
-}
 \references{
 Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for
 exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21.
@@ -118,5 +115,7 @@ exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3},
 \code{\link{gCD}}, \code{\link{GOF}}, \code{\link{obs.resid}},
   \code{\link{robustMD}}, \code{\link{setCluster}}
 }
+\author{
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
+}
 \keyword{cooks}
-

@@ -14,4 +14,3 @@ the other four observed variables (even-numbered items).
 Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \keyword{data}
-

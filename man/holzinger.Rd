@@ -12,4 +12,3 @@ using 9 variables.
 Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \keyword{data}
-

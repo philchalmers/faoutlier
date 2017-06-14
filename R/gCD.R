@@ -83,35 +83,32 @@
 #' }
 gCD <- function(data, model, ...)
 {
-    f_numeric <- function(ind, data, model, theta){
+    f_numeric <- function(ind, data, model, theta, vcovmat){
         tmp1 <- cor(data[-ind,])
         tmp2 <- mlfact(tmp1, model)
-        vcovmat <- solve(tmp2$hessian)
         h2 <- tmp2$par
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_sem <- function(ind, data, model, objective, theta, ...){
+    f_sem <- function(ind, data, model, objective, theta, vcovmat, ...){
         tmp2 <- sem::sem(model, data=data[-ind, ], objective=objective, ...)
-        vcovmat <- tmp2$vcov
         h2 <- tmp2$coeff
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_lavaan <- function(ind, data, model, theta, ...){
+    f_lavaan <- function(ind, data, model, theta, vcovmat, ...){
         tmp <- lavaan::sem(model, data[-ind, ], ...)
-        vcovmat <- lavaan::vcov(tmp)
         h2 <- lavaan::coef(tmp)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_mirt <- function(ind, data, large, model, theta, sv, ...){
+    f_mirt <- function(ind, data, large, model, theta, sv, vcovmat, ...){
         large$Freq[[1L]][ind] <- large$Freq[[1L]][ind] - 1L
-        tmp <- mirt::mirt(data, model, large=large, SE=TRUE, pars=sv, verbose=FALSE, ...)
-        vcovmat <- tmp@vcov
+        tmp <- mirt::mirt(data, model, large=large, SE=FALSE,
+                          pars=sv, verbose=FALSE, ...)
         h2 <- mirt::extract.mirt(tmp, 'parvec')
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
@@ -125,25 +122,32 @@ gCD <- function(data, model, ...)
 	        stop('Numeric model requires complete dataset (no NA\'s)')
 		mod <- mlfact(cor(data), model)
 		theta <- mod$par
-		tmp <- myLapply(index, FUN=f_numeric, theta=theta, model=model, data=data)
+		vcovmat <- solve(mod$hessian)
+		tmp <- myLapply(index, FUN=f_numeric, theta=theta, model=model, data=data,
+		                vcovmat=vcovmat)
 	} else if(class(model) == "semmod"){
 	    objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    mod <- sem::sem(model, data=data, objective=objective, ...)
 	    theta <- mod$coeff
+	    vcovmat <- mod$vcov
 	    tmp <- myLapply(index, FUN=f_sem, theta=theta, model=model, data=data,
-                        objective=objective, ...)
+                        objective=objective, vcovmat=vcovmat, ...)
 	} else if(class(model) == "character"){
 	    mod <- lavaan::sem(model, data=data, ...)
 	    theta <- lavaan::coef(mod)
-        tmp <- myLapply(index, FUN=f_lavaan, theta=theta, model=model, data=data, ...)
+	    vcovmat <- lavaan::vcov(mod)
+        tmp <- myLapply(index, FUN=f_lavaan, theta=theta, model=model, data=data,
+                        vcovmat=vcovmat, ...)
 	} else if(class(model) == "mirt.model"){
 	    large <- mirt::mirt(data=data, model=model, large = TRUE)
 	    index <- matrix(1L:length(large$Freq[[1L]]))
-	    mod <- mirt::mirt(data=data, model=model, large=large, verbose=FALSE, ...)
+	    mod <- mirt::mirt(data=data, model=model, large=large, verbose=FALSE,
+	                      SE = TRUE, ...)
 	    theta <- mirt::extract.mirt(mod, 'parvec')
 	    sv <- mirt::mod2values(mod)
+	    vcovmat <- mod@vcov
 	    tmp <- myLapply(index, FUN=f_mirt, theta=theta, model=model, data=data,
-	                    large=large, sv=sv, ...)
+	                    large=large, sv=sv, vcovmat=vcovmat, ...)
 	} else stop('model class not supported')
 
     gCD <- lapply(tmp, function(x) x$gCD)

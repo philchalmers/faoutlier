@@ -2,8 +2,8 @@
 % Please edit documentation in R/gCD.R
 \name{gCD}
 \alias{gCD}
-\alias{plot.gCD}
 \alias{print.gCD}
+\alias{plot.gCD}
 \title{Generalized Cook's Distance}
 \usage{
 gCD(data, model, ...)
@@ -107,9 +107,6 @@ cbind(res, gCD=round(result$gCD, 3))
 
 }
 }
-\author{
-Phil Chalmers \email{rphilip.chalmers@gmail.com}
-}
 \references{
 Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for
 exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21.
@@ -117,5 +114,7 @@ exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3},
 \seealso{
 \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluster}}
 }
+\author{
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
+}
 \keyword{cooks}
-

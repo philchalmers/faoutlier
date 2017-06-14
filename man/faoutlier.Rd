@@ -18,4 +18,3 @@ cases that can affect exploratory and confirmatory factor analyses.
 Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \keyword{package}
-

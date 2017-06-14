@@ -2,8 +2,8 @@
 % Please edit documentation in R/obs.resid.R
 \name{obs.resid}
 \alias{obs.resid}
-\alias{plot.obs.resid}
 \alias{print.obs.resid}
+\alias{plot.obs.resid}
 \title{Model predicted residual outliers}
 \usage{
 obs.resid(data, model, ...)
@@ -85,9 +85,6 @@ plot(obs.resid2.outlier)
 
 }
 }
-\author{
-Phil Chalmers \email{rphilip.chalmers@gmail.com}
-}
 \references{
 Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for
 exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21.
@@ -95,5 +92,7 @@ exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3},
 \seealso{
 \code{\link{gCD}}, \code{\link{LD}}, \code{\link{robustMD}}
 }
+\author{
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
+}
 \keyword{covariance}
-

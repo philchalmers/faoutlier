@@ -40,4 +40,3 @@ setCluster()
 Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
 \keyword{parallel}
-
