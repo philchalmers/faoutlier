@@ -22,7 +22,7 @@ Imports:
     lavaan,
     mirt (>= 1.24),
     MASS,
-    pbapply
+    pbapply (>= 1.3-0)
 ByteCompile: yes
 LazyLoad: yes
 LazyData: yes
