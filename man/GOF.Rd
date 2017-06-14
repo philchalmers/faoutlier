@@ -6,7 +6,7 @@
 \alias{plot.GOF}
 \title{Goodness of Fit Distance}
 \usage{
-GOF(data, model, M2 = TRUE, ...)
+GOF(data, model, M2 = TRUE, progress = FALSE, ...)
 
 \method{print}{GOF}(x, ncases = 10, digits = 5, ...)
 
@@ -24,6 +24,8 @@ then a confirmatory approach is performed instead. Finally, if the model is defi
 mirt package}
 
 \item{M2}{logical; use the M2 statistic for when using mirt objects instead of G2?}
+
+\item{progress}{logical; display the progress of the computations in the console?}
 
 \item{...}{additional parameters to be passed}
 
@@ -65,6 +67,9 @@ nfact <- 3
 (GOFresult.outlier <- GOF(holzinger.outlier, nfact))
 plot(GOFresult)
 plot(GOFresult.outlier)
+
+## include a progress bar
+GOFresult <- GOF(holzinger, nfact, progress = TRUE)
 
 #-------------------------------------------------------------------
 #Confirmatory with sem

@@ -21,7 +21,8 @@ Imports:
     lattice,
     lavaan,
     mirt (>= 1.24),
-    MASS
+    MASS,
+    pbapply
 ByteCompile: yes
 LazyLoad: yes
 LazyData: yes

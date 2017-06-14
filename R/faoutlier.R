@@ -12,6 +12,7 @@
 #' @import stats MASS parallel lattice mvtnorm graphics sem
 #' @importFrom lavaan logLik
 #' @importFrom methods is
+#' @importFrom pbapply pblapply pbapply
 #' @importFrom utils flush.console tail
 #' @keywords package
 NULL

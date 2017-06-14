@@ -16,6 +16,7 @@
 #'   \code{mirt::mirt.model()} then distances will be computed for categorical data with the
 #'   mirt package
 #' @param M2 logical; use the M2 statistic for when using mirt objects instead of G2?
+#' @param progress logical; display the progress of the computations in the console?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
 #'   \code{\link{gCD}}, \code{\link{LD}}, \code{\link{obs.resid}},
@@ -38,6 +39,9 @@
 #' (GOFresult.outlier <- GOF(holzinger.outlier, nfact))
 #' plot(GOFresult)
 #' plot(GOFresult.outlier)
+#'
+#' ## include a progress bar
+#' GOFresult <- GOF(holzinger, nfact, progress = TRUE)
 #'
 #' #-------------------------------------------------------------------
 #' #Confirmatory with sem
@@ -81,7 +85,7 @@
 #' plot(result)
 #'
 #' }
-GOF <- function(data, model, M2 = TRUE, ...)
+GOF <- function(data, model, M2 = TRUE, progress = FALSE, ...)
 {
     G2 <- function(mirt_mod){
         F <- mirt_mod@Data$Freq[[1L]]
@@ -118,16 +122,19 @@ GOF <- function(data, model, M2 = TRUE, ...)
 	    if(any(is.na(data)))
 	        stop('Numeric model requires complete dataset (no NA\'s)')
 		MLmod <- factanal(data, model, ...)$STATISTIC
-		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, data=data, model=model, ...)
+		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, progress=progress,
+		              data=data, model=model, ...)
 	} else if(class(model) == "semmod"){
         objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    MLmod <- sem::sem(model, data=data, objective=objective, ...)
         MLmod <- MLmod$criterion * (MLmod$N - 1)
-	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, data=data, model=model, objective=objective, ...)
+	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, progress=progress,
+	                  data=data, model=model, objective=objective, ...)
 	} else if(class(model) == "character"){
         MLmod <- lavaan::sem(model, data=data, ...)
         MLmod <- MLmod@Fit@test[[1]]$stat
-        LR <- myApply(index, MARGIN=1L, FUN=f_lavaan, data=data, model=model, ...)
+        LR <- myApply(index, MARGIN=1L, FUN=f_lavaan, progress=progress,
+                      data=data, model=model, ...)
 	} else if(class(model) == "mirt.model"){
         large <- MLmod_full <- mirt::mirt(data=data, model=model, large = TRUE)
         index <- matrix(1L:length(large$Freq[[1L]]))
@@ -135,7 +142,8 @@ GOF <- function(data, model, M2 = TRUE, ...)
         sv <- mirt::mod2values(MLmod_full)
         MLmod <- if(M2) fM2(MLmod_full)
             else G2(MLmod_full)
-        LR <- myApply(index, MARGIN=1L, FUN=f_mirt, data=data, model=model,
+        LR <- myApply(index, MARGIN=1L, FUN=f_mirt, progress=progress,
+                      data=data, model=model,
                       sv=sv, large=large, M2=M2, ...)
 	} else {
         stop('model class not supported')

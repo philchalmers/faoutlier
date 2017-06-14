@@ -14,6 +14,7 @@
 #'   exploratory factor analysis (requires complete dataset, i.e., no missing).
 #'   If \code{class(model)} is a sem (semmod), or lavaan (character),
 #'   then a confirmatory approach is performed instead
+#' @param progress logical; display the progress of the computations in the console?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
 #'   \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluster}}
@@ -35,6 +36,9 @@
 #' (gCDresult.outlier <- gCD(holzinger.outlier, nfact))
 #' plot(gCDresult)
 #' plot(gCDresult.outlier)
+#'
+#' ## include a progress bar
+#' gCDresult <- gCD(holzinger, nfact, progress = TRUE)
 #'
 #' #-------------------------------------------------------------------
 #' #Confirmatory with sem
@@ -81,7 +85,7 @@
 #' cbind(res, gCD=round(result$gCD, 3))
 #'
 #' }
-gCD <- function(data, model, ...)
+gCD <- function(data, model, progress = FALSE, ...)
 {
     f_numeric <- function(ind, data, model, theta, vcovmat){
         tmp1 <- cor(data[-ind,])
@@ -123,20 +127,23 @@ gCD <- function(data, model, ...)
 		mod <- mlfact(cor(data), model)
 		theta <- mod$par
 		vcovmat <- solve(mod$hessian)
-		tmp <- myLapply(index, FUN=f_numeric, theta=theta, model=model, data=data,
+		tmp <- myLapply(index, FUN=f_numeric, progress=progress,
+		                theta=theta, model=model, data=data,
 		                vcovmat=vcovmat)
 	} else if(class(model) == "semmod"){
 	    objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    mod <- sem::sem(model, data=data, objective=objective, ...)
 	    theta <- mod$coeff
 	    vcovmat <- mod$vcov
-	    tmp <- myLapply(index, FUN=f_sem, theta=theta, model=model, data=data,
+	    tmp <- myLapply(index, FUN=f_sem, progress=progress,
+	                    theta=theta, model=model, data=data,
                         objective=objective, vcovmat=vcovmat, ...)
 	} else if(class(model) == "character"){
 	    mod <- lavaan::sem(model, data=data, ...)
 	    theta <- lavaan::coef(mod)
 	    vcovmat <- lavaan::vcov(mod)
-        tmp <- myLapply(index, FUN=f_lavaan, theta=theta, model=model, data=data,
+        tmp <- myLapply(index, FUN=f_lavaan, progress=progress,
+                        theta=theta, model=model, data=data,
                         vcovmat=vcovmat, ...)
 	} else if(class(model) == "mirt.model"){
 	    large <- mirt::mirt(data=data, model=model, large = TRUE)
@@ -146,7 +153,8 @@ gCD <- function(data, model, ...)
 	    theta <- mirt::extract.mirt(mod, 'parvec')
 	    sv <- mirt::mod2values(mod)
 	    vcovmat <- mod@vcov
-	    tmp <- myLapply(index, FUN=f_mirt, theta=theta, model=model, data=data,
+	    tmp <- myLapply(index, FUN=f_mirt, progress=progress,
+	                    theta=theta, model=model, data=data,
 	                    large=large, sv=sv, vcovmat=vcovmat, ...)
 	} else stop('model class not supported')
 

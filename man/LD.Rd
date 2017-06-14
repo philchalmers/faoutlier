@@ -6,7 +6,7 @@
 \alias{plot.LD}
 \title{Likelihood Distance}
 \usage{
-LD(data, model, ...)
+LD(data, model, progress = FALSE, ...)
 
 \method{print}{LD}(x, ncases = 10, digits = 5, ...)
 
@@ -22,6 +22,8 @@ If \code{class(model)} is a sem (semmod), or lavaan (character),
 then a confirmatory approach is performed instead. Finally, if the model is defined with
 \code{mirt::mirt.model()} then distances will be computed for categorical data with the
 mirt package}
+
+\item{progress}{logical; display the progress of the computations in the console?}
 
 \item{...}{additional parameters to be passed}
 
@@ -64,6 +66,9 @@ nfact <- 3
 (LDresult.outlier <- LD(holzinger.outlier, nfact))
 plot(LDresult)
 plot(LDresult.outlier)
+
+## add a progress meter
+LDresult <- LD(holzinger, nfact, progress = TRUE)
 
 #-------------------------------------------------------------------
 #Confirmatory with sem
