@@ -1,5 +1,5 @@
 Package: faoutlier
-Version: 0.6.3
+Version: 0.7
 Type: Package
 Title: Influential Case Detection Methods for Factor Analysis and Structural
     Equation Models
@@ -20,7 +20,7 @@ Imports:
     methods,
     lattice,
     lavaan,
-    mirt (>= 1.14),
+    mirt (>= 1.24),
     MASS
 ByteCompile: yes
 LazyLoad: yes

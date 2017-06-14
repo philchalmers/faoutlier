@@ -81,7 +81,7 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 {
     if(any(is.na(data)))
         stop('All routines require complete datasets (no NA\'s) so that the search
-             gives meaninful results.')
+             gives meaningful results.')
 	N <- nrow(data)
 	p <- ncol(data)
 	ID <- 1:N

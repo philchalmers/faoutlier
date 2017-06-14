@@ -1,14 +1,14 @@
 [![Travis-CI Build Status](https://travis-ci.org/philchalmers/faoutlier.svg?branch=master)](https://travis-ci.org/philchalmers/faoutlier) [![](http://www.r-pkg.org/badges/version/faoutlier)](http://www.r-pkg.org/pkg/faoutlier) [![](http://cranlogs.r-pkg.org/badges/grand-total/faoutlier)]( http://cran.rstudio.com/web/packages/faoutlier/index.html)
 
-#faoutlier
+# faoutlier
 
 Tools for detecting and summarize influential cases that
 can affect exploratory and confirmatory factor analysis models as well as
 structural equation models more generally.
 
-#Installing from Github
+# Installing from Github
 
-To install the developement version of this package, use the following code.
+To install the development version of this package, use the following code.
 
 ```r
 #if not installed already on your computer, install devtools
