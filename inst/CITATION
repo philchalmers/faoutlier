@@ -8,10 +8,12 @@ citEntry(entry = "Article",
   volume       = "39",
   number       = "7",
   pages        = "573--574",
+  doi          = "10.1177/0146621615597894",
 
   textVersion  =
   paste("R.\ Philip Chalmers and David B. Flora (2015).",
         "faoutlier: An R Package for Detecting Influential Cases in Exploratory and Confirmatory Factor Analysis.",
-        "Applied Psychological Measurement, 39(7), 573-374.")
+        "Applied Psychological Measurement, 39(7), 573-374.",
+        "doi:10.1177/0146621615597894")
 )
 
