@@ -22,8 +22,14 @@
 #'   \code{\link{gCD}}, \code{\link{GOF}}, \code{\link{obs.resid}},
 #'   \code{\link{robustMD}}, \code{\link{setCluster}}
 #' @references
-#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for
-#' exploratory and confirmatory factor analysis. \emph{Frontiers in Psychology, 3}, 1-21.
+#'
+#' Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting 
+#'   Influential Cases in Exploratory and Confirmatory Factor Analysis.
+#'   \emph{Applied Psychological Measurement, 39}, 573-574. \doi{10.1177/0146621615597894}
+#'
+#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data 
+#' screening and assumption testing for exploratory and confirmatory factor analysis. 
+#'  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
 #' @keywords cooks
 #' @export LD
 #' @examples

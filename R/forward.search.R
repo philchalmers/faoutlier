@@ -24,6 +24,15 @@
 #' @param p.base proportion of sample size to use as the base group
 #' @param print.messages logical; print how many iterations are remaining?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
+#' @references
+#'
+#' Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting 
+#'   Influential Cases in Exploratory and Confirmatory Factor Analysis.
+#'   \emph{Applied Psychological Measurement, 39}, 573-574. \doi{10.1177/0146621615597894}
+#'
+#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data 
+#' screening and assumption testing for exploratory and confirmatory factor analysis. 
+#'  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
 #' @seealso
 #'   \code{\link{gCD}}, \code{\link{GOF}}, \code{\link{LD}},
 #'   \code{\link{robustMD}}, \code{\link{setCluster}}
