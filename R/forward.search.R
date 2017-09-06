@@ -26,12 +26,12 @@
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @references
 #'
-#' Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting 
+#' Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting
 #'   Influential Cases in Exploratory and Confirmatory Factor Analysis.
 #'   \emph{Applied Psychological Measurement, 39}, 573-574. \doi{10.1177/0146621615597894}
 #'
-#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data 
-#' screening and assumption testing for exploratory and confirmatory factor analysis. 
+#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data
+#' screening and assumption testing for exploratory and confirmatory factor analysis.
 #'  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
 #' @seealso
 #'   \code{\link{gCD}}, \code{\link{GOF}}, \code{\link{LD}},
@@ -92,7 +92,6 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
         stop('All routines require complete datasets (no NA\'s) so that the search
              gives meaningful results.')
 	N <- nrow(data)
-	p <- ncol(data)
 	ID <- 1:N
 	Samples <- matrix(0, floor(p.base*N), n.subsets)
 	for(i in 1:n.subsets)
@@ -173,7 +172,6 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 			(ncol(Rhat)*(ncol(Rhat) + 1))))
 		ret <- list(GOF=GOFstat, RMR=RMR, gCD=Cooksstat, ord=orderentered)
 	} else if(class(model) == "semmod"){
-	    sampleCov <- cov(data)
 	    STATISTICS <- myApply(matrix(1:n.subsets), 1, function(i, data, Samples, model){
             tmpdat <- data[Samples[ ,i], ]
 	        samplesemMod <- try(sem::sem(model, cov(tmpdat), nrow(tmpdat), ...), TRUE)
@@ -183,6 +181,8 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 	    }, data=data, Samples=Samples, model=model)
         orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
 	    nbaseID <- setdiff(ID, baseID)
+	    if(length(nbaseID) == 0)
+	        stop('No unique starting subset located based-on goodness of fit')
 	    basedata <- data[baseID, ]
 	    stat <- c()
 	    basemodels <- list()
@@ -258,6 +258,8 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 	    }, data=data, Samples=Samples, model=model)
 	    orgbaseID <- baseID <- Samples[ ,(min(STATISTICS) == STATISTICS)]
 	    nbaseID <- setdiff(ID, baseID)
+	    if(length(nbaseID) == 0)
+	        stop('No unique starting subset located based-on goodness of fit')
 	    basedata <- data[baseID, ]
 	    basemodels <- list()
 	    orderentered <- c()
@@ -276,9 +278,10 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 	            RANK <- RANK + rank(stat)
 	        }
 	        if(any(criteria == 'mah')){
-	            stat <- mahalanobis(data[nbaseID, ], colMeans(data[baseID, ]),
-	                                cov(data[baseID, ]))
-	            RANK <- RANK + rank(stat)
+	            stat <- try(mahalanobis(data[nbaseID, ], colMeans(data[baseID, ]),
+	                                cov(data[baseID, ])), TRUE)
+	            if(!is(stat, 'try-error'))
+	                RANK <- RANK + rank(stat)
 	        }
 	        if(any(criteria == 'res')){
 	            stat <- c()
