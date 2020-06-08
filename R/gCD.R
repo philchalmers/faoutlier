@@ -43,9 +43,6 @@
 #' plot(gCDresult)
 #' plot(gCDresult.outlier)
 #'
-#' ## include a progress bar
-#' gCDresult <- gCD(holzinger, nfact, progress = TRUE)
-#'
 #' #-------------------------------------------------------------------
 #' #Confirmatory with sem
 #' model <- sem::specifyModel()
@@ -97,26 +94,28 @@ gCD <- function(data, model, progress = TRUE, ...)
         tmp1 <- cor(data[-ind,])
         tmp2 <- mlfact(tmp1, model)
         h2 <- tmp2$par
-        vcovmat <- solve(tmp2$hessian)
+        inv_vcovmat <- tmp2$hessian
+        vcovmat <- solve(inv_vcovmat)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
-        gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
+        gCD <- t(theta - h2) %*%  inv_vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
     f_sem <- function(ind, data, model, objective, theta, ...){
         tmp2 <- sem::sem(model, data=data[-ind, ], objective=objective, ...)
         h2 <- tmp2$coeff
         vcovmat <- tmp2$vcov
+        inv_vcovmat <- solve(vcovmat)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
-        gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
+        gCD <- t(theta - h2) %*%  inv_vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
     f_lavaan <- function(ind, data, model, theta, ...){
         tmp <- lavaan::sem(model, data[-ind, ], ...)
         h2 <- lavaan::coef(tmp)
         vcovmat <- lavaan::vcov(tmp)
+        inv_vcovmat <- solve(vcovmat)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
-        gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
-        if(gCD > 1000) browser()
+        gCD <- t(theta - h2) %*% inv_vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
     f_mirt <- function(ind, data, large, model, theta, sv, ...){
@@ -125,8 +124,9 @@ gCD <- function(data, model, progress = TRUE, ...)
                           pars=sv, verbose=FALSE, ...)
         h2 <- mirt::extract.mirt(tmp, 'parvec')
         vcovmat <- mirt::vcov(tmp)
+        inv_vcovmat <- solve(vcovmat)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
-        gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
+        gCD <- t(theta - h2) %*%  inv_vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
 
