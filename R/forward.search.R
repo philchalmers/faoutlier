@@ -157,7 +157,7 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 			theta <- basemodels[[i]]$par
 			hess <- basemodels[[i]]$hessian
 			theta2 <- basemodels[[i+1]]$par
-			Cooksstat[i] <- (theta-theta2) %*% solve(hess) %*% (theta-theta2)
+			Cooksstat[i] <- (theta-theta2) %*% hess %*% (theta-theta2)
 			Rhat <- basemodels[[i]]$loadings %*% t(basemodels[[i]]$loadings)
 			diag(Rhat) <- 1
 			RMR[i] <- sqrt(2*sum(((basemodels[[i]]$R - Rhat)^2) /
@@ -235,7 +235,7 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 	    	theta <- basemodels[[i]]$coeff
 	    	vcov <- basemodels[[i]]$vcov
 	    	theta2 <- basemodels[[i+1]]$coeff
-	    	Cooksstat[i] <- (theta-theta2) %*% vcov %*% (theta-theta2)
+	    	Cooksstat[i] <- (theta-theta2) %*% solve(vcov) %*% (theta-theta2)
 	    	Chat <- basemodels[[i]]$C
 	    	C <- basemodels[[i]]$S
 	    	RMR[i] <- sqrt(2*sum(((C - Chat)^2) /
@@ -311,7 +311,7 @@ forward.search <- function(data, model, criteria = c('GOF', 'mah'),
 	        theta <- basemodels[[i]]@Fit@x
 	        vcov <- lavaan::vcov(basemodels[[i]])
 	        theta2 <- basemodels[[i+1]]@Fit@x
-	        Cooksstat[i] <- (theta-theta2) %*% vcov %*% (theta-theta2)
+	        Cooksstat[i] <- (theta-theta2) %*% solve(vcov) %*% (theta-theta2)
 	        Chat <- basemodels[[i]]@Fit@Sigma.hat[[1]]
 	        C <- basemodels[[i]]@SampleStats@cov[[1]]
 	        RMR[i] <- sqrt(2*sum(((C - Chat)^2) /
