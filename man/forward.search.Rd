@@ -6,13 +6,27 @@
 \alias{plot.forward.search}
 \title{Forward search algorithm for outlier detection}
 \usage{
-forward.search(data, model, criteria = c("GOF", "mah"), n.subsets = 1000,
-  p.base = 0.4, print.messages = TRUE, ...)
+forward.search(
+  data,
+  model,
+  criteria = c("GOF", "mah"),
+  n.subsets = 1000,
+  p.base = 0.4,
+  print.messages = TRUE,
+  ...
+)
 
 \method{print}{forward.search}(x, ncases = 10, stat = "GOF", ...)
 
-\method{plot}{forward.search}(x, y = NULL, stat = "GOF",
-  main = "Forward Search", type = c("p", "h"), ylab = "obs.resid", ...)
+\method{plot}{forward.search}(
+  x,
+  y = NULL,
+  stat = "GOF",
+  main = "Forward Search",
+  type = c("p", "h"),
+  ylab = "obs.resid",
+  ...
+)
 }
 \arguments{
 \item{data}{matrix or data.frame}
@@ -112,12 +126,12 @@ plot(FS.outlier)
 }
 }
 \references{
-Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting 
+Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting
   Influential Cases in Exploratory and Confirmatory Factor Analysis.
   \emph{Applied Psychological Measurement, 39}, 573-574. \doi{10.1177/0146621615597894}
 
-Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data 
-screening and assumption testing for exploratory and confirmatory factor analysis. 
+Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data
+screening and assumption testing for exploratory and confirmatory factor analysis.
  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
 }
 \seealso{

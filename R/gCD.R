@@ -20,12 +20,12 @@
 #'   \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluster}}
 #' @references
 #'
-#' Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting 
+#' Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting
 #'   Influential Cases in Exploratory and Confirmatory Factor Analysis.
 #'   \emph{Applied Psychological Measurement, 39}, 573-574. \doi{10.1177/0146621615597894}
 #'
-#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data 
-#' screening and assumption testing for exploratory and confirmatory factor analysis. 
+#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data
+#' screening and assumption testing for exploratory and confirmatory factor analysis.
 #'  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
 #' @keywords cooks
 #' @export gCD
@@ -91,35 +91,40 @@
 #' cbind(res, gCD=round(result$gCD, 3))
 #'
 #' }
-gCD <- function(data, model, progress = FALSE, ...)
+gCD <- function(data, model, progress = TRUE, ...)
 {
-    f_numeric <- function(ind, data, model, theta, vcovmat){
+    f_numeric <- function(ind, data, model, theta){
         tmp1 <- cor(data[-ind,])
         tmp2 <- mlfact(tmp1, model)
         h2 <- tmp2$par
+        vcovmat <- solve(tmp2$hessian)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_sem <- function(ind, data, model, objective, theta, vcovmat, ...){
+    f_sem <- function(ind, data, model, objective, theta, ...){
         tmp2 <- sem::sem(model, data=data[-ind, ], objective=objective, ...)
         h2 <- tmp2$coeff
+        vcovmat <- tmp2$vcov
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_lavaan <- function(ind, data, model, theta, vcovmat, ...){
+    f_lavaan <- function(ind, data, model, theta, ...){
         tmp <- lavaan::sem(model, data[-ind, ], ...)
         h2 <- lavaan::coef(tmp)
+        vcovmat <- lavaan::vcov(tmp)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
+        if(gCD > 1000) browser()
         list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_mirt <- function(ind, data, large, model, theta, sv, vcovmat, ...){
+    f_mirt <- function(ind, data, large, model, theta, sv, ...){
         large$Freq[[1L]][ind] <- large$Freq[[1L]][ind] - 1L
-        tmp <- mirt::mirt(data, model, large=large, SE=FALSE,
+        tmp <- mirt::mirt(data, model, large=large, SE=TRUE,
                           pars=sv, verbose=FALSE, ...)
         h2 <- mirt::extract.mirt(tmp, 'parvec')
+        vcovmat <- mirt::vcov(tmp)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
@@ -132,36 +137,29 @@ gCD <- function(data, model, progress = FALSE, ...)
 	        stop('Numeric model requires complete dataset (no NA\'s)')
 		mod <- mlfact(cor(data), model)
 		theta <- mod$par
-		vcovmat <- solve(mod$hessian)
 		tmp <- myLapply(index, FUN=f_numeric, progress=progress,
-		                theta=theta, model=model, data=data,
-		                vcovmat=vcovmat)
+		                theta=theta, model=model, data=data)
 	} else if(class(model) == "semmod"){
 	    objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    mod <- sem::sem(model, data=data, objective=objective, ...)
 	    theta <- mod$coeff
-	    vcovmat <- mod$vcov
 	    tmp <- myLapply(index, FUN=f_sem, progress=progress,
 	                    theta=theta, model=model, data=data,
-                        objective=objective, vcovmat=vcovmat, ...)
+                        objective=objective, ...)
 	} else if(class(model) == "character"){
 	    mod <- lavaan::sem(model, data=data, ...)
 	    theta <- lavaan::coef(mod)
-	    vcovmat <- lavaan::vcov(mod)
         tmp <- myLapply(index, FUN=f_lavaan, progress=progress,
-                        theta=theta, model=model, data=data,
-                        vcovmat=vcovmat, ...)
+                        theta=theta, model=model, data=data, ...)
 	} else if(class(model) == "mirt.model"){
-	    large <- mirt::mirt(data=data, model=model, large = TRUE)
+	    large <- mirt::mirt(data=data, model=model, large = 'return')
 	    index <- matrix(1L:length(large$Freq[[1L]]))
-	    mod <- mirt::mirt(data=data, model=model, large=large, verbose=FALSE,
-	                      SE = TRUE, ...)
+	    mod <- mirt::mirt(data=data, model=model, large=large, verbose=FALSE, ...)
 	    theta <- mirt::extract.mirt(mod, 'parvec')
 	    sv <- mirt::mod2values(mod)
-	    vcovmat <- mod@vcov
 	    tmp <- myLapply(index, FUN=f_mirt, progress=progress,
 	                    theta=theta, model=model, data=data,
-	                    large=large, sv=sv, vcovmat=vcovmat, ...)
+	                    large=large, sv=sv, ...)
 	} else stop('model class not supported')
 
     gCD <- lapply(tmp, function(x) x$gCD)

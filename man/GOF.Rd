@@ -6,12 +6,19 @@
 \alias{plot.GOF}
 \title{Goodness of Fit Distance}
 \usage{
-GOF(data, model, M2 = TRUE, progress = FALSE, ...)
+GOF(data, model, M2 = TRUE, progress = TRUE, ...)
 
 \method{print}{GOF}(x, ncases = 10, digits = 5, ...)
 
-\method{plot}{GOF}(x, y = NULL, main = "Goodness of Fit Distance",
-  type = c("p", "h"), ylab = "GOF", absolute = FALSE, ...)
+\method{plot}{GOF}(
+  x,
+  y = NULL,
+  main = "Goodness of Fit Distance",
+  type = c("p", "h"),
+  ylab = "GOF",
+  absolute = FALSE,
+  ...
+)
 }
 \arguments{
 \item{data}{matrix or data.frame}
@@ -115,12 +122,12 @@ plot(result)
 }
 }
 \references{
-Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting 
+Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting
   Influential Cases in Exploratory and Confirmatory Factor Analysis.
   \emph{Applied Psychological Measurement, 39}, 573-574. \doi{10.1177/0146621615597894}
 
-Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data 
-screening and assumption testing for exploratory and confirmatory factor analysis. 
+Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data
+screening and assumption testing for exploratory and confirmatory factor analysis.
  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
 }
 \seealso{

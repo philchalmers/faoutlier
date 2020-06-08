@@ -3,7 +3,6 @@
 \docType{package}
 \name{faoutlier}
 \alias{faoutlier}
-\alias{faoutlier-package}
 \title{Influential case detection methods for FA and SEM}
 \description{
 Influential case detection methods for factor analysis and SEM
