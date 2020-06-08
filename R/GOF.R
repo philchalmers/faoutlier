@@ -142,7 +142,7 @@ GOF <- function(data, model, M2 = TRUE, progress = TRUE, ...)
         LR <- myApply(index, MARGIN=1L, FUN=f_lavaan, progress=progress,
                       data=data, model=model, ...)
 	} else if(class(model) == "mirt.model"){
-        large <- MLmod_full <- mirt::mirt(data=data, model=model, large = TRUE)
+        large <- MLmod_full <- mirt::mirt(data=data, model=model, large = 'return')
         index <- matrix(1L:length(large$Freq[[1L]]))
         MLmod_full <- mirt::mirt(data=data, model=model, verbose = FALSE, large=large, ...)
         sv <- mirt::mod2values(MLmod_full)

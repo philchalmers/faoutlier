@@ -16,7 +16,7 @@ test_that('forward.search run', {
     expect_is(FS.outlier, 'forward.search')
     expect_is(plot(FS.outlier), 'trellis')
     expect_equal(FS.outlier$GOF[c(1, length(FS.outlier$GOF))],
-                 c(30.5883, 161.01480), tolerance = 1e-5)
+                 c(25.69686, 161.01480), tolerance = 1e-5)
 
     #---- lavaan
     model <- 'F1 =~  Remndrs + SntComp + WrdMean
@@ -27,6 +27,6 @@ test_that('forward.search run', {
     expect_is(FS.outlier, 'forward.search')
     expect_is(plot(FS.outlier), 'trellis')
     expect_equal(FS.outlier$GOF[c(1, length(FS.outlier$GOF))],
-                 c(25.37104, 111.39844), tolerance = 1e-5)
+                 c(29.22207, 111.39844), tolerance = 1e-5)
 
 })
