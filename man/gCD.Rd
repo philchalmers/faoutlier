@@ -69,9 +69,6 @@ nfact <- 3
 plot(gCDresult)
 plot(gCDresult.outlier)
 
-## include a progress bar
-gCDresult <- gCD(holzinger, nfact, progress = TRUE)
-
 #-------------------------------------------------------------------
 #Confirmatory with sem
 model <- sem::specifyModel()

@@ -20,7 +20,7 @@ Imports:
     methods,
     lattice,
     lavaan,
-    mirt (>= 1.24),
+    mirt (>= 1.32.1),
     MASS,
     pbapply (>= 1.3-0)
 ByteCompile: yes

@@ -4,8 +4,8 @@ test_that('GOF run', {
 
     #Exploratory
     nfact <- 3
-    GOFresult <- GOF(holzinger, nfact)
-    GOFresult.outlier <- GOF(holzinger.outlier, nfact)
+    GOFresult <- GOF(holzinger, nfact, progress = FALSE)
+    GOFresult.outlier <- GOF(holzinger.outlier, nfact, progress = FALSE)
     expect_equal(as.numeric(GOFresult[1:3]), c(-0.7431551, -0.3786938, -1.2646524),
                  tolerance=1e-5)
     expect_is(GOFresult, 'GOF')
@@ -15,8 +15,8 @@ test_that('GOF run', {
 
     #-------------------------------------------------------------------
     suppressMessages(model <- sem::specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))
-    GOFresult <- suppressWarnings(GOF(holzinger, model))
-    GOFresult.outlier <- suppressWarnings(GOF(holzinger.outlier, model))
+    GOFresult <- suppressWarnings(GOF(holzinger, model, progress = FALSE))
+    GOFresult.outlier <- suppressWarnings(GOF(holzinger.outlier, model, progress = FALSE))
     expect_equal(as.numeric(GOFresult[1:3]), c(-4.945440, -1.943843, -3.330193),
                  tolerance=1e-5)
     expect_is(GOFresult, 'GOF')
@@ -30,10 +30,10 @@ test_that('GOF run', {
     F2 =~ MissNum + MxdArit + OddWrds
     F3 =~ Boots + Gloves + Hatchts'
 
-    GOFresult <- GOF(holzinger, model, orthogonal=TRUE)
+    GOFresult <- GOF(holzinger, model, orthogonal=TRUE, progress = FALSE)
     expect_equal(as.numeric(GOFresult[1:3]), c(-4.984276, -1.952360, -3.352713),
                  tolerance=1e-5)
-    GOFresult <- GOF(holzinger.outlier, model, orthogonal=TRUE)
+    GOFresult <- GOF(holzinger.outlier, model, orthogonal=TRUE, progress = FALSE)
     expect_is(GOFresult, 'GOF')
     expect_is(GOFresult.outlier, 'GOF')
     expect_is(plot(GOFresult), 'trellis')
