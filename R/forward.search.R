@@ -31,8 +31,12 @@
 #'   \emph{Applied Psychological Measurement, 39}, 573-574. \doi{10.1177/0146621615597894}
 #'
 #' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data
-#' screening and assumption testing for exploratory and confirmatory factor analysis.
-#'  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
+#'   screening and assumption testing for exploratory and confirmatory factor analysis.
+#'   \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
+#'
+#' Mavridis, D., & Moustaki, I. (2008). Detecting Outliers in Factor Analysis Using the
+#'   Forward Search Algorithm. \emph{Multivariate Behavioral Research, 43}, 453-475,
+#'   \doi{10.1080/00273170802285909}
 #' @seealso
 #'   \code{\link{gCD}}, \code{\link{GOF}}, \code{\link{LD}},
 #'   \code{\link{robustMD}}, \code{\link{setCluster}}
