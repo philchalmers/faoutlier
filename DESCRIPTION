@@ -10,7 +10,7 @@ Maintainer: Phil Chalmers <rphilip.chalmers@gmail.com>
 Description: Tools for detecting and summarize influential cases that
     can affect exploratory and confirmatory factor analysis models as well as
     structural equation models more generally (Chalmers, 2015, <doi:10.1177/0146621615597894>; 
-    Flora, D. B., LaBrish, C. & Chalmers, R. P., 2012, <10.3389/fpsyg.2012.00055>).
+    Flora, D. B., LaBrish, C. & Chalmers, R. P., 2012, <doi:10.3389/fpsyg.2012.00055>).
 Depends:
     R (>= 3.0.2),
     sem,
