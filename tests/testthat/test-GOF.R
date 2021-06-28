@@ -41,8 +41,7 @@ test_that('GOF run', {
 })
 
 test_that('GOF categorical', {
-    set.seed(1234)
-    cut <- rnorm(ncol(holzinger.outlier), 0 , .25)
+    cut <- seq(-.25, .25, length.out=ncol(holzinger.outlier))
     dat <- holzinger.outlier
     for(i in 1:length(cut))
         dat[,i] <- ifelse(holzinger.outlier[,i] < cut[i], 0, 1)
@@ -54,8 +53,8 @@ test_that('GOF categorical', {
 
     GOFresult <- suppressWarnings(GOF(dat, model, progress=FALSE, orthogonal=TRUE, ordered=colnames(dat)))
     expect_is(GOFresult, 'GOF')
-    expect_equal(as.numeric(head(GOFresult)),
-                 c(2.392693, -8.217107, -2.637149, -17.303106, 4.298777, -11.997538),
+    expect_equal(head(as.numeric(GOFresult)),
+                 c(0.6629545, -17.2955864,  -8.0069887, -17.2955864,  -7.9910165, -13.3094968),
                  tolerance = 1e-3)
 })
 
