@@ -4,18 +4,20 @@ test_that('gCD run', {
 
     #Exploratory
     nfact <- 3
-    gCDresult <- gCD(holzinger, nfact, progress = FALSE)
+    gCDresult <- gCD(holzinger, nfact, progress = FALSE, vcov_drop = TRUE)
     gCDresult.outlier <- gCD(holzinger.outlier, nfact, progress = FALSE)
     expect_is(gCDresult, 'gCD')
     expect_is(plot(gCDresult), 'trellis')
     expect_is(gCDresult.outlier, 'gCD')
     expect_is(plot(gCDresult.outlier), 'trellis')
     expect_equal(as.numeric(gCDresult$gCD[1:3]), c(0.0020993686, 0.0008613305, 0.0013162123), tolerance=1e-5)
+    gCDresult <- gCD(holzinger, nfact, progress = FALSE)
+    expect_equal(as.numeric(gCDresult$gCD[1:3]), c(0.0022232819, 0.0008943396, 0.0012875196), tolerance=1e-5)
 
     #-------------------------------------------------------------------
     suppressMessages(model <- sem::specifyModel(file='sem-model/sem-model.txt', quiet=TRUE))
-    gCDresult <- suppressWarnings(gCD(holzinger, model, progress = FALSE))
-    gCDresult.outlier <- suppressWarnings(gCD(holzinger.outlier, model, progress = FALSE))
+    gCDresult <- suppressWarnings(gCD(holzinger, model, progress = FALSE, vcov_drop = TRUE))
+    gCDresult.outlier <- suppressWarnings(gCD(holzinger.outlier, model, progress = FALSE, , vcov_drop = TRUE))
     expect_is(gCDresult, 'gCD')
     expect_is(plot(gCDresult), 'trellis')
     expect_is(gCDresult.outlier, 'gCD')
@@ -28,8 +30,8 @@ test_that('gCD run', {
     F2 =~ MissNum + MxdArit + OddWrds
     F3 =~ Boots + Gloves + Hatchts'
 
-    gCDresult <- gCD(holzinger, model, orthogonal=TRUE, progress = FALSE)
-    gCDresult.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE, progress = FALSE)
+    gCDresult <- gCD(holzinger, model, orthogonal=TRUE, progress = FALSE, vcov_drop = TRUE)
+    gCDresult.outlier <- gCD(holzinger.outlier, model, orthogonal=TRUE, progress = FALSE, vcov_drop = TRUE)
     expect_equal(as.numeric(gCDresult.outlier$gCD[1:3]), c(36.67371343, 0.05034515, 0.34999495),
                  tolerance = 1e-5)
     expect_is(gCDresult, 'gCD')
@@ -50,7 +52,8 @@ test_that('gCD categorical', {
     F2 =~ MissNum + MxdArit + OddWrds
     F3 =~ Boots + Gloves + Hatchts'
 
-    gCDresult <- suppressWarnings(gCD(dat, model, orthogonal=TRUE, progress = FALSE, ordered=colnames(dat)))
+    gCDresult <- suppressWarnings(gCD(dat, model, orthogonal=TRUE, progress = FALSE,
+                                      vcov_drop = TRUE, ordered=colnames(dat)))
     expect_is(gCDresult, 'gCD')
     expect_equal(as.numeric(head(gCDresult$gCD)), c(0.45389878, 0.11746119, 0.15885323, 0.07169155, 0.30643962, 0.15728745),
                  tolerance = 1e-2)

@@ -6,7 +6,7 @@
 \alias{plot.gCD}
 \title{Generalized Cook's Distance}
 \usage{
-gCD(data, model, progress = TRUE, ...)
+gCD(data, model, vcov_drop = FALSE, progress = TRUE, ...)
 
 \method{print}{gCD}(x, ncases = 10, DFBETAS = FALSE, ...)
 
@@ -26,6 +26,10 @@ gCD(data, model, progress = TRUE, ...)
 exploratory factor analysis (requires complete dataset, i.e., no missing).
 If \code{class(model)} is a sem (semmod), or lavaan (character),
 then a confirmatory approach is performed instead}
+
+\item{vcov_drop}{logical; should the variance-covariance matrix of the parameter
+estimates be based on the unique \code{data[-i, ]} models
+(Pek and MacCallum, 2011) or original \code{data}?}
 
 \item{progress}{logical; display the progress of the computations in the console?}
 
@@ -110,7 +114,7 @@ result <- gCD(dat, model)
 plot(result)
 
 mod <- mirt(dat, model)
-res <- residuals(mod, type = 'exp')
+res <- mirt::residuals(mod, type = 'exp')
 cbind(res, gCD=round(result$gCD, 3))
 
 }
@@ -123,6 +127,10 @@ Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting
 Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data
 screening and assumption testing for exploratory and confirmatory factor analysis.
  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
+
+Pek, J. & MacCallum, R. C. (2011). Sensitivity Analysis in Structural
+  Equation Models: Cases and Their Influence. Multivariate Behavioral Research,
+  46(2), 202-228.
 }
 \seealso{
 \code{\link{LD}}, \code{\link{obs.resid}}, \code{\link{robustMD}}, \code{\link{setCluster}}

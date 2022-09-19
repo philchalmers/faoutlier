@@ -14,6 +14,9 @@
 #'   exploratory factor analysis (requires complete dataset, i.e., no missing).
 #'   If \code{class(model)} is a sem (semmod), or lavaan (character),
 #'   then a confirmatory approach is performed instead
+#' @param vcov_drop logical; should the variance-covariance matrix of the parameter
+#'   estimates be based on the unique \code{data[-i, ]} models
+#'   (Pek and MacCallum, 2011) or original \code{data}?
 #' @param progress logical; display the progress of the computations in the console?
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
@@ -27,6 +30,11 @@
 #' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data
 #' screening and assumption testing for exploratory and confirmatory factor analysis.
 #'  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
+#'
+#' Pek, J. & MacCallum, R. C. (2011). Sensitivity Analysis in Structural
+#'   Equation Models: Cases and Their Influence. Multivariate Behavioral Research,
+#'   46(2), 202-228.
+#'
 #' @keywords cooks
 #' @export gCD
 #' @examples
@@ -84,46 +92,46 @@
 #' plot(result)
 #'
 #' mod <- mirt(dat, model)
-#' res <- residuals(mod, type = 'exp')
+#' res <- mirt::residuals(mod, type = 'exp')
 #' cbind(res, gCD=round(result$gCD, 3))
 #'
 #' }
-gCD <- function(data, model, progress = TRUE, ...)
+gCD <- function(data, model, vcov_drop = FALSE, progress = TRUE, ...)
 {
-    f_numeric <- function(ind, data, model, theta){
+    f_numeric <- function(ind, data, model, theta, inv_vcov, vcov_drop){
         tmp1 <- cor(data[-ind,])
         tmp2 <- mlfact(tmp1, model)
         h2 <- tmp2$par
-        inv_vcovmat <- tmp2$hessian
+        inv_vcovmat <- if(vcov_drop) tmp2$hessian else inv_vcov
         vcovmat <- solve(inv_vcovmat)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  inv_vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_sem <- function(ind, data, model, objective, theta, ...){
+    f_sem <- function(ind, data, model, objective, theta, vcov, vcov_drop, ...){
         tmp2 <- sem::sem(model, data=data[-ind, ], objective=objective, ...)
         h2 <- tmp2$coeff
-        vcovmat <- tmp2$vcov
+        vcovmat <- if(vcov_drop) tmp2$vcov else vcov
         inv_vcovmat <- solve(vcovmat)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  inv_vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_lavaan <- function(ind, data, model, theta, ...){
+    f_lavaan <- function(ind, data, model, theta, vcov, vcov_drop, ...){
         tmp <- lavaan::sem(model, data[-ind, ], ...)
         h2 <- lavaan::coef(tmp)
-        vcovmat <- lavaan::vcov(tmp)
+        vcovmat <- if(vcov_drop) lavaan::vcov(tmp) else vcov
         inv_vcovmat <- solve(vcovmat)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*% inv_vcovmat %*% (theta - h2)
         list(dfbeta = DFBETA, gCD = gCD)
     }
-    f_mirt <- function(ind, data, large, model, theta, sv, ...){
+    f_mirt <- function(ind, data, large, model, theta, sv, vcov, vcov_drop, ...){
         large$Freq[[1L]][ind] <- large$Freq[[1L]][ind] - 1L
-        tmp <- mirt::mirt(data, model, large=large, SE=TRUE,
+        tmp <- mirt::mirt(data, model, large=large, SE=vcov_drop,
                           pars=sv, verbose=FALSE, ...)
         h2 <- mirt::extract.mirt(tmp, 'parvec')
-        vcovmat <- mirt::vcov(tmp)
+        vcovmat <- if(vcov_drop) mirt::vcov(tmp) else vcov
         inv_vcovmat <- solve(vcovmat)
         DFBETA <- (theta - h2)/sqrt(diag(vcovmat))
         gCD <- t(theta - h2) %*%  inv_vcovmat %*% (theta - h2)
@@ -132,34 +140,44 @@ gCD <- function(data, model, progress = TRUE, ...)
 
 	N <- nrow(data)
     index <- as.list(1:N)
+    inv_vcov <- NULL
 	if(is.numeric(model)){
 	    if(any(is.na(data)))
 	        stop('Numeric model requires complete dataset (no NA\'s)')
 		mod <- mlfact(cor(data), model)
 		theta <- mod$par
+		if(!vcov_drop) inv_vcov <- mod$hessian
 		tmp <- myLapply(index, FUN=f_numeric, progress=progress,
-		                theta=theta, model=model, data=data)
+		                theta=theta, model=model, data=data,
+		                inv_vcov=inv_vcov, vcov_drop=vcov_drop)
 	} else if(class(model) == "semmod"){
 	    objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    mod <- sem::sem(model, data=data, objective=objective, ...)
 	    theta <- mod$coeff
+	    if(!vcov_drop) vcov <- mod$vcov
 	    tmp <- myLapply(index, FUN=f_sem, progress=progress,
 	                    theta=theta, model=model, data=data,
-                        objective=objective, ...)
+                        objective=objective, vcov=vcov,
+	                    vcov_drop=vcov_drop, ...)
 	} else if(class(model) == "character"){
 	    mod <- lavaan::sem(model, data=data, ...)
 	    theta <- lavaan::coef(mod)
+	    if(!vcov_drop) vcov <- lavaan::vcov(mod)
         tmp <- myLapply(index, FUN=f_lavaan, progress=progress,
-                        theta=theta, model=model, data=data, ...)
+                        theta=theta, model=model, data=data, vcov=vcov,
+                        vcov_drop=vcov_drop, ...)
 	} else if(class(model) == "mirt.model"){
 	    large <- mirt::mirt(data=data, model=model, large = 'return')
 	    index <- matrix(1L:length(large$Freq[[1L]]))
-	    mod <- mirt::mirt(data=data, model=model, large=large, verbose=FALSE, ...)
+	    mod <- mirt::mirt(data=data, model=model, large=large, verbose=FALSE,
+	                      SE=!vcov_drop, ...)
 	    theta <- mirt::extract.mirt(mod, 'parvec')
 	    sv <- mirt::mod2values(mod)
+	    if(!vcov_drop) vcov <- mirt::vcov(mod)
 	    tmp <- myLapply(index, FUN=f_mirt, progress=progress,
 	                    theta=theta, model=model, data=data,
-	                    large=large, sv=sv, ...)
+	                    large=large, sv=sv,
+	                    vcov=vcov, vcov_drop=vcov_drop, ...)
 	} else stop('model class not supported')
 
     gCD <- lapply(tmp, function(x) x$gCD)
