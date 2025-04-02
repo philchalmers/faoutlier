@@ -7,19 +7,19 @@
 #' @aliases robustMD
 #' @param data matrix or data.frame
 #' @param method type of estimation for robust means and covariance
-#'   (see \code{\link{cov.rob}})
+#'   (see \code{\link[MASS]{cov.rob}})
 #' @param digits number of digits to round in the final result
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
 #' @seealso
 #'   \code{\link{gCD}}, \code{\link{obs.resid}}, \code{\link{LD}}
 #' @references
 #'
-#' Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting 
+#' Chalmers, R. P. & Flora, D. B. (2015). faoutlier: An R Package for Detecting
 #'   Influential Cases in Exploratory and Confirmatory Factor Analysis.
 #'   \emph{Applied Psychological Measurement, 39}, 573-574. \doi{10.1177/0146621615597894}
 #'
-#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data 
-#' screening and assumption testing for exploratory and confirmatory factor analysis. 
+#' Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data
+#' screening and assumption testing for exploratory and confirmatory factor analysis.
 #'  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
 #' @keywords covariance
 #' @export robustMD
@@ -37,7 +37,7 @@ robustMD <- function(data, method = 'mve', ...)
 	ret <- list()
 	id <- 1:nrow(data)
 	rownames(data) <- id
-	rob <- cov.rob(data, method = method, ...)
+	rob <- MASS::cov.rob(data, method = method, ...)
 	ret$ID <- id
 	ret$mah <- mahalanobis(data, rob$center, rob$cov)
 	ret$mah_p <- pchisq(ret$mah, ncol(data), lower.tail = FALSE)

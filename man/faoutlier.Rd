@@ -23,6 +23,13 @@ Flora, D. B., LaBrish, C. & Chalmers, R. P. (2012). Old and new ideas for data
 screening and assumption testing for exploratory and confirmatory factor analysis.
  \emph{Frontiers in Psychology, 3}, 1-21. \doi{10.3389/fpsyg.2012.00055}
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/philchalmers/faoutlier}
+}
+
+}
 \author{
 Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
