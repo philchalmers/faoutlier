@@ -6,7 +6,6 @@
 #' cases that can affect exploratory and confirmatory factor analyses.
 #'
 #' @name faoutlier
-#' @docType _PACKAGE
 #' @aliases faoutlier-package
 #' @title Influential case detection methods for FA and SEM
 #' @author Phil Chalmers \email{rphilip.chalmers@@gmail.com}
