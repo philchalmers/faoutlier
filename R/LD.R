@@ -117,17 +117,17 @@ LD <- function(data, model, progress = TRUE, ...)
 		MLmod <- f_numeric(nrow(data) + 1, data=data, model=model, ...)
 		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, progress=progress,
 		              data=data, model=model, ...)
-	} else if(class(model) == "semmod"){
+	} else if(is(model, "semmod")){
 	    MLmod <- sem::sem(model, data=data, ...)
         MLmod <- logLik(MLmod)
 	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, progress=progress,
 	                  data=data, model=model, ...)
-	} else if(class(model) == "character"){
+	} else if(is.character(model)){
         MLmod <- lavaan::sem(model, data=data, ...)
         MLmod <- lavaan::logLik(MLmod)
         LR <- myApply(index, MARGIN=1L, FUN=f_lavaan, progress=progress,
                       data=data, model=model, ...)
-	} else if(class(model) == "mirt.model"){
+	} else if(is(model, "mirt.model")){
         large <- MLmod_full <- mirt::mirt(data=data, model=model, large = 'return')
         index <- matrix(1L:length(large$Freq[[1L]]))
         MLmod_full <- mirt::mirt(data=data, model=model, verbose = FALSE, large=large, ...)
@@ -140,7 +140,7 @@ LD <- function(data, model, progress = TRUE, ...)
         stop('model class not supported')
     }
 	deltaX2 <- 2*(MLmod - LR)
-	if(class(model) != "mirt.model")
+	if(!is(model, "mirt.model"))
 	    names(deltaX2) <- rownames(data)
 	class(deltaX2) <- 'LD'
 	deltaX2

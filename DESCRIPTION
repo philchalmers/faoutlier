@@ -26,6 +26,7 @@ Imports:
 ByteCompile: yes
 LazyLoad: yes
 LazyData: yes
+Encoding: UTF-8
 Repository: github
 License: GPL (>= 2)
 URL: https://github.com/philchalmers/faoutlier

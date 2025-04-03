@@ -90,7 +90,7 @@ obs.resid <- function(data, model, ...)
 		colnames(eji) <- colnames(e) <- colnames(data)
 		ret$res <- e
 		ret$std_res <- eji
-	} else if(class(model) == "semmod"){
+	} else if(is(model, "semmod")){
         C <- cov(data)
         vnames <- colnames(C)
         mod <- sem::sem(model, C, N, ...)
@@ -105,7 +105,7 @@ obs.resid <- function(data, model, ...)
         colnames(eji) <- colnames(e) <- colnames(data)
         ret$res <- e
         ret$std_res <- eji
-	} else if(class(model) == "character"){
+	} else if(is.character(model)){
         dots <- list(...)
         if(!is.null(dots$ordered))
             stop('observed residuals only defined for continuous data')

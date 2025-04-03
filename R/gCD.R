@@ -150,7 +150,7 @@ gCD <- function(data, model, vcov_drop = FALSE, progress = TRUE, ...)
 		tmp <- myLapply(index, FUN=f_numeric, progress=progress,
 		                theta=theta, model=model, data=data,
 		                inv_vcov=inv_vcov, vcov_drop=vcov_drop)
-	} else if(class(model) == "semmod"){
+	} else if(is(model, "semmod")){
 	    objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    mod <- sem::sem(model, data=data, objective=objective, ...)
 	    theta <- mod$coeff
@@ -159,14 +159,14 @@ gCD <- function(data, model, vcov_drop = FALSE, progress = TRUE, ...)
 	                    theta=theta, model=model, data=data,
                         objective=objective, vcov=vcov,
 	                    vcov_drop=vcov_drop, ...)
-	} else if(class(model) == "character"){
+	} else if(is.character(model)){
 	    mod <- lavaan::sem(model, data=data, ...)
 	    theta <- lavaan::coef(mod)
 	    if(!vcov_drop) vcov <- lavaan::vcov(mod)
         tmp <- myLapply(index, FUN=f_lavaan, progress=progress,
                         theta=theta, model=model, data=data, vcov=vcov,
                         vcov_drop=vcov_drop, ...)
-	} else if(class(model) == "mirt.model"){
+	} else if(is(model, "mirt.model")){
 	    large <- mirt::mirt(data=data, model=model, large = 'return')
 	    index <- matrix(1L:length(large$Freq[[1L]]))
 	    mod <- mirt::mirt(data=data, model=model, large=large, verbose=FALSE,
@@ -184,7 +184,7 @@ gCD <- function(data, model, vcov_drop = FALSE, progress = TRUE, ...)
     gCD <- do.call(c, gCD)
     dfbetas <- lapply(tmp, function(x) x$dfbeta)
     dfbetas <- do.call(rbind, dfbetas)
-    if(class(model) != "mirt.model")
+    if(!is(model, "mirt.model"))
         names(gCD) <- rownames(data)
     ret <- list(dfbetas = dfbetas, gCD = gCD)
 	class(ret) <- 'gCD'

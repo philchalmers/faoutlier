@@ -1,5 +1,3 @@
-[![Travis-CI Build Status](https://travis-ci.org/philchalmers/faoutlier.svg?branch=master)](https://travis-ci.org/philchalmers/faoutlier) [![](http://www.r-pkg.org/badges/version/faoutlier)](r-pkg.org/pkg/faoutlier) [![](http://cranlogs.r-pkg.org/badges/grand-total/faoutlier)](https://CRAN.R-project.org/package=faoutlier)
-
 # faoutlier
 
 Tools for detecting and summarize influential cases that

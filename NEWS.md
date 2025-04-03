@@ -1,11 +1,11 @@
-Changes in version 0.7
+# Changes in version 0.7
 
 - `forward.search()` now throws an error when no unique base set can be found (occurs when the defined 
   model is exactly identified, and therefore perfectly fits the data)
 
 - added a `progress` argument to `gCD()`, `LD()`, and `GOF()` to print the progress of the iterations
 
-Changes in version 0.5
+# Changes in version 0.5
 
   - several orgainizational overahauls
 
@@ -13,7 +13,7 @@ Changes in version 0.5
 
   - avoid masking lavaan::sem with sem::sem
 
-Changes in version 0.4
+# Changes in version 0.4
 
   - better use of the parallel package for faster computing in most functions (most notably
   in the forward.search implementation)

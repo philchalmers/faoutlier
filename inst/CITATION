@@ -1,6 +1,6 @@
 citHeader("To cite faoutlier in publications use:")
 
-citEntry(entry = "Article",
+bibentry(entry = "Article",
   title        = "faoutlier: An R Package for Detecting Influential Cases in Exploratory and Confirmatory Factor Analysis.",
   author       = c(as.person("R. Philip Chalmers"), as.person("David B. Flora")),
   journal      = "Applied Psychological Measurement",

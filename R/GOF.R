@@ -130,18 +130,18 @@ GOF <- function(data, model, M2 = TRUE, progress = TRUE, ...)
 		MLmod <- factanal(data, model, ...)$STATISTIC
 		LR <- myApply(index, MARGIN=1L, FUN=f_numeric, progress=progress,
 		              data=data, model=model, ...)
-	} else if(class(model) == "semmod"){
+	} else if(is(model, "semmod")){
         objective <- if(any(is.na(data))) sem::objectiveFIML else sem::objectiveML
 	    MLmod <- sem::sem(model, data=data, objective=objective, ...)
         MLmod <- MLmod$criterion * (MLmod$N - 1)
 	    LR <- myApply(index, MARGIN=1L, FUN=f_sem, progress=progress,
 	                  data=data, model=model, objective=objective, ...)
-	} else if(class(model) == "character"){
+	} else if(is.character(model)){
         MLmod <- lavaan::sem(model, data=data, ...)
         MLmod <- MLmod@Fit@test[[1]]$stat
         LR <- myApply(index, MARGIN=1L, FUN=f_lavaan, progress=progress,
                       data=data, model=model, ...)
-	} else if(class(model) == "mirt.model"){
+	} else if(is(model, "mirt.model")){
         large <- MLmod_full <- mirt::mirt(data=data, model=model, large = 'return')
         index <- matrix(1L:length(large$Freq[[1L]]))
         MLmod_full <- mirt::mirt(data=data, model=model, verbose = FALSE, large=large, ...)
@@ -155,7 +155,7 @@ GOF <- function(data, model, M2 = TRUE, progress = TRUE, ...)
         stop('model class not supported')
     }
 	deltaX2 <- LR - MLmod
-	if(class(model) != "mirt.model")
+	if(!is(model, "mirt.model"))
 	    names(deltaX2) <- rownames(data)
 	class(deltaX2) <- 'GOF'
 	deltaX2
